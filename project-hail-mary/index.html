@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A Project Hail Mary space word search by Movie Your English." />
+    <title>Project Hail Mary Word Search | Movie Your English</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <main class="activity-page">
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="Return to Movie Your English activities homepage">
+          <img class="brand-logo" src="../assets/mye-logo.png" alt="Movie Your English" />
+          <span>movie <strong>your</strong> english</span>
+        </a>
+        <span class="activity-label">Project Hail Mary</span>
+      </header>
+
+      <section class="hero" aria-labelledby="activity-title">
+        <p class="eyebrow">Project Hail Mary · Vocabulary challenge</p>
+        <h1 id="activity-title">Space word search</h1>
+        <p class="intro">Can you find the seven words connected to astronomy and space?</p>
+      </section>
+
+      <section class="activity-card word-search-card" aria-label="Word search activity">
+        <div class="film-strip" aria-hidden="true"></div>
+        <div class="word-search-content">
+          <div class="activity-heading">
+            <div>
+              <h2>Find the space words! 🚀</h2>
+              <p>Click any letter from a hidden space word. Once found, it will light up and be added to your mission log.</p>
+            </div>
+            <p class="score" aria-live="polite"><span id="found-count">0</span> / 7 found</p>
+          </div>
+
+          <div class="puzzle-layout">
+            <div id="word-grid" class="word-grid" role="grid" aria-label="Space word search"></div>
+            <aside class="word-list mission-log" aria-label="Words discovered">
+              <p class="word-list-title">Mission log</p>
+              <ul id="word-list-items"></ul>
+            </aside>
+          </div>
+          <div class="activity-actions">
+            <p id="completion-message" class="completion-message" aria-live="polite"></p>
+            <div class="activity-buttons">
+              <a class="home-button" href="../index.html">← Back to homepage</a>
+              <button id="reset-button" type="button">Start again</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <p>Practice English. Have fun. Enjoy the movie.</p>
+        <a href="https://movieyourenglish.com/" target="_blank" rel="noreferrer">Visit Movie Your English</a>
+      </footer>
+    </main>
+    <script src="../script.js"></script>
+  </body>
+</html>
