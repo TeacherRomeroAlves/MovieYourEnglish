@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A sheep vocabulary matching activity inspired by The Sheep Detectives." />
+    <title>The Sheep Detectives: Match the Clues | Movie Your English</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <main class="activity-page">
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="Return to Movie Your English activities homepage">
+          <img class="brand-logo" src="../assets/mye-logo.png" alt="Movie Your English" />
+          <span>movie <strong>your</strong> english</span>
+        </a>
+        <span class="activity-label">The Sheep Detectives</span>
+      </header>
+
+      <section class="hero movie-hero" aria-labelledby="activity-title">
+        <div class="movie-hero-copy">
+          <p class="eyebrow">The Sheep Detectives · Vocabulary challenge</p>
+          <h1 id="activity-title">Match the clues</h1>
+          <p class="intro">Learn seven useful words from the world of sheep.</p>
+        </div>
+        <img class="hero-poster" src="../assets/sheep-detectives-poster.png" alt="The Sheep Detectives movie poster" />
+      </section>
+
+      <section class="activity-card matching-card" aria-label="Sheep vocabulary matching activity">
+        <div class="film-strip" aria-hidden="true"></div>
+        <div class="matching-content">
+          <div class="activity-heading">
+            <div>
+              <h2>Can you solve the case? 🕵️🐑</h2>
+              <p>Click a word, then click the definition that matches it. Correct pairs will be revealed.</p>
+            </div>
+            <p class="score" aria-live="polite"><span id="match-count">0</span> / 7 matched</p>
+          </div>
+          <div class="matching-board">
+            <section aria-label="Words"><p class="matching-label">Words</p><div id="terms" class="match-column"></div></section>
+            <section aria-label="Definitions"><p class="matching-label">Definitions</p><div id="definitions" class="match-column"></div></section>
+          </div>
+          <div class="activity-actions">
+            <p id="matching-message" class="completion-message" aria-live="polite"></p>
+            <div class="activity-buttons">
+              <a class="home-button" href="../index.html">← Back to homepage</a>
+              <button id="reset-matching" type="button">Start again</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer"><p>Practice English. Have fun. Enjoy the movie.</p><a href="https://movieyourenglish.com/" target="_blank" rel="noreferrer">Visit Movie Your English</a></footer>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>
