@@ -11,6 +11,7 @@ const sheepPairs = [
 const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
 let selectedTerm = null;
 let matchedTerms = new Set();
+let displayedTerms = shuffle(sheepPairs);
 let displayedDefinitions = shuffle(sheepPairs);
 let feedbackMessage = "";
 
@@ -20,7 +21,7 @@ const countElement = document.querySelector("#match-count");
 const messageElement = document.querySelector("#matching-message");
 
 function render() {
-  termElement.innerHTML = sheepPairs.map(({ term, emoji }) => `
+  termElement.innerHTML = displayedTerms.map(({ term, emoji }) => `
     <button class="match-button term-button ${selectedTerm === term ? "selected" : ""} ${matchedTerms.has(term) ? "matched" : ""}" type="button" data-term="${term}" ${matchedTerms.has(term) ? "disabled" : ""}>
       <span aria-hidden="true">${emoji}</span>${term}<span class="match-check">${matchedTerms.has(term) ? "✓" : ""}</span>
     </button>`).join("");
@@ -62,6 +63,7 @@ definitionElement.addEventListener("click", (event) => {
 document.querySelector("#reset-matching").addEventListener("click", () => {
   selectedTerm = null;
   matchedTerms = new Set();
+  displayedTerms = shuffle(sheepPairs);
   displayedDefinitions = shuffle(sheepPairs);
   feedbackMessage = "";
   render();
