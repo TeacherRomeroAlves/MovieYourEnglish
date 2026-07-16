@@ -257,4 +257,81 @@ document.querySelector("#save-report").addEventListener("click", () => {
   popup.document.close();
 });
 
+function loadImage(source) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = source;
+  });
+}
+
+function drawCenteredText(context, text, y, maxWidth, lineHeight) {
+  const words = text.split(" ");
+  const lines = [];
+  let line = "";
+  words.forEach((word) => {
+    const next = line ? `${line} ${word}` : word;
+    if (context.measureText(next).width > maxWidth && line) { lines.push(line); line = word; }
+    else line = next;
+  });
+  if (line) lines.push(line);
+  lines.forEach((entry, index) => context.fillText(entry, 540, y + index * lineHeight));
+  return y + lines.length * lineHeight;
+}
+
+document.querySelector("#share-story").addEventListener("click", async () => {
+  const status = document.querySelector("#story-status");
+  const button = document.querySelector("#share-story");
+  button.disabled = true;
+  status.textContent = "Creating your Story image…";
+  try {
+    const template = await loadImage(new URL("../assets/mye-instagram-story-template.png", window.location.href).href);
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080; canvas.height = 1920;
+    const context = canvas.getContext("2d");
+    context.drawImage(template, 0, 0, canvas.width, canvas.height);
+    const progress = getProgress();
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.font = "900 78px Arial, sans-serif";
+    context.fillStyle = "#d9ff00";
+    context.shadowColor = "#000000";
+    context.shadowBlur = 16;
+    context.shadowOffsetY = 5;
+    const endY = drawCenteredText(context, "PROJECT HAIL MARY", 610, 860, 88);
+    context.font = "800 33px Arial, sans-serif";
+    context.fillStyle = "#ffffff";
+    drawCenteredText(context, `I completed ${progress.completed} of ${progress.total} activities!`, endY + 54, 820, 44);
+    context.shadowColor = "transparent";
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    if (!blob) throw new Error("Story image could not be created");
+    const file = new File([blob], "project-hail-mary-movie-your-english.png", { type: "image/png" });
+    if (navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: "My Movie Your English progress" });
+        status.textContent = "Your Story image is ready to share!";
+        return;
+      } catch (error) {
+        if (error.name === "AbortError") { status.textContent = "Sharing cancelled."; return; }
+      }
+    }
+    const link = document.createElement("a");
+    const objectUrl = URL.createObjectURL(blob);
+    link.href = objectUrl;
+    link.download = file.name;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+    status.textContent = "Story image downloaded. Add it to your Instagram Story!";
+  } catch (error) {
+    console.error("Could not create Instagram Story image:", error);
+    status.textContent = "We couldn't create the Story image. Please try again.";
+  } finally {
+    button.disabled = false;
+  }
+});
+
 renderAll();
