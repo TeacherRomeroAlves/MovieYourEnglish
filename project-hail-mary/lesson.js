@@ -1,6 +1,10 @@
 const storageKey = "mye-project-hail-mary-lesson-v1";
+const lessonSlug = "project-hail-mary";
 const defaultState = { plot: "", vocab: {}, foundWords: [], during: [], comprehension: {}, rocky: {}, writing: "", name: "", teacherName: "", orders: {} };
 let lesson = { ...defaultState, ...JSON.parse(localStorage.getItem(storageKey) || "{}") };
+let authClient = null;
+let authUser = null;
+let remoteSyncTimer = null;
 
 const plotQuestion = {
   id: "plot", points: 10, question: "Based on the trailer, which plot is correct?",
@@ -75,7 +79,37 @@ placements.forEach((placement) => {
 });
 grid.forEach((row) => row.forEach((letter, index) => { if (!letter) row[index] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 26)]; }));
 
-function save() { localStorage.setItem(storageKey, JSON.stringify(lesson)); }
+function save() {
+  localStorage.setItem(storageKey, JSON.stringify(lesson));
+  if (authClient && authUser) {
+    clearTimeout(remoteSyncTimer);
+    remoteSyncTimer = setTimeout(syncRemoteProgress, 500);
+  }
+}
+
+async function syncRemoteProgress() {
+  if (!authClient || !authUser) return;
+  const progress = getProgress();
+  await authClient.from("lesson_progress").upsert({
+    user_id: authUser.id,
+    lesson_slug: lessonSlug,
+    state: lesson,
+    completed: progress.completed,
+    total: progress.total
+  }, { onConflict: "user_id,lesson_slug" });
+}
+
+async function loadRemoteProgress() {
+  if (!authClient || !authUser) return;
+  const { data } = await authClient.from("lesson_progress").select("state").eq("user_id", authUser.id).eq("lesson_slug", lessonSlug).maybeSingle();
+  if (data?.state) {
+    lesson = { ...defaultState, ...data.state, orders: data.state.orders || {} };
+    localStorage.setItem(storageKey, JSON.stringify(lesson));
+    renderAll();
+  } else {
+    syncRemoteProgress();
+  }
+}
 function correctCount(items, answers) { return items.filter((item) => Number(answers[item.id]) === item.correct).length; }
 function normalise(value) { return value.toLowerCase().replace(/[^a-z]/g, ""); }
 function rockyCount() { return rockyItems.filter((item) => normalise(lesson.rocky[item.id] || "") === normalise(item.answer)).length; }
@@ -149,7 +183,11 @@ function renderProgress() {
   document.querySelector("#student-writing").value = lesson.writing;
   document.querySelector("#student-name").value = lesson.name;
   document.querySelector("#teacher-name").value = lesson.teacherName || "";
-  document.querySelector("#writing-feedback").textContent = writingComplete() ? "Writing task complete! +10 points" : `${Math.max(0, 50 - lesson.writing.trim().length)} more characters needed to complete this task.`;
+  document.querySelector("#writing-feedback").textContent = writingComplete() ? "Writing task complete!" : `${Math.max(0, 50 - lesson.writing.trim().length)} more characters needed to complete this task.`;
+  const accountStatus = document.querySelector("#account-save-status");
+  if (authUser) accountStatus.textContent = `Signed in as ${authUser.email}. Your progress is saved.`;
+  else if (window.myeAuth?.configured) accountStatus.textContent = "Sign in to save your progress across devices.";
+  else accountStatus.textContent = "Member progress saving will be available soon.";
 }
 
 function renderAll() {
@@ -191,7 +229,20 @@ document.addEventListener("input", (event) => {
   if (event.target.id === "teacher-name") { lesson.teacherName = event.target.value; save(); }
 });
 
-document.querySelector("#reset-lesson").addEventListener("click", () => { if (confirm("Reset all saved answers and points for this lesson?")) { lesson = { ...defaultState }; save(); renderAll(); } });
+document.querySelector("#reset-lesson").addEventListener("click", () => { if (confirm("Reset all saved answers and progress for this lesson?")) { lesson = { ...defaultState }; save(); renderAll(); } });
+
+document.addEventListener("mye-auth-ready", (event) => {
+  authClient = event.detail.client;
+  authUser = event.detail.user;
+  renderProgress();
+  loadRemoteProgress();
+});
+document.addEventListener("mye-auth-changed", (event) => {
+  authClient = event.detail.client;
+  authUser = event.detail.user;
+  renderProgress();
+  if (authUser) loadRemoteProgress();
+});
 
 function escapeHtml(value) { return value.replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[character])); }
 document.querySelector("#save-report").addEventListener("click", () => {

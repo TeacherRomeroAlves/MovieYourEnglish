@@ -17,7 +17,7 @@
           <img class="brand-logo" src="../assets/mye-logo.png" alt="Movie Your English" />
           <span>movie <strong>your</strong> english</span>
         </a>
-        <a class="activity-label" href="#lesson-report">Your report</a>
+        <div class="header-account"><a class="activity-label" href="#lesson-report">Your report</a><span data-auth-slot></span></div>
       </header>
 
       <section class="hero movie-hero lesson-hero" aria-labelledby="activity-title">
@@ -33,6 +33,7 @@
         <div><span class="progress-kicker">Mission progress</span><strong id="progress-label">0 / 33 complete</strong></div>
         <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
       </section>
+      <p id="account-save-status" class="account-save-status">Sign in to save your progress across devices.</p>
 
       <section class="lesson-intro">
         <p>Complete the three sections in your own time. Your answers and points are saved on this device.</p>
@@ -97,6 +98,8 @@
 
       <footer class="site-footer"><p>Practice English. Have fun. Enjoy the movie.</p><a href="../index.html">Back to activities</a></footer>
     </main>
+    <script src="../auth-config.js"></script>
+    <script type="module" src="../auth.js"></script>
     <script src="lesson.js"></script>
   </body>
 </html>

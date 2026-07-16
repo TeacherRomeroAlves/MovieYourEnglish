@@ -5,20 +5,56 @@ const sheepPairs = [
   { term: "LAMB", definition: "A young sheep", emoji: "🐑" },
   { term: "EWE", definition: "An adult female sheep", emoji: "🌼" },
   { term: "PASTURE", definition: "A field where farm animals eat grass", emoji: "🌿" },
-  { term: "HAY", definition: "Dried grass used as food for animals", emoji: "🌾" },
+  { term: "HAY", definition: "Dried grass used as food for animals", emoji: "🌾" }
 ];
 
 const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
+const sheepStorageKey = "mye-sheep-detectives-v1";
+const savedSheepState = JSON.parse(localStorage.getItem(sheepStorageKey) || "{}");
 let selectedTerm = null;
-let matchedTerms = new Set();
+let matchedTerms = new Set(savedSheepState.matchedTerms || []);
 let displayedTerms = shuffle(sheepPairs);
 let displayedDefinitions = shuffle(sheepPairs);
 let feedbackMessage = "";
+let authClient = null;
+let authUser = null;
+let remoteSyncTimer = null;
 
 const termElement = document.querySelector("#terms");
 const definitionElement = document.querySelector("#definitions");
 const countElement = document.querySelector("#match-count");
 const messageElement = document.querySelector("#matching-message");
+
+function saveSheepProgress() {
+  localStorage.setItem(sheepStorageKey, JSON.stringify({ matchedTerms: [...matchedTerms] }));
+  if (authClient && authUser) {
+    clearTimeout(remoteSyncTimer);
+    remoteSyncTimer = setTimeout(syncRemoteProgress, 500);
+  }
+}
+
+async function syncRemoteProgress() {
+  if (!authClient || !authUser) return;
+  await authClient.from("lesson_progress").upsert({
+    user_id: authUser.id,
+    lesson_slug: "sheep-detectives",
+    state: { matchedTerms: [...matchedTerms] },
+    completed: matchedTerms.size,
+    total: sheepPairs.length
+  }, { onConflict: "user_id,lesson_slug" });
+}
+
+async function loadRemoteProgress() {
+  if (!authClient || !authUser) return;
+  const { data } = await authClient.from("lesson_progress").select("state").eq("user_id", authUser.id).eq("lesson_slug", "sheep-detectives").maybeSingle();
+  if (data?.state?.matchedTerms) {
+    matchedTerms = new Set(data.state.matchedTerms);
+    saveSheepProgress();
+    render();
+  } else {
+    syncRemoteProgress();
+  }
+}
 
 function render() {
   termElement.innerHTML = displayedTerms.map(({ term, emoji }) => `
@@ -31,6 +67,10 @@ function render() {
     </button>`).join("");
   countElement.textContent = matchedTerms.size;
   messageElement.textContent = matchedTerms.size === sheepPairs.length ? "Case closed! You matched every clue. 🎉" : feedbackMessage;
+  const accountStatus = document.querySelector("#sheep-account-status");
+  if (authUser) accountStatus.textContent = `Signed in as ${authUser.email}. Your progress is saved.`;
+  else if (window.myeAuth?.configured) accountStatus.textContent = "Sign in to save your activity progress.";
+  else accountStatus.textContent = "Member progress saving will be available soon.";
 }
 
 termElement.addEventListener("click", (event) => {
@@ -47,15 +87,11 @@ definitionElement.addEventListener("click", (event) => {
     matchedTerms.add(selectedTerm);
     selectedTerm = null;
     feedbackMessage = "";
+    saveSheepProgress();
   } else {
     selectedTerm = null;
     feedbackMessage = "Not quite — choose another definition.";
-    setTimeout(() => {
-      if (matchedTerms.size !== sheepPairs.length) {
-        feedbackMessage = "";
-        render();
-      }
-    }, 1500);
+    setTimeout(() => { if (matchedTerms.size !== sheepPairs.length) { feedbackMessage = ""; render(); } }, 1500);
   }
   render();
 });
@@ -66,7 +102,21 @@ document.querySelector("#reset-matching").addEventListener("click", () => {
   displayedTerms = shuffle(sheepPairs);
   displayedDefinitions = shuffle(sheepPairs);
   feedbackMessage = "";
+  saveSheepProgress();
   render();
+});
+
+document.addEventListener("mye-auth-ready", (event) => {
+  authClient = event.detail.client;
+  authUser = event.detail.user;
+  render();
+  loadRemoteProgress();
+});
+document.addEventListener("mye-auth-changed", (event) => {
+  authClient = event.detail.client;
+  authUser = event.detail.user;
+  render();
+  if (authUser) loadRemoteProgress();
 });
 
 render();
