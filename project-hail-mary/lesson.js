@@ -286,7 +286,10 @@ document.querySelector("#share-story").addEventListener("click", async () => {
   button.disabled = true;
   status.textContent = "Creating your Story image…";
   try {
-    const template = await loadImage(new URL("../assets/mye-instagram-story-template.png", window.location.href).href);
+    const [template, poster] = await Promise.all([
+      loadImage(new URL("../assets/mye-instagram-story-template.png", window.location.href).href),
+      loadImage(new URL("../assets/project-hail-mary-poster.png", window.location.href).href)
+    ]);
     const canvas = document.createElement("canvas");
     canvas.width = 1080; canvas.height = 1920;
     const context = canvas.getContext("2d");
@@ -294,15 +297,22 @@ document.querySelector("#share-story").addEventListener("click", async () => {
     const progress = getProgress();
     context.textAlign = "center";
     context.textBaseline = "middle";
-    context.font = "900 78px Arial, sans-serif";
-    context.fillStyle = "#d9ff00";
-    context.shadowColor = "#000000";
-    context.shadowBlur = 16;
-    context.shadowOffsetY = 5;
-    const endY = drawCenteredText(context, "PROJECT HAIL MARY", 610, 860, 88);
+    const posterWidth = 360;
+    const posterHeight = 540;
+    const posterX = (canvas.width - posterWidth) / 2;
+    const posterY = 585;
+    context.fillStyle = "#ffffff";
+    context.fillRect(posterX - 11, posterY - 11, posterWidth + 22, posterHeight + 22);
+    context.drawImage(poster, posterX, posterY, posterWidth, posterHeight);
+    context.strokeStyle = "#16b9b4";
+    context.lineWidth = 7;
+    context.strokeRect(posterX - 7, posterY - 7, posterWidth + 14, posterHeight + 14);
     context.font = "800 33px Arial, sans-serif";
     context.fillStyle = "#ffffff";
-    drawCenteredText(context, `I completed ${progress.completed} of ${progress.total} activities!`, endY + 54, 820, 44);
+    context.shadowColor = "#000000";
+    context.shadowBlur = 12;
+    context.shadowOffsetY = 4;
+    drawCenteredText(context, `I completed ${progress.completed} of ${progress.total} activities!`, 1200, 820, 44);
     context.shadowColor = "transparent";
     const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
     if (!blob) throw new Error("Story image could not be created");
