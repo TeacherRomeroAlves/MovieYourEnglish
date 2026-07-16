@@ -5,9 +5,9 @@ let lesson = { ...defaultState, ...JSON.parse(localStorage.getItem(storageKey) |
 const plotQuestion = {
   id: "plot", points: 10, question: "Based on the trailer, which plot is correct?",
   answers: [
-    "A couple of astronauts go to space to become friends with a cute lost alien.",
-    "A science teacher goes to space to stop violent aliens that are killing Earth's sun.",
-    "A science teacher goes to space to stop a mysterious substance that is killing Earth's sun, and an unexpected friendship may be the answer."
+    "Two astronauts go to space and help a lost alien.",
+    "A teacher goes to space to fight dangerous aliens.",
+    "A teacher goes to space to stop a threat to the Sun."
   ], correct: 2, followUp: "Why do you think the mission is called a ‘Hail Mary’?"
 };
 
@@ -106,9 +106,14 @@ function renderQuestion(question, selected, type) {
 }
 
 function renderQuestions() {
-  document.querySelector("#plot-question").innerHTML = renderQuestion(plotQuestion, lesson.plot, "plot");
-  document.querySelector("#vocabulary-questions").innerHTML = vocab.map((item) => renderQuestion(item, lesson.vocab[item.id], "vocab")).join("");
-  document.querySelector("#comprehension-questions").innerHTML = comprehension.map((item) => renderQuestion(item, lesson.comprehension[item.id], "comprehension")).join("");
+  const beforeItems = [{ question: plotQuestion, selected: lesson.plot, type: "plot" }, ...vocab.map((question) => ({ question, selected: lesson.vocab[question.id], type: "vocab" }))];
+  renderQuestionCarousel(document.querySelector("#before-questions"), beforeItems, "Before watching questions");
+  const afterItems = comprehension.map((question) => ({ question, selected: lesson.comprehension[question.id], type: "comprehension" }));
+  renderQuestionCarousel(document.querySelector("#comprehension-questions"), afterItems, "After watching questions");
+}
+
+function renderQuestionCarousel(container, items, label) {
+  container.innerHTML = `<div class="question-carousel-shell"><div class="question-carousel-toolbar"><span>${label}</span><div><button class="question-carousel-button" data-question-carousel="previous" type="button" aria-label="Previous question">←</button><button class="question-carousel-button" data-question-carousel="next" type="button" aria-label="Next question">→</button></div></div><div class="question-carousel">${items.map((item, index) => `<div class="question-slide"><p class="slide-number">Question ${index + 1} of ${items.length}</p>${renderQuestion(item.question, item.selected, item.type)}</div>`).join("")}</div></div>`;
 }
 
 function renderWordSearch() {
@@ -147,7 +152,11 @@ function renderProgress() {
   document.querySelector("#writing-feedback").textContent = writingComplete() ? "Writing task complete! +10 points" : `${Math.max(0, 50 - lesson.writing.trim().length)} more characters needed to complete this task.`;
 }
 
-function renderAll() { renderQuestions(); renderWordSearch(); renderDuring(); renderRocky(); renderProgress(); }
+function renderAll() {
+  const carouselPositions = [...document.querySelectorAll(".question-carousel")].map((carousel) => carousel.scrollLeft);
+  renderQuestions(); renderWordSearch(); renderDuring(); renderRocky(); renderProgress();
+  [...document.querySelectorAll(".question-carousel")].forEach((carousel, index) => { carousel.scrollLeft = carouselPositions[index] || 0; });
+}
 
 document.addEventListener("click", (event) => {
   const answer = event.target.closest(".answer-choice");
@@ -169,6 +178,11 @@ document.addEventListener("click", (event) => {
   }
   const rockyButton = event.target.closest("[data-reveal-rocky]");
   if (rockyButton) { const item = rockyItems.find((entry) => entry.id === rockyButton.dataset.revealRocky); lesson.rocky[item.id] = item.answer; save(); renderAll(); }
+  const carouselButton = event.target.closest("[data-question-carousel]");
+  if (carouselButton) {
+    const carousel = carouselButton.closest(".question-carousel-shell").querySelector(".question-carousel");
+    carousel.scrollBy({ left: carousel.clientWidth * (carouselButton.dataset.questionCarousel === "next" ? 1 : -1), behavior: "smooth" });
+  }
 });
 
 document.addEventListener("input", (event) => {
