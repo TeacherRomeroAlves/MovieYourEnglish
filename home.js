@@ -7,3 +7,14 @@ document.querySelectorAll("[data-carousel-direction]").forEach((button) => {
     carousel.scrollBy({ left: distance * direction, behavior: "smooth" });
   });
 });
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("is-visible");
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll(".home-reveal").forEach((section) => revealObserver.observe(section));
