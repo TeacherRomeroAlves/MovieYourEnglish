@@ -302,7 +302,7 @@ document.querySelector("#share-story").addEventListener("click", async () => {
     context.shadowColor = "#000000";
     context.shadowBlur = 15;
     context.shadowOffsetY = 5;
-    drawCenteredText(context, "I’VE JUST PRACTICED ENGLISH WITH…", 505, 820, 66);
+    drawCenteredText(context, "I’ve just practiced English with…", 505, 820, 66);
 
     const posterWidth = 360;
     const posterHeight = 540;
