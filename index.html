@@ -1,58 +1,42 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Movie Your English interactive activities." />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Movie Your English helps teachers and students learn English through interactive movie lessons.">
     <title>Movie Your English | Let's learn English with movies!</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500;600;700&amp;family=Outfit:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
   </head>
-  <body class="platform-home">
-    <main class="streaming-home">
-      <header class="site-header platform-header">
-        <a class="brand" href="index.html" aria-label="Movie Your English homepage">
-          <img class="brand-logo" src="assets/mye-logo.png" alt="Movie Your English" />
-          <span>movie <strong>your</strong> english</span>
-        </a>
-        <div class="header-account"><span class="activity-label">2 activities available</span><span data-auth-slot></span></div>
+  <body class="platform-home saas-home">
+    <main class="saas-shell">
+      <header class="saas-nav">
+        <a class="brand" href="index.html" aria-label="Movie Your English homepage"><img class="brand-logo" src="assets/mye-logo.png" alt="Movie Your English"><span>movie <strong>your</strong> english</span></a>
+        <nav aria-label="Main navigation"><a href="movies.html">Movies</a><a href="#how-it-works">How it works</a><a href="#free">Free to use</a></nav>
+        <div class="nav-actions"><span data-auth-slot></span><a class="nav-start" href="movies.html">Get started</a></div>
       </header>
 
-      <section class="platform-hero home-reveal" aria-labelledby="featured-title">
-        <img src="assets/project-hail-mary-poster.png" alt="Project Hail Mary movie poster" />
-        <div class="platform-hero-content">
-          <p class="eyebrow">Featured lesson</p>
-          <h1 id="featured-title">Project Hail Mary</h1>
-          <p>A complete English mission: trailer, vocabulary, word search, viewing guide, comprehension, grammar, and writing.</p>
-          <div class="hero-actions"><a class="activity-link" href="./project-hail-mary/index.html"><span aria-hidden="true">▶</span> Start lesson</a><a class="hero-secondary" href="#activity-library">Browse activities</a></div>
+      <section class="saas-hero home-reveal" aria-labelledby="hero-title">
+        <div class="hero-copy"><p class="eyebrow">English beyond the classroom</p><h1 id="hero-title">Learn English with the <span>movies you love.</span></h1><p>Ready-to-use interactive lessons that turn every movie night into meaningful English practice.</p><div class="hero-actions"><a class="hero-primary" href="movies.html">Get started <span aria-hidden="true">→</span></a><button class="hero-secondary member-cta" data-open-auth type="button">Become a member</button><a class="hero-secondary" href="#how-it-works">See how it works</a></div><p class="hero-note">Free to explore. No preparation required.</p></div>
+        <div class="hero-gallery" aria-label="Featured movie lessons"><a class="hero-card hero-card-main" href="./zootopia-2/index.html"><img src="assets/zootopia-2-logo.webp" alt="Zootopia 2 movie poster"><span>Now playing</span></a><a class="hero-card hero-card-back" href="./project-hail-mary/index.html"><img src="assets/project-hail-mary-poster.png" alt="Project Hail Mary movie poster"></a><a class="hero-card hero-card-front" href="./sheep-detectives/index.html"><img src="assets/sheep-detectives-poster.png" alt="The Sheep Detectives movie poster"></a></div>
+      </section>
+
+      <section class="audience-section home-reveal" aria-labelledby="audience-title">
+        <div class="section-heading"><p class="eyebrow">Made for your next lesson</p><h2 id="audience-title">One platform. Two ways to grow.</h2></div>
+        <div class="audience-grid">
+          <article class="audience-card teacher-card"><div class="audience-icon" aria-hidden="true">▣</div><p class="eyebrow">For teachers</p><h3>Bring the cinema into class.</h3><ul><li>Save hours preparing lessons</li><li>Ready-to-use activities</li><li>Interactive classroom experience</li></ul></article>
+          <article class="audience-card student-card"><div class="audience-icon" aria-hidden="true">◉</div><p class="eyebrow">For students</p><h3>Make every movie count.</h3><ul><li>Learn English with movies</li><li>Improve vocabulary and listening</li><li>Share progress with your teacher</li></ul></article>
         </div>
       </section>
 
-      <section id="activity-library" class="activity-shelf home-reveal" aria-labelledby="library-title">
-        <div class="shelf-heading"><div><p class="eyebrow">Movie library</p><h2 id="library-title">Choose your next activity</h2></div><div class="carousel-controls"><button class="carousel-button" type="button" data-carousel-direction="previous" aria-label="Previous activities">←</button><button class="carousel-button" type="button" data-carousel-direction="next" aria-label="Next activities">→</button></div></div>
-        <div id="poster-carousel" class="poster-carousel" tabindex="0">
-          <article class="movie-tile">
-            <a href="./project-hail-mary/index.html" class="movie-poster-link"><img src="assets/project-hail-mary-poster.png" alt="Project Hail Mary movie poster" /><span class="play-overlay">▶</span></a>
-          <div class="movie-meta"><h3>Project Hail Mary</h3><p><span>Intermediate+</span> · Complete lesson</p></div>
-          </article>
-          <article class="movie-tile">
-            <a href="./sheep-detectives/index.html" class="movie-poster-link"><img src="assets/sheep-detectives-poster.png" alt="The Sheep Detectives movie poster" /><span class="play-overlay">▶</span></a>
-            <div class="movie-meta"><h3>The Sheep Detectives</h3><p><span>Elementary</span> · Complete lesson</p></div>
-          </article>
-          <article class="movie-tile">
-            <a href="./odyssey/index.html" class="movie-poster-link"><img src="assets/the-odyssey-poster.webp" alt="The Odyssey movie poster" /><span class="play-overlay">▶</span></a>
-            <div class="movie-meta"><h3>The Odyssey</h3><p><span>Intermediate+</span> · Complete lesson</p></div>
-          </article>
-        </div>
-      </section>
+      <section id="how-it-works" class="how-section home-reveal" aria-labelledby="how-title"><div class="section-heading"><p class="eyebrow">How it works</p><h2 id="how-title">Turn every movie into an English lesson.</h2></div><div class="how-card-grid"><article><span class="how-icon" aria-hidden="true">▸</span><h3>Choose a movie</h3><p>Browse lessons based on amazing movies. Filter by level, genre, or language skill to find the perfect lesson.</p></article><article><span class="how-icon" aria-hidden="true">✎</span><h3>Learn while you watch</h3><p>Complete interactive activities before, during, and after the movie. Expand vocabulary, strengthen listening, and practise English in context.</p></article><article><span class="how-icon" aria-hidden="true">↗</span><h3>Track your progress</h3><p>Use what you have learned, check comprehension, and share your results with your teacher.</p></article></div></section>
 
-      <section class="platform-note home-reveal"><span aria-hidden="true">🎬</span><div><h2>Learn English one movie at a time.</h2><p>Each activity is designed to help you watch, think, speak, and write with confidence.</p><a class="instagram-cta" href="https://www.instagram.com/movieyourenglish/" target="_blank" rel="noreferrer">Follow us on Instagram <span aria-hidden="true">↗</span></a></div></section>
-      <footer class="site-footer"><p>Practice English. Have fun. Enjoy the movie.</p><a href="https://movieyourenglish.com/" target="_blank" rel="noreferrer">Visit the original website</a></footer>
+      <section id="free" class="free-cta home-reveal"><div><p class="eyebrow">Free to use</p><h2>Ready for your next great English lesson?</h2><p>Choose a movie, press play, and let the learning begin.</p></div><div class="cta-actions"><a class="hero-primary" href="movies.html">Get started <span aria-hidden="true">→</span></a><button class="member-cta dark-member-cta" data-open-auth type="button">Become a member</button></div></section>
+
+      <footer class="saas-footer"><a class="brand" href="index.html"><img class="brand-logo" src="assets/mye-logo.png" alt=""><span>movie <strong>your</strong> english</span></a><p>Practice English. Have fun. Enjoy the movie.</p><a href="https://www.instagram.com/movieyourenglish/" target="_blank" rel="noreferrer">Follow us on Instagram</a></footer>
     </main>
-    <script src="auth-config.js"></script>
-    <script type="module" src="auth.js"></script>
-    <script src="home.js"></script>
+    <script src="auth-config.js"></script><script type="module" src="auth.js"></script><script src="home.js"></script>
   </body>
 </html>
