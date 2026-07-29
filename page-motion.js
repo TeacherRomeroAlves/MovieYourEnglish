@@ -29,7 +29,7 @@ document.querySelectorAll(".writing-card").forEach((writingCard) => {
   responseGrid.appendChild(writingCard);
   const speakingCard = document.createElement("section");
   speakingCard.className = "speaking-card";
-  speakingCard.innerHTML = `<h2>${promptTitle}</h2><p>${promptText}</p><p class="speaking-help">Record your answer, save the audio file, then share it with your teacher.</p><p class="recording-timer" hidden>Recording 00:00</p><div class="recording-actions"><button class="record-button" type="button">Record answer</button><button class="stop-recording" type="button" hidden>Stop recording</button></div><audio class="speaking-audio" controls hidden></audio><div class="recording-actions saved-actions" hidden><button class="save-recording" type="button">Save recording</button><button class="share-recording" type="button">Share with teacher</button></div><p class="recording-status" aria-live="polite">Your recording stays on this device until you choose to save or share it.</p>`;
+  speakingCard.innerHTML = `<h2>${promptTitle}</h2><p>${promptText}</p><p class="speaking-help">Record your answer, then save the audio file to send to your teacher.</p><p class="recording-timer" hidden>Recording 00:00</p><div class="recording-actions"><button class="record-button" type="button">Record answer</button><button class="stop-recording" type="button" hidden>Stop recording</button></div><audio class="speaking-audio" controls hidden></audio><div class="recording-actions saved-actions" hidden><button class="save-recording" type="button">Save recording</button></div><p class="recording-status" aria-live="polite">Your recording stays on this device until you choose to save it.</p>`;
   speakingCard.hidden = true;
   responseGrid.appendChild(speakingCard);
   responseGrid.querySelectorAll(".response-mode-tab").forEach((tab) => tab.addEventListener("click", () => {
@@ -80,7 +80,7 @@ document.querySelectorAll(".writing-card").forEach((writingCard) => {
         clearInterval(timerInterval); timer.hidden = true;
         recordButton.textContent = "Record again"; recordButton.hidden = false; stopButton.hidden = true;
         stream.getTracks().forEach((track) => track.stop());
-        status.textContent = "Recording ready. Save it or share it with your teacher.";
+        status.textContent = "Recording ready. Save the file to send it to your teacher.";
         document.dispatchEvent(new CustomEvent("mye-speaking-saved"));
       });
       recorder.start();
@@ -94,12 +94,4 @@ document.querySelectorAll(".writing-card").forEach((writingCard) => {
   });
   stopButton.addEventListener("click", () => recorder?.state === "recording" && recorder.stop());
   speakingCard.querySelector(".save-recording").addEventListener("click", downloadRecording);
-  speakingCard.querySelector(".share-recording").addEventListener("click", async () => {
-    if (!recordingBlob) return;
-    const file = new File([recordingBlob], recordingName, { type: recordingBlob.type || "audio/webm" });
-    if (navigator.canShare?.({ files: [file] }) && navigator.share) {
-      try { await navigator.share({ files: [file], title: "My Movie Your English speaking answer" }); status.textContent = "Your recording is ready to share with your teacher."; return; } catch { status.textContent = "Sharing was cancelled. You can save the recording instead."; return; }
-    }
-    downloadRecording();
-  });
 });

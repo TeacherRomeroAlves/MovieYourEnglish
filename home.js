@@ -47,7 +47,7 @@ function applyMovieFilters() {
   movieTiles.forEach((tile) => {
     const matchesLevel = filterState.level === "all" || tile.dataset.level === filterState.level;
     const matchesGenre = filterState.genre === "all" || tile.dataset.genre.split(" ").includes(filterState.genre);
-    const matchesPlatform = filterState.platform === "all" || tile.dataset.platform === filterState.platform;
+    const matchesPlatform = filterState.platform === "all" || tile.dataset.platform.split(" ").includes(filterState.platform);
     const visible = matchesLevel && matchesGenre && matchesPlatform;
     tile.hidden = !visible;
     if (visible) visibleCount += 1;
