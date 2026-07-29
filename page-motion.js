@@ -1,4 +1,17 @@
 const motionTargets = document.querySelectorAll(".activity-page > section, .activity-page > .watch-provider");
+let questionPosition = 0;
+document.addEventListener("click", (event) => { const choice = event.target.closest(".answer-choice"); if (choice) questionPosition = choice.closest(".question-carousel")?.scrollLeft || 0; }, true);
+document.addEventListener("click", (event) => { if (event.target.closest(".answer-choice")) setTimeout(() => { document.querySelectorAll(".question-carousel").forEach((carousel) => { carousel.scrollLeft = questionPosition; }); }, 0); });
+const addCarouselControls = () => {
+  document.querySelectorAll(".question-carousel-shell").forEach((shell) => {
+    const toolbar = shell.querySelector(".question-carousel-toolbar");
+    if (!toolbar || toolbar.querySelector("[data-shared-carousel]")) return;
+    toolbar.insertAdjacentHTML("beforeend", '<div><button class="question-carousel-button" type="button" data-shared-carousel="previous" aria-label="Previous question">←</button><button class="question-carousel-button" type="button" data-shared-carousel="next" aria-label="Next question">→</button></div>');
+  });
+};
+setTimeout(addCarouselControls, 500);
+setInterval(addCarouselControls, 500);
+document.addEventListener("click", (event) => { const button = event.target.closest("[data-shared-carousel]"); if (button) button.closest(".question-carousel-shell").querySelector(".question-carousel").scrollBy({ left: button.dataset.sharedCarousel === "next" ? 500 : -500, behavior: "smooth" }); });
 
 if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window) {
   const pageObserver = new IntersectionObserver((entries) => {
@@ -95,3 +108,25 @@ document.querySelectorAll(".writing-card").forEach((writingCard) => {
   stopButton.addEventListener("click", () => recorder?.state === "recording" && recorder.stop());
   speakingCard.querySelector(".save-recording").addEventListener("click", downloadRecording);
 });
+
+setTimeout(() => {
+  if (!location.pathname.includes("/se7en/")) return;
+  const grid = document.querySelector("#word-grid");
+  const list = document.querySelector("#word-list-items");
+  if (!grid || !list) return;
+  const words = ["WRATH", "GREED", "PRIDE", "LUST", "GLUTTONY", "ENVY", "SLOTH"];
+  const starts = [[0, 0], [2, 1], [4, 3], [6, 0], [8, 2], [1, 10], [10, 4]];
+  const repair = () => {
+    while (grid.children.length > 144) grid.removeChild(grid.children[24]);
+    ["E", "N", "V", "Y"].forEach((letter, index) => { grid.children[(1 + index) * 12 + 10].textContent = letter; });
+    grid.querySelectorAll(".found, .color-0, .color-1, .color-2, .color-3").forEach((cell) => cell.classList.remove("found", "color-0", "color-1", "color-2", "color-3"));
+    const found = new Set([...list.querySelectorAll(".word-item.is-found strong")].map((item) => item.textContent));
+    words.forEach((word, color) => {
+      if (!found.has(word)) return;
+      const [row, column] = starts[color];
+      [...word].forEach((_, index) => grid.children[color === 5 ? (row + index) * 12 + column : row * 12 + column + index]?.classList.add("found", `color-${color % 4}`));
+    });
+  };
+  new MutationObserver(repair).observe(grid, { childList: true });
+  repair();
+}, 500);
