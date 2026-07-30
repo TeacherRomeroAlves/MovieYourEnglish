@@ -5,7 +5,7 @@ document.addEventListener("click", (event) => { if (event.target.closest(".answe
 const addCarouselControls = () => {
   document.querySelectorAll(".question-carousel-shell").forEach((shell) => {
     const toolbar = shell.querySelector(".question-carousel-toolbar");
-    if (!toolbar || toolbar.querySelector("[data-shared-carousel]")) return;
+    if (!toolbar || toolbar.querySelector(".question-carousel-button")) return;
     toolbar.insertAdjacentHTML("beforeend", '<div><button class="question-carousel-button" type="button" data-shared-carousel="previous" aria-label="Previous question">←</button><button class="question-carousel-button" type="button" data-shared-carousel="next" aria-label="Next question">→</button></div>');
   });
 };
