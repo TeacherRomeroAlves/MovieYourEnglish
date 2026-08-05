@@ -1,3 +1,4 @@
+const pageMotionSource = document.currentScript?.src || location.href;
 const motionTargets = document.querySelectorAll(".activity-page > section, .activity-page > .watch-provider");
 let questionPosition = 0;
 document.addEventListener("click", (event) => { const choice = event.target.closest(".answer-choice"); if (choice) questionPosition = choice.closest(".question-carousel")?.scrollLeft || 0; }, true);
@@ -9,9 +10,139 @@ const addCarouselControls = () => {
     toolbar.insertAdjacentHTML("beforeend", '<div><button class="question-carousel-button" type="button" data-shared-carousel="previous" aria-label="Previous question">←</button><button class="question-carousel-button" type="button" data-shared-carousel="next" aria-label="Next question">→</button></div>');
   });
 };
+const addCarouselInstructions = () => {
+  document.querySelectorAll(".question-list").forEach((questionList) => {
+    const heading = questionList.previousElementSibling;
+    if (!heading?.classList.contains("mini-heading")) {
+      questionList.insertAdjacentHTML("beforebegin", '<div class="mini-heading"><p>Use the arrows to move through the questions.</p></div>');
+      return;
+    }
+    if (heading.textContent.includes("Use the arrows to move through the questions.")) return;
+    heading.insertAdjacentHTML("beforeend", "<p>Use the arrows to move through the questions.</p>");
+  });
+};
+const beforeWatchHeadings = {
+  "alien-romulus": "Survive the station",
+  "conclave": "Behind closed doors",
+  "devil-wears-prada": "Fashion meets ambition",
+  "eternity": "Love beyond life",
+  "f1-the-movie": "Prepare for the race",
+  "forrest-gump": "Life is full of surprises",
+  "harry-potter-philosophers-stone": "Magic begins at Hogwarts",
+  "kpop-demon-hunters": "Music can save the world",
+  "lilo-and-stitch": "Welcome to the family",
+  "materialists": "Love is complicated",
+  "moana-2": "Go beyond the horizon",
+  "odyssey": "Prepare for the journey",
+  "project-hail-mary": "One mission can save the sun",
+  "se7en": "Follow the clues",
+  "sheep-detectives": "Every mystery leaves a clue",
+  "the-housemaid": "Something is wrong in this house",
+  "the-batman": "Follow the clues through Gotham",
+  "the-wrong-paris": "Welcome to the wrong Paris",
+  "zootopia-2": "Crack the case"
+};
+const enhanceBeforeWatchHeading = () => {
+  const beforeSection = [...document.querySelectorAll("details.lesson-section")].find((section) => section.querySelector("summary b")?.textContent.trim() === "01");
+  const questionList = beforeSection?.querySelector(".question-list");
+  if (!questionList) return;
+  let heading = questionList.previousElementSibling;
+  if (!heading?.classList.contains("mini-heading")) {
+    heading = document.createElement("div");
+    heading.className = "mini-heading";
+    questionList.insertAdjacentElement("beforebegin", heading);
+  }
+  heading.classList.add("plot-vocab-heading");
+  let eyebrow = heading.querySelector(".eyebrow");
+  if (!eyebrow) { eyebrow = document.createElement("p"); eyebrow.className = "eyebrow"; heading.prepend(eyebrow); }
+  eyebrow.textContent = "Plot & vocabulary";
+  let title = heading.querySelector("h2");
+  if (!title) { title = document.createElement("h2"); eyebrow.insertAdjacentElement("afterend", title); }
+  const pathParts = location.pathname.split("/").filter(Boolean);
+  const lastPart = pathParts.at(-1) || "";
+  const movieSlug = lastPart.endsWith(".html") ? pathParts.at(-2) : lastPart;
+  title.textContent = beforeWatchHeadings[movieSlug] || "Get ready for the movie";
+  let instruction = [...heading.querySelectorAll("p:not(.eyebrow)")].find((paragraph) => paragraph.textContent.includes("arrows"));
+  if (!instruction) { instruction = document.createElement("p"); heading.appendChild(instruction); }
+  instruction.textContent = "Use the arrows to move through the questions.";
+  if (!heading.querySelector(".dictionary-card")) {
+    heading.insertAdjacentHTML("beforeend", '<a class="dictionary-card" href="https://dictionary.cambridge.org/dictionary/english/" target="_blank" rel="noreferrer"><img src="../assets/cambridge-dictionary-logo.jpeg" alt="Cambridge Dictionary"><span><small>Definitions & pronunciation</small><strong>Cambridge Dictionary <b>↗</b></strong><em>Look up any words you do not know.</em></span></a>');
+  }
+};
+const addDuringMovieClosingMessage = () => {
+  const duringSection = [...document.querySelectorAll("details.lesson-section")].find((section) => section.querySelector("summary b")?.textContent.trim() === "02");
+  const content = duringSection?.querySelector(".lesson-section-content");
+  if (!content || content.querySelector(".watching-tip")) return;
+  content.insertAdjacentHTML("beforeend", '<p class="watching-tip"><strong>Time to have fun!</strong> Now you are going to watch the movie in English <em>(with or without subtitles — according to your English level).</em> We do not want to spoil your movie experience.</p>');
+};
 setTimeout(addCarouselControls, 500);
 setInterval(addCarouselControls, 500);
+setTimeout(addCarouselInstructions, 500);
+setInterval(addCarouselInstructions, 500);
+setTimeout(enhanceBeforeWatchHeading, 100);
+setInterval(enhanceBeforeWatchHeading, 500);
+setTimeout(addDuringMovieClosingMessage, 100);
+setInterval(addDuringMovieClosingMessage, 500);
 document.addEventListener("click", (event) => { const button = event.target.closest("[data-shared-carousel]"); if (button) button.closest(".question-carousel-shell").querySelector(".question-carousel").scrollBy({ left: button.dataset.sharedCarousel === "next" ? 500 : -500, behavior: "smooth" }); });
+
+const colorMatchingPairs = () => {
+  document.querySelectorAll(".matching-board").forEach((board) => {
+    const matchedButtons = [...board.querySelectorAll(".match-button.matched")];
+    const pairKeys = [];
+    matchedButtons.forEach((button) => {
+      const key = button.dataset.term || button.dataset.definition || button.dataset.c || button.dataset.cd;
+      if (key && !pairKeys.includes(key)) pairKeys.push(key);
+    });
+    matchedButtons.forEach((button) => {
+      const key = button.dataset.term || button.dataset.definition || button.dataset.c || button.dataset.cd;
+      const color = pairKeys.indexOf(key);
+      if (color >= 0) button.dataset.matchColor = String(color % 9);
+    });
+  });
+};
+setTimeout(colorMatchingPairs, 100);
+setInterval(colorMatchingPairs, 400);
+
+const wrongChoiceStorageKey = `mye-wrong-choices:${location.pathname}`;
+let wrongChoiceHistory = new Set();
+try { wrongChoiceHistory = new Set(JSON.parse(localStorage.getItem(wrongChoiceStorageKey) || "[]")); } catch { localStorage.removeItem(wrongChoiceStorageKey); }
+const choiceAttemptKey = (choice) => {
+  const data = choice.dataset;
+  const question = data.id || data.i || data.questionId || choice.closest(".question-card")?.querySelector(".question-text")?.textContent?.trim() || "question";
+  const group = data.group || data.g || data.type || data.questionGroup || "quiz";
+  const answer = data.answer ?? data.n ?? data.a ?? data.v ?? data.option ?? choice.textContent.trim();
+  return `${group}::${question}::${answer}`;
+};
+const paintWrongChoices = () => {
+  document.querySelectorAll(".answer-choice").forEach((choice) => choice.classList.toggle("was-wrong", wrongChoiceHistory.has(choiceAttemptKey(choice))));
+};
+document.addEventListener("click", (event) => {
+  const choice = event.target.closest(".answer-choice");
+  if (!choice) return;
+  const attemptKey = choiceAttemptKey(choice);
+  setTimeout(() => {
+    const renderedChoice = [...document.querySelectorAll(".answer-choice")].find((item) => choiceAttemptKey(item) === attemptKey);
+    const card = renderedChoice?.closest(".question-card");
+    const hasFeedback = Boolean(card?.querySelector(".question-feedback")?.textContent?.trim());
+    if (card && !card.classList.contains("is-correct") && hasFeedback) {
+      wrongChoiceHistory.add(attemptKey);
+      localStorage.setItem(wrongChoiceStorageKey, JSON.stringify([...wrongChoiceHistory]));
+    }
+    paintWrongChoices();
+  }, 0);
+}, true);
+document.addEventListener("click", (event) => {
+  if (!event.target.closest("#reset-lesson")) return;
+  setTimeout(() => {
+    const lessonWasReset = [...document.querySelectorAll(".question-feedback")].every((feedback) => !feedback.textContent.trim());
+    if (!lessonWasReset) return;
+    wrongChoiceHistory.clear();
+    localStorage.removeItem(wrongChoiceStorageKey);
+    paintWrongChoices();
+  }, 100);
+});
+setTimeout(paintWrongChoices, 100);
+setInterval(paintWrongChoices, 400);
 
 if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window) {
   const pageObserver = new IntersectionObserver((entries) => {
@@ -38,7 +169,14 @@ document.querySelectorAll(".writing-card").forEach((writingCard) => {
   const responseGrid = document.createElement("div");
   responseGrid.className = "response-mode-switcher";
   writingCard.parentNode.insertBefore(responseGrid, writingCard);
-  responseGrid.innerHTML = '<div class="response-mode-tabs" role="tablist" aria-label="Choose your response type"><button class="response-mode-tab active" type="button" role="tab" aria-selected="true" data-response-mode="write">Time to write</button><button class="response-mode-tab" type="button" role="tab" aria-selected="false" data-response-mode="speak">Time to speak</button></div>';
+  const existingResponseHeading = responseGrid.previousElementSibling?.classList.contains("response-heading");
+  if (!existingResponseHeading) {
+    const responseHeading = document.createElement("div");
+    responseHeading.className = "mini-heading response-heading";
+    responseHeading.innerHTML = '<p class="eyebrow">Wrap-up</p><h2>Express your opinion</h2><p>Answer the question below in a text or record yourself speaking.</p>';
+    responseGrid.insertAdjacentElement("beforebegin", responseHeading);
+  }
+  responseGrid.innerHTML = '<div class="response-mode-tabs" role="tablist" aria-label="Choose your response type"><button class="response-mode-tab active" type="button" role="tab" aria-selected="true" data-response-mode="write">Time to Write</button><button class="response-mode-tab" type="button" role="tab" aria-selected="false" data-response-mode="speak">Time to Speak</button></div>';
   responseGrid.appendChild(writingCard);
   const speakingCard = document.createElement("section");
   speakingCard.className = "speaking-card";
@@ -108,6 +246,21 @@ document.querySelectorAll(".writing-card").forEach((writingCard) => {
   stopButton.addEventListener("click", () => recorder?.state === "recording" && recorder.stop());
   speakingCard.querySelector(".save-recording").addEventListener("click", downloadRecording);
 });
+
+if (document.querySelector(".writing-card") && !document.querySelector("#lesson-report")) {
+  const footer = document.querySelector(".site-footer");
+  const report = document.createElement("section");
+  report.id = "lesson-report";
+  report.className = "report-card";
+  report.innerHTML = '<div><p class="eyebrow">Lesson complete?</p><h2>Save your lesson report</h2><p>Choose <strong>Save as PDF</strong> in your browser\'s print dialog, then send the report to your teacher.</p></div><div class="report-actions"><button id="save-report" class="activity-link" type="button">Save / share report <span>→</span></button><button id="share-story" class="instagram-share-button" type="button">Create Instagram Story <span>✦</span></button><p id="story-status" class="story-status" aria-live="polite"></p></div>';
+  footer?.parentNode.insertBefore(report, footer);
+}
+if (document.querySelector(".writing-card")) {
+  const exportsScript = document.createElement("script");
+  exportsScript.src = new URL("lesson-exports.js", pageMotionSource).href;
+  exportsScript.async = false;
+  document.body.appendChild(exportsScript);
+}
 
 setTimeout(() => {
   if (!location.pathname.includes("/se7en/")) return;
