@@ -45,7 +45,9 @@ const ensureLessonReport = () => {
 };
 ensureLessonReport();
 document.addEventListener("click", (event) => {
-  if (event.target.closest("[data-generic-report]")) window.print();
+  if (!event.target.closest("[data-generic-report]")) return;
+  updateGenericReportScore();
+  window.print();
 });
 let questionPosition = 0;
 document.addEventListener("click", (event) => { const choice = event.target.closest(".answer-choice"); if (choice) questionPosition = choice.closest(".question-carousel")?.scrollLeft || 0; }, true);
@@ -151,29 +153,102 @@ setTimeout(colorMatchingPairs, 100);
 setInterval(colorMatchingPairs, 400);
 
 const wrongChoiceStorageKey = `mye-wrong-choices:${location.pathname}`;
+const wrongQuestionStorageKey = `mye-wrong-questions:${location.pathname}`;
+const firstTryCorrectStorageKey = `mye-first-try-correct:${location.pathname}`;
 let wrongChoiceHistory = new Set();
+let wrongQuestionHistory = new Set();
+let firstTryCorrectHistory = new Set();
 try { wrongChoiceHistory = new Set(JSON.parse(localStorage.getItem(wrongChoiceStorageKey) || "[]")); } catch { localStorage.removeItem(wrongChoiceStorageKey); }
-const choiceAttemptKey = (choice) => {
+try { wrongQuestionHistory = new Set(JSON.parse(localStorage.getItem(wrongQuestionStorageKey) || "[]")); } catch { localStorage.removeItem(wrongQuestionStorageKey); }
+try { firstTryCorrectHistory = new Set(JSON.parse(localStorage.getItem(firstTryCorrectStorageKey) || "[]")); } catch { localStorage.removeItem(firstTryCorrectStorageKey); }
+if (!wrongQuestionHistory.size && wrongChoiceHistory.size) {
+  wrongChoiceHistory.forEach((key) => wrongQuestionHistory.add(key.slice(0, key.lastIndexOf("::"))));
+  localStorage.setItem(wrongQuestionStorageKey, JSON.stringify([...wrongQuestionHistory]));
+}
+const choiceQuestionKey = (choice) => {
   const data = choice.dataset;
   const question = data.id || data.i || data.questionId || choice.closest(".question-card")?.querySelector(".question-text")?.textContent?.trim() || "question";
   const group = data.group || data.g || data.type || data.questionGroup || "quiz";
+  return `${group}::${question}`;
+};
+const choiceAttemptKey = (choice) => {
+  const data = choice.dataset;
   const answer = data.answer ?? data.n ?? data.a ?? data.v ?? data.option ?? choice.textContent.trim();
-  return `${group}::${question}::${answer}`;
+  return `${choiceQuestionKey(choice)}::${answer}`;
+};
+const firstTryScore = () => firstTryCorrectHistory.size;
+const firstTryScoreText = () => `${firstTryScore()} correct ${firstTryScore() === 1 ? "answer" : "answers"} on the first try`;
+const updateGenericReportScore = () => {
+  const report = document.querySelector("#lesson-report");
+  if (!report) return;
+  let score = report.querySelector(".first-try-report-score");
+  if (!score) {
+    score = document.createElement("p");
+    score.className = "first-try-report-score";
+    report.querySelector("h2")?.insertAdjacentElement("afterend", score);
+  }
+  score.textContent = firstTryScoreText();
+};
+window.myeFirstTryScore = { count: firstTryScore, text: firstTryScoreText };
+const nativeWindowOpen = window.open.bind(window);
+window.open = (...args) => {
+  const popup = nativeWindowOpen(...args);
+  if (!popup) return popup;
+  let attempts = 0;
+  const enhanceReport = window.setInterval(() => {
+    attempts += 1;
+    try {
+      const summary = popup.document?.querySelector(".summary");
+      if (summary && !summary.querySelector(".first-try-report-score")) {
+        const score = popup.document.createElement("p");
+        score.className = "first-try-report-score";
+        score.textContent = firstTryScoreText();
+        score.style.cssText = "margin:7px 0 0;font-size:13px;font-weight:800;color:#235654";
+        const progressText = summary.querySelector("strong");
+        (progressText?.parentElement || summary).appendChild(score);
+        window.clearInterval(enhanceReport);
+      }
+    } catch {
+      window.clearInterval(enhanceReport);
+    }
+    if (attempts > 100) window.clearInterval(enhanceReport);
+  }, 10);
+  return popup;
+};
+const syncFirstTryFromRenderedAnswers = () => {
+  let changed = false;
+  document.querySelectorAll(".question-card.is-correct").forEach((card) => {
+    const selected = card.querySelector(".answer-choice.selected") || card.querySelector(".answer-choice");
+    if (!selected) return;
+    const questionKey = choiceQuestionKey(selected);
+    if (!wrongQuestionHistory.has(questionKey) && !firstTryCorrectHistory.has(questionKey)) {
+      firstTryCorrectHistory.add(questionKey);
+      changed = true;
+    }
+  });
+  if (changed) localStorage.setItem(firstTryCorrectStorageKey, JSON.stringify([...firstTryCorrectHistory]));
 };
 const paintWrongChoices = () => {
   document.querySelectorAll(".answer-choice").forEach((choice) => choice.classList.toggle("was-wrong", wrongChoiceHistory.has(choiceAttemptKey(choice))));
+  syncFirstTryFromRenderedAnswers();
 };
 document.addEventListener("click", (event) => {
   const choice = event.target.closest(".answer-choice");
   if (!choice) return;
   const attemptKey = choiceAttemptKey(choice);
+  const questionKey = choiceQuestionKey(choice);
   setTimeout(() => {
     const renderedChoice = [...document.querySelectorAll(".answer-choice")].find((item) => choiceAttemptKey(item) === attemptKey);
     const card = renderedChoice?.closest(".question-card");
     const hasFeedback = Boolean(card?.querySelector(".question-feedback")?.textContent?.trim());
     if (card && !card.classList.contains("is-correct") && hasFeedback) {
       wrongChoiceHistory.add(attemptKey);
+      wrongQuestionHistory.add(questionKey);
       localStorage.setItem(wrongChoiceStorageKey, JSON.stringify([...wrongChoiceHistory]));
+      localStorage.setItem(wrongQuestionStorageKey, JSON.stringify([...wrongQuestionHistory]));
+    } else if (card?.classList.contains("is-correct") && !wrongQuestionHistory.has(questionKey)) {
+      firstTryCorrectHistory.add(questionKey);
+      localStorage.setItem(firstTryCorrectStorageKey, JSON.stringify([...firstTryCorrectHistory]));
     }
     paintWrongChoices();
   }, 0);
@@ -184,7 +259,11 @@ document.addEventListener("click", (event) => {
     const lessonWasReset = [...document.querySelectorAll(".question-feedback")].every((feedback) => !feedback.textContent.trim());
     if (!lessonWasReset) return;
     wrongChoiceHistory.clear();
+    wrongQuestionHistory.clear();
+    firstTryCorrectHistory.clear();
     localStorage.removeItem(wrongChoiceStorageKey);
+    localStorage.removeItem(wrongQuestionStorageKey);
+    localStorage.removeItem(firstTryCorrectStorageKey);
     paintWrongChoices();
   }, 100);
 });
