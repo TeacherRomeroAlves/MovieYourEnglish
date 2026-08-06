@@ -11,6 +11,28 @@ if (!document.querySelector("[data-auth-slot]")) {
   document.head.appendChild(authConfigScript);
 }
 const motionTargets = document.querySelectorAll(".activity-page > section, .activity-page > .watch-provider");
+const adultContentNotes = {
+  "alien-romulus": { label: "Content warning", text: "This movie contains intense violence, frightening scenes, and disturbing images. Recommended for adults." },
+  "se7en": { label: "Content warning", text: "This movie contains graphic violence, disturbing crime scenes, and adult themes. Recommended for adults." },
+  "materialists": { label: "Mild content warning", text: "This movie includes mature relationship themes and a reference to sexual assault. Viewer discretion is advised." },
+  "frankenstein-easier": { label: "Mild content warning", text: "This movie includes fantasy violence and some unsettling images. Viewer discretion is advised." },
+  "frankenstein-harder": { label: "Mild content warning", text: "This movie includes fantasy violence and some unsettling images. Viewer discretion is advised." }
+};
+const addAdultContentNote = () => {
+  if (document.querySelector(".content-note")) return;
+  const pathParts = location.pathname.split("/").filter(Boolean);
+  const lastPart = pathParts.at(-1) || "";
+  const movieSlug = lastPart.endsWith(".html") ? pathParts.at(-2) : lastPart;
+  const note = adultContentNotes[movieSlug];
+  const hero = document.querySelector(".movie-hero");
+  if (!note || !hero) return;
+  const contentNote = document.createElement("aside");
+  contentNote.className = "content-note";
+  contentNote.setAttribute("aria-label", note.label);
+  contentNote.innerHTML = `<p class="eyebrow">${note.label}</p><strong>${note.text}</strong>`;
+  hero.insertAdjacentElement("afterend", contentNote);
+};
+addAdultContentNote();
 const ensureLessonReport = () => {
   const lessonPage = document.querySelector(".activity-page.lesson-page");
   if (!lessonPage || document.querySelector("#lesson-report")) return;
