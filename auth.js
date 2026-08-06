@@ -1,4 +1,60 @@
 const authConfig = window.MYE_SUPABASE_CONFIG || {};
+function standardizeGlobalHeader() {
+  document.querySelectorAll("header.saas-nav, header.site-header").forEach((header) => {
+    const brandHref = header.querySelector(".brand")?.getAttribute("href") || "index.html";
+    const root = brandHref.startsWith("../") ? "../" : "";
+    if (!document.querySelector('link[data-global-nav-styles]')) {
+      const navStyles = document.createElement("link");
+      navStyles.rel = "stylesheet";
+      navStyles.href = `${root}global-nav.css`;
+      navStyles.setAttribute("data-global-nav-styles", "");
+      document.head.appendChild(navStyles);
+    }
+    const links = [["Our Movies", `${root}movies.html`], ["How it works", `${root}how-it-works.html`], ["Our impact", `${root}social-proof.html`], ["Instagram", "https://www.instagram.com/movieyourenglish/"]];
+    let nav = header.querySelector("nav");
+    if (!nav) {
+      nav = document.createElement("nav");
+      header.insertBefore(nav, header.querySelector(".nav-actions, .header-account") || null);
+    }
+    nav.className = "global-nav";
+    nav.setAttribute("aria-label", "Main navigation");
+    nav.innerHTML = links.map(([label, href]) => `<a href="${href}"${href.startsWith("https://") ? ' target="_blank" rel="noreferrer"' : ""}>${label}</a>`).join("");
+    let actions = header.querySelector(".nav-actions, .header-account");
+    if (!actions) {
+      actions = document.createElement("div");
+      actions.className = header.classList.contains("saas-nav") ? "nav-actions" : "header-account";
+      header.appendChild(actions);
+    }
+    if (header.classList.contains("site-header") && !header.classList.contains("platform-header")) {
+      let reportLink = actions.querySelector('a[href="#lesson-report"]');
+      if (!reportLink) {
+        reportLink = document.createElement("a");
+        reportLink.href = "#lesson-report";
+        reportLink.className = "activity-label";
+        reportLink.textContent = "Your report";
+        actions.prepend(reportLink);
+      }
+      const lessonLinks = [...actions.querySelectorAll(".activity-label")].filter((link) => link !== reportLink);
+      if (lessonLinks.length) {
+        let lessonTools = header.nextElementSibling;
+        if (!lessonTools?.classList.contains("lesson-header-tools")) {
+          lessonTools = document.createElement("div");
+          lessonTools.className = "lesson-header-tools";
+          lessonTools.setAttribute("aria-label", "Lesson shortcuts");
+          header.insertAdjacentElement("afterend", lessonTools);
+        }
+        lessonLinks.forEach((link) => lessonTools.appendChild(link));
+      }
+    }
+    let authSlot = header.querySelector("[data-auth-slot]");
+    if (!authSlot) {
+      authSlot = document.createElement("span");
+      authSlot.setAttribute("data-auth-slot", "");
+    }
+    actions.appendChild(authSlot);
+  });
+}
+standardizeGlobalHeader();
 const authSlots = document.querySelectorAll("[data-auth-slot]");
 const configured = Boolean(authConfig.url && authConfig.anonKey);
 
@@ -10,7 +66,7 @@ function renderAuth(user = null) {
       const displayName = user.email ? user.email.split("@")[0] : "Member";
       slot.innerHTML = `<span class="member-status">Hi, ${displayName}</span><button class="member-button member-signout" type="button">Sign out</button>`;
     } else {
-      slot.innerHTML = '<button class="member-button" data-open-auth type="button">Member sign in</button>';
+      slot.innerHTML = '<button class="member-button" data-open-auth type="button">Become a member</button>';
     }
   });
 }
@@ -78,4 +134,5 @@ document.addEventListener("submit", async (event) => {
 });
 
 window.myeAuth = { ready, get client() { return supabaseClient; }, get user() { return currentUser; }, configured };
+renderAuth();
 setupAuth();

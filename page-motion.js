@@ -1,5 +1,30 @@
 const pageMotionSource = document.currentScript?.src || location.href;
+if (!document.querySelector("[data-auth-slot]")) {
+  const authConfigScript = document.createElement("script");
+  authConfigScript.src = new URL("auth-config.js", pageMotionSource).href;
+  authConfigScript.addEventListener("load", () => {
+    const authScript = document.createElement("script");
+    authScript.type = "module";
+    authScript.src = new URL("auth.js", pageMotionSource).href;
+    document.body.appendChild(authScript);
+  });
+  document.head.appendChild(authConfigScript);
+}
 const motionTargets = document.querySelectorAll(".activity-page > section, .activity-page > .watch-provider");
+const ensureLessonReport = () => {
+  const lessonPage = document.querySelector(".activity-page.lesson-page");
+  if (!lessonPage || document.querySelector("#lesson-report")) return;
+  const report = document.createElement("section");
+  report.id = "lesson-report";
+  report.className = "report-card";
+  report.innerHTML = '<div><p class="eyebrow">Lesson complete?</p><h2>Save your lesson report</h2><p>Use your browser’s print dialog to save this completed lesson as a PDF and share it with your teacher.</p></div><div class="report-actions"><button class="activity-link" data-generic-report type="button">Save / share report <span aria-hidden="true">→</span></button></div>';
+  const footer = lessonPage.querySelector(".site-footer");
+  lessonPage.insertBefore(report, footer || null);
+};
+ensureLessonReport();
+document.addEventListener("click", (event) => {
+  if (event.target.closest("[data-generic-report]")) window.print();
+});
 let questionPosition = 0;
 document.addEventListener("click", (event) => { const choice = event.target.closest(".answer-choice"); if (choice) questionPosition = choice.closest(".question-carousel")?.scrollLeft || 0; }, true);
 document.addEventListener("click", (event) => { if (event.target.closest(".answer-choice")) setTimeout(() => { document.querySelectorAll(".question-carousel").forEach((carousel) => { carousel.scrollLeft = questionPosition; }); }, 0); });

@@ -30,6 +30,7 @@ body {
 .platform-hero-content { position: relative; z-index: 1; width: min(100%, 620px); padding: clamp(28px, 6vw, 70px); }
 .platform-hero-content .eyebrow { color: var(--neon); }
 .platform-hero h1 { margin: 0; color: var(--paper); font-size: clamp(3rem, 8vw, 6.5rem); }
+.hero-accent { color: var(--neon); }
 .platform-hero-content > p:not(.eyebrow) { max-width: 540px; margin: 14px 0 25px; color: #f0f0f0; font-size: clamp(1rem, 2vw, 1.15rem); line-height: 1.55; }
 .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
 .hero-actions .activity-link { background: var(--neon); }

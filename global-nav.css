@@ -1,0 +1,76 @@
+/* Shared navigation for marketing, library, and lesson pages. */
+.site-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.global-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(13px, 2vw, 25px);
+  min-width: 0;
+}
+
+.global-nav a {
+  color: rgba(239, 255, 253, 0.78);
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.18s ease;
+}
+
+.global-nav a:hover,
+.global-nav a:focus-visible {
+  color: var(--neon);
+  outline: none;
+}
+
+.site-header .global-nav a { color: #315c59; }
+.site-header .global-nav a:hover,
+.site-header .global-nav a:focus-visible { color: #087f7b; }
+.header-account > [data-auth-slot],
+.nav-actions > [data-auth-slot] { order: 99; }
+.header-account .member-button,
+.nav-actions .member-button { white-space: nowrap; }
+
+.lesson-header-tools {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 18px;
+}
+
+.lesson-header-tools .activity-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  border: 0;
+  border-radius: 999px;
+  color: #e8fffd;
+  background: rgba(22, 185, 180, 0.18);
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .site-header { grid-template-columns: auto auto; }
+  .site-header .global-nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-top: 10px;
+    scrollbar-width: none;
+  }
+  .site-header .global-nav::-webkit-scrollbar { display: none; }
+}
+
+@media (max-width: 620px) {
+  .site-header .global-nav { gap: 17px; }
+  .site-header .global-nav a { font-size: 0.78rem; }
+  .header-account .activity-label { display: inline-flex; padding: 7px 9px; font-size: 0.65rem; }
+  .lesson-header-tools { justify-content: flex-start; margin-top: 8px; }
+  .lesson-header-tools .activity-label { display: inline-flex; font-size: 0.68rem; }
+}
