@@ -326,16 +326,30 @@ document.querySelectorAll(".writing-card").forEach((writingCard) => {
   const savedActions = speakingCard.querySelector(".saved-actions");
   const status = speakingCard.querySelector(".recording-status");
   const timer = speakingCard.querySelector(".recording-timer");
-  let recorder; let stream; let chunks = []; let recordingBlob; let recordingUrl; let timerInterval; let seconds = 0;
-  const recordingName = `${location.pathname.split("/").filter(Boolean).pop() || "movie-your-english"}-speaking-answer.webm`;
+  let recorder; let stream; let chunks = []; let recordingBlob; let recordingUrl; let timerInterval; let seconds = 0; let recordingExtension = "webm";
+  const recordingBaseName = `${location.pathname.split("/").filter(Boolean).pop() || "movie-your-english"}-speaking-answer`;
 
-  const downloadRecording = () => {
+  const downloadRecording = async () => {
     if (!recordingBlob) return;
+    const recordingName = `${recordingBaseName}.${recordingExtension}`;
+    const file = new File([recordingBlob], recordingName, { type: recordingBlob.type || `audio/${recordingExtension}` });
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: "My Movie Your English speaking answer" });
+        status.textContent = "Recording ready to share or save from your device.";
+        return;
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+      }
+    }
     const link = document.createElement("a");
     link.href = URL.createObjectURL(recordingBlob);
     link.download = recordingName;
+    link.target = "_blank";
+    document.body.appendChild(link);
     link.click();
-    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 60000);
     status.textContent = "Recording saved. Attach the audio file when you message your teacher.";
   };
 
@@ -347,10 +361,13 @@ document.querySelectorAll(".writing-card").forEach((writingCard) => {
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       chunks = [];
-      recorder = new MediaRecorder(stream);
+      const preferredTypes = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm"];
+      const recordingType = preferredTypes.find((type) => MediaRecorder.isTypeSupported?.(type)) || "";
+      recorder = recordingType ? new MediaRecorder(stream, { mimeType: recordingType }) : new MediaRecorder(stream);
       recorder.addEventListener("dataavailable", (event) => { if (event.data.size) chunks.push(event.data); });
       recorder.addEventListener("stop", () => {
         recordingBlob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+        recordingExtension = recordingBlob.type.includes("mp4") ? "m4a" : recordingBlob.type.includes("ogg") ? "ogg" : "webm";
         if (recordingUrl) URL.revokeObjectURL(recordingUrl);
         recordingUrl = URL.createObjectURL(recordingBlob);
         audio.src = recordingUrl; audio.hidden = false; savedActions.hidden = false;
@@ -372,6 +389,22 @@ document.querySelectorAll(".writing-card").forEach((writingCard) => {
   stopButton.addEventListener("click", () => recorder?.state === "recording" && recorder.stop());
   speakingCard.querySelector(".save-recording").addEventListener("click", downloadRecording);
 });
+
+// Use explicit slide indexes for question navigation. This avoids fractional
+// scroll offsets and unreliable scrollBy behavior in iPhone Safari.
+document.addEventListener("click", (event) => {
+  const navigation = event.target.closest(".question-carousel-button[data-nav], .question-carousel-button[data-qnav]");
+  if (!navigation) return;
+  const carousel = navigation.closest(".question-carousel-shell")?.querySelector(".question-carousel");
+  if (!carousel) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  const direction = (navigation.dataset.nav || navigation.dataset.qnav) === "next" ? 1 : -1;
+  const slides = [...carousel.querySelectorAll(".question-slide")];
+  const current = Math.round(carousel.scrollLeft / Math.max(carousel.clientWidth, 1));
+  const target = Math.max(0, Math.min(slides.length - 1, current + direction));
+  carousel.scrollTo({ left: target * carousel.clientWidth, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}, true);
 
 if (document.querySelector(".writing-card") && !document.querySelector("#lesson-report")) {
   const footer = document.querySelector(".site-footer");
