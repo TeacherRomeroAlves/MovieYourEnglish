@@ -1,0 +1,20 @@
+{
+  "name": "movieyourenglish",
+  "version": "1.0.0",
+  "description": "Movie Your English - Learn English through interactive movie lessons",
+  "type": "module",
+  "scripts": {
+    "dev": "echo 'Development server'",
+    "build": "echo 'Build complete'"
+  },
+  "keywords": [
+    "english",
+    "learning",
+    "movies"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^1.4.1"
+  }
+}
