@@ -1,4 +1,23 @@
 const authConfig = window.MYE_SUPABASE_CONFIG || {};
+const authModuleRoot = new URL(".", import.meta.url).href;
+function loadSharedScript(name) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[data-mye-shared="${name}"]`)) { resolve(); return; }
+    const script = document.createElement("script");
+    script.src = new URL(name, authModuleRoot).href;
+    script.dataset.myeShared = name;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+if (!document.querySelector('link[data-mye-learning-styles]')) {
+  const learningStyles = document.createElement("link");
+  learningStyles.rel = "stylesheet";
+  learningStyles.href = new URL("my-learning.css", authModuleRoot).href;
+  learningStyles.dataset.myeLearningStyles = "";
+  document.head.appendChild(learningStyles);
+}
 function standardizeGlobalHeader() {
   document.querySelectorAll("header.saas-nav, header.site-header").forEach((header) => {
     const brandHref = header.querySelector(".brand")?.getAttribute("href") || "index.html";
@@ -64,7 +83,8 @@ function renderAuth(user = null) {
       slot.innerHTML = '<span class="member-status">Member sign-in coming soon</span>';
     } else if (user) {
       const displayName = user.email ? user.email.split("@")[0] : "Member";
-      slot.innerHTML = `<span class="member-status">Hi, ${displayName}</span><button class="member-button member-signout" type="button">Sign out</button>`;
+      const root = document.querySelector(".brand")?.getAttribute("href")?.startsWith("../") ? "../" : "";
+      slot.innerHTML = `<a class="member-learning-link" href="${root}my-learning.html">My Learning</a><span class="member-status">Hi, ${displayName}</span><button class="member-button member-signout" type="button">Sign out</button>`;
     } else {
       slot.innerHTML = '<button class="member-button" data-open-auth type="button">Become a member</button>';
     }
@@ -136,3 +156,4 @@ document.addEventListener("submit", async (event) => {
 window.myeAuth = { ready, get client() { return supabaseClient; }, get user() { return currentUser; }, configured };
 renderAuth();
 setupAuth();
+loadSharedScript("learning-data.js").then(() => loadSharedScript("learning.js")).catch(() => {});

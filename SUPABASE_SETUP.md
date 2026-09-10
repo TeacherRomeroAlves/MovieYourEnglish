@@ -16,7 +16,14 @@ The website is prepared for Supabase Auth and a Supabase Postgres database. Foll
 3. Copy everything from [`supabase/schema.sql`](supabase/schema.sql) into the editor.
 4. Click **Run**.
 
-This creates `lesson_progress` and row-level security rules. Each signed-in member can only read or change their own progress.
+This creates `lesson_progress`, a dashboard index, and row-level security rules. Each signed-in member can only read or change their own progress. The same protected table also stores favorite-movie markers used by the **My Learning** page.
+
+The member experience includes:
+
+- favorite movies from the library or lesson pages;
+- separate progress for every language level of a multilevel movie;
+- in-progress and completed lesson history;
+- automatic progress summaries across the movie catalog.
 
 ## 3. Configure magic-link sign-in
 

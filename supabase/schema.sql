@@ -13,6 +13,12 @@ create table if not exists public.lesson_progress (
 
 alter table public.lesson_progress enable row level security;
 
+revoke all on table public.lesson_progress from anon, authenticated;
+grant select, insert, update, delete on table public.lesson_progress to authenticated;
+
+create index if not exists lesson_progress_user_updated_idx
+  on public.lesson_progress (user_id, updated_at desc);
+
 drop policy if exists "Students read only their own progress" on public.lesson_progress;
 create policy "Students read only their own progress"
   on public.lesson_progress for select
