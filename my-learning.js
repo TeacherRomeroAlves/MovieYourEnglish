@@ -8,7 +8,7 @@
   const formatDate = (value) => new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(new Date(value));
 
   function signedOut() {
-    host.innerHTML = `<section class="learning-signin"><p class="eyebrow">Your learning space</p><h1>Keep your movie lessons in one place.</h1><p>Sign in to save favorite movies, follow lesson progress, and continue learning across your devices.</p><button class="activity-link" data-open-auth type="button">Become a member <span aria-hidden="true">→</span></button></section>`;
+    host.innerHTML = `<section class="learning-signin"><p class="eyebrow">Your learning space</p><h1>Keep your movie lessons in one place.</h1><p>Sign in to save favorite movies, follow lesson progress, and continue learning across your devices.</p><button class="activity-link" data-open-auth type="button">Sign in <span aria-hidden="true">→</span></button></section>`;
   }
 
   function lessonCard(row) {

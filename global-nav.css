@@ -35,6 +35,61 @@
 .header-account .member-button,
 .nav-actions .member-button { white-space: nowrap; }
 
+.site-header.lesson-compact-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.lesson-compact-header .header-account {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.lesson-library-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 13px;
+  border: 1px solid rgba(151, 242, 237, 0.24);
+  border-radius: 999px;
+  color: #dffaf7;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+
+.lesson-library-link:hover,
+.lesson-library-link:focus-visible {
+  border-color: rgba(151, 242, 237, 0.58);
+  color: var(--neon);
+  background: rgba(22, 185, 180, 0.1);
+  outline: none;
+}
+
+.lesson-compact-header .member-learning-link {
+  padding: 9px 13px;
+  border-color: rgba(151, 242, 237, 0.28);
+  background: rgba(22, 185, 180, 0.09);
+}
+
+.lesson-compact-header .member-signout {
+  padding-inline: 10px;
+  color: #b6cfcc;
+  background: transparent;
+}
+
+.lesson-compact-header .member-signout:hover,
+.lesson-compact-header .member-signout:focus-visible {
+  color: var(--neon);
+  background: rgba(255, 255, 255, 0.06);
+}
+
 .lesson-header-tools {
   display: flex;
   justify-content: flex-end;
@@ -73,4 +128,10 @@
   .header-account .activity-label { display: inline-flex; padding: 7px 9px; font-size: 0.65rem; }
   .lesson-header-tools { justify-content: flex-start; margin-top: 8px; }
   .lesson-header-tools .activity-label { display: inline-flex; font-size: 0.68rem; }
+  .site-header.lesson-compact-header { gap: 8px; }
+  .lesson-compact-header .header-account { gap: 5px; }
+  .lesson-library-link { padding: 8px 10px; font-size: 0.72rem; }
+  .lesson-compact-header .member-learning-link { padding: 8px 10px; font-size: 0.72rem; }
+  .lesson-compact-header .member-signout { width: 34px; padding: 8px 0; overflow: hidden; color: transparent; font-size: 0; }
+  .lesson-compact-header .member-signout::before { content: "↪"; color: #b6cfcc; font-size: 0.9rem; }
 }

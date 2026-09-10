@@ -22,6 +22,7 @@ function standardizeGlobalHeader() {
   document.querySelectorAll("header.saas-nav, header.site-header").forEach((header) => {
     const brandHref = header.querySelector(".brand")?.getAttribute("href") || "index.html";
     const root = brandHref.startsWith("../") ? "../" : "";
+    const isLessonHeader = header.classList.contains("site-header") && !header.classList.contains("platform-header");
     if (!document.querySelector('link[data-global-nav-styles]')) {
       const navStyles = document.createElement("link");
       navStyles.rel = "stylesheet";
@@ -29,31 +30,17 @@ function standardizeGlobalHeader() {
       navStyles.setAttribute("data-global-nav-styles", "");
       document.head.appendChild(navStyles);
     }
-    const links = [["Our Movies", `${root}movies.html`], ["How it works", `${root}how-it-works.html`], ["Our impact", `${root}social-proof.html`], ["Instagram", "https://www.instagram.com/movieyourenglish/"]];
-    let nav = header.querySelector("nav");
-    if (!nav) {
-      nav = document.createElement("nav");
-      header.insertBefore(nav, header.querySelector(".nav-actions, .header-account") || null);
-    }
-    nav.className = "global-nav";
-    nav.setAttribute("aria-label", "Main navigation");
-    nav.innerHTML = links.map(([label, href]) => `<a href="${href}"${href.startsWith("https://") ? ' target="_blank" rel="noreferrer"' : ""}>${label}</a>`).join("");
     let actions = header.querySelector(".nav-actions, .header-account");
     if (!actions) {
       actions = document.createElement("div");
       actions.className = header.classList.contains("saas-nav") ? "nav-actions" : "header-account";
       header.appendChild(actions);
     }
-    if (header.classList.contains("site-header") && !header.classList.contains("platform-header")) {
-      let reportLink = actions.querySelector('a[href="#lesson-report"]');
-      if (!reportLink) {
-        reportLink = document.createElement("a");
-        reportLink.href = "#lesson-report";
-        reportLink.className = "activity-label";
-        reportLink.textContent = "Your report";
-        actions.prepend(reportLink);
-      }
-      const lessonLinks = [...actions.querySelectorAll(".activity-label")].filter((link) => link !== reportLink);
+    if (isLessonHeader) {
+      header.classList.add("lesson-compact-header");
+      header.querySelector("nav")?.remove();
+      actions.querySelector('a[href="#lesson-report"]')?.remove();
+      const lessonLinks = [...actions.querySelectorAll(".activity-label")];
       if (lessonLinks.length) {
         let lessonTools = header.nextElementSibling;
         if (!lessonTools?.classList.contains("lesson-header-tools")) {
@@ -64,6 +51,24 @@ function standardizeGlobalHeader() {
         }
         lessonLinks.forEach((link) => lessonTools.appendChild(link));
       }
+      let libraryLink = actions.querySelector(".lesson-library-link");
+      if (!libraryLink) {
+        libraryLink = document.createElement("a");
+        libraryLink.className = "lesson-library-link";
+        libraryLink.href = `${root}movies.html`;
+        libraryLink.innerHTML = '<span aria-hidden="true">←</span> All movies';
+        actions.prepend(libraryLink);
+      }
+    } else {
+      const links = [["Our Movies", `${root}movies.html`], ["How it works", `${root}how-it-works.html`], ["Our impact", `${root}social-proof.html`], ["Instagram", "https://www.instagram.com/movieyourenglish/"]];
+      let nav = header.querySelector("nav");
+      if (!nav) {
+        nav = document.createElement("nav");
+        header.insertBefore(nav, actions);
+      }
+      nav.className = "global-nav";
+      nav.setAttribute("aria-label", "Main navigation");
+      nav.innerHTML = links.map(([label, href]) => `<a href="${href}"${href.startsWith("https://") ? ' target="_blank" rel="noreferrer"' : ""}>${label}</a>`).join("");
     }
     let authSlot = header.querySelector("[data-auth-slot]");
     if (!authSlot) {
@@ -84,9 +89,10 @@ function renderAuth(user = null) {
     } else if (user) {
       const displayName = user.email ? user.email.split("@")[0] : "Member";
       const root = document.querySelector(".brand")?.getAttribute("href")?.startsWith("../") ? "../" : "";
-      slot.innerHTML = `<a class="member-learning-link" href="${root}my-learning.html">My Learning</a><span class="member-status">Hi, ${displayName}</span><button class="member-button member-signout" type="button">Sign out</button>`;
+      const greeting = slot.closest(".lesson-compact-header") ? "" : `<span class="member-status">Hi, ${displayName}</span>`;
+      slot.innerHTML = `<a class="member-learning-link" href="${root}my-learning.html">My Learning</a>${greeting}<button class="member-button member-signout" type="button">Sign out</button>`;
     } else {
-      slot.innerHTML = '<button class="member-button" data-open-auth type="button">Become a member</button>';
+      slot.innerHTML = '<button class="member-button" data-open-auth type="button">Sign in</button>';
     }
   });
 }
@@ -94,16 +100,15 @@ function renderAuth(user = null) {
 function createModal() {
   if (document.querySelector("#auth-modal")) return;
   document.body.insertAdjacentHTML("beforeend", `
-    <dialog id="auth-modal" class="auth-modal">
+    <dialog id="auth-modal" class="auth-modal" aria-labelledby="auth-title" aria-describedby="auth-description">
       <form id="auth-form" method="dialog" class="auth-form">
-        <button class="modal-close" type="button" data-close-auth aria-label="Close">×</button>
-        <p class="eyebrow">Movie Your English members</p>
-        <h2>Save your progress</h2>
-        <p>Enter your email and we’ll send you a secure sign-in link. No password needed.</p>
-        <label for="auth-email">Email address</label>
-        <input id="auth-email" type="email" required autocomplete="email" placeholder="you@example.com" />
-        <button class="activity-link" type="submit">Send sign-in link <span aria-hidden="true">→</span></button>
+        <h2 id="auth-title">Save your learning</h2>
+        <p id="auth-description">Keep your progress, scores, favorites, and written responses.</p>
+        <label class="sr-only" for="auth-email">Email address</label>
+        <input id="auth-email" type="email" required autocomplete="email" inputmode="email" placeholder="you@example.com" autofocus />
+        <button class="activity-link" type="submit">Email me a login link</button>
         <p id="auth-message" class="auth-message" aria-live="polite"></p>
+        <button class="auth-cancel" type="button" data-close-auth>Cancel</button>
       </form>
     </dialog>`);
 }
@@ -137,9 +142,12 @@ async function setupAuth() {
 document.addEventListener("click", async (event) => {
   if (event.target.closest("[data-open-auth]")) {
     createModal();
-    document.querySelector("#auth-modal").showModal();
+    const dialog = document.querySelector("#auth-modal");
+    dialog.showModal();
+    requestAnimationFrame(() => dialog.querySelector("#auth-email")?.focus());
   }
   if (event.target.closest("[data-close-auth]")) document.querySelector("#auth-modal")?.close();
+  if (event.target.matches("#auth-modal")) event.target.close();
   if (event.target.closest(".member-signout") && supabaseClient) await supabaseClient.auth.signOut();
 });
 
@@ -148,9 +156,9 @@ document.addEventListener("submit", async (event) => {
   event.preventDefault();
   const email = document.querySelector("#auth-email").value.trim();
   const message = document.querySelector("#auth-message");
-  message.textContent = "Sending secure sign-in link…";
+  message.textContent = "Sending…";
   const { error } = await supabaseClient.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
-  message.textContent = error ? "We couldn't send the link. Please try again." : "Check your email for the sign-in link.";
+  message.textContent = error ? "We couldn't send the link. Please try again." : "Check your email for the login link.";
 });
 
 window.myeAuth = { ready, get client() { return supabaseClient; }, get user() { return currentUser; }, configured };
