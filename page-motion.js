@@ -1,4 +1,117 @@
 const pageMotionSource = document.currentScript?.src || location.href;
+const storyExportScript = document.createElement("script");
+storyExportScript.src = new URL("story-export.js", pageMotionSource).href;
+storyExportScript.async = false;
+document.body.appendChild(storyExportScript);
+// Keep a word bank stable during an attempt, but never show it in answer order.
+window.myeEnsureShuffledOrder = (answers, savedOrder) => {
+  const original = [...answers];
+  const sortedOriginal = [...original].sort();
+  const valid = Array.isArray(savedOrder) && savedOrder.length === original.length
+    && [...savedOrder].sort().every((word, index) => word === sortedOriginal[index]);
+  if (valid && !savedOrder.every((word, index) => word === original[index])) return savedOrder;
+  if (original.length < 2) return original;
+  for (let index = original.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(Math.random() * (index + 1));
+    [original[index], original[swap]] = [original[swap], original[index]];
+  }
+  if (original.every((word, index) => word === answers[index])) original.push(original.shift());
+  return original;
+};
+// Each lesson owns its challenge state, but this shared control resets only that
+// state and lets the lesson's existing renderer rebuild the activity on reload.
+const extraActivityState = {
+  "alien-romulus": { terms: {}, selected: null },
+  "eternity": { words: [], wordOrder: [] },
+  "f1-the-movie": { teams: {} },
+  "f1-the-movie-beginner": { teams: {} },
+  "forrest-gump": { brands: {} },
+  "frankenstein-easier": { facts: {} },
+  "frankenstein-harder": { matches: [], selectedMatch: "", matchOrder: [] },
+  "harry-potter-philosophers-stone": { verbs: [], verbOrder: [] },
+  "inside-out-2": { sorted: {}, selected: "" },
+  "lilo-and-stitch": { adjectives: {} },
+  "materialists": { words: [] },
+  "moana-2": { sentences: {}, selectedWord: "", wordOrder: [] },
+  "moana-2-beginner": { sentences: {}, selectedWord: "", wordOrder: [] },
+  "odyssey": { verbs: [], verbOrder: [] },
+  "project-hail-mary": { foundWords: [] },
+  "se7en": { w: [] },
+  "sheep-detectives": { matchedTerms: [] },
+  "superman-beginner": { gaps: {}, selectedWord: "", wordOrder: [] },
+  "superman-intermediate-plus": { gaps: {}, selectedWord: "", wordOrder: [] },
+  "the-batman": { sorted: {}, selected: "" },
+  "the-housemaid": { routine: [], verbOrder: [] },
+  "the-wrong-paris": { sorted: {}, selected: "" },
+  "zootopia-2": { animals: {} }
+};
+const extraActivityStorageKeys = {
+  "moana-2": "mye-moana-2-v2",
+  "project-hail-mary": "mye-project-hail-mary-lesson-v1",
+  "sheep-detectives": "mye-sheep-detectives-lesson-v2"
+};
+const extraActivityPathParts = location.pathname.split("/").filter(Boolean);
+const extraActivitySlug = extraActivityPathParts.at(-1)?.endsWith(".html") ? extraActivityPathParts.at(-2) : extraActivityPathParts.at(-1);
+function installExtraActivityControls() {
+  const fields = extraActivityState[extraActivitySlug];
+  if (!fields) return;
+  document.querySelectorAll(".mini-heading").forEach((heading) => {
+    const eyebrow = heading.querySelector(".eyebrow");
+    if (!eyebrow || !/^(extra challenge|bonus activity)$/i.test(eyebrow.textContent.trim())) return;
+    heading.classList.add("extra-challenge-heading");
+    if (heading.querySelector("[data-reset-activity]")) return;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "reset-activity-button";
+    button.dataset.resetActivity = "";
+    button.textContent = "Reset Activity";
+    button.setAttribute("aria-label", `Reset ${heading.querySelector("h2")?.textContent || "extra"} activity`);
+    heading.appendChild(button);
+    heading.nextElementSibling?.classList.add("extra-challenge-content");
+  });
+}
+installExtraActivityControls();
+if (sessionStorage.getItem("mye-extra-reset") === extraActivitySlug) {
+  sessionStorage.removeItem("mye-extra-reset");
+  const heading = document.querySelector(".extra-challenge-heading");
+  const section = heading?.closest("details");
+  if (section) section.open = true;
+  requestAnimationFrame(() => heading?.scrollIntoView({ block: "start" }));
+}
+document.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-reset-activity]");
+  if (!button) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  const fields = extraActivityState[extraActivitySlug];
+  const key = extraActivityStorageKeys[extraActivitySlug] || `mye-${extraActivitySlug}-v1`;
+  if (!fields) return;
+  let state;
+  try { state = JSON.parse(localStorage.getItem(key) || "{}"); } catch { state = {}; }
+  for (const [field, empty] of Object.entries(fields)) {
+    state[field] = Array.isArray(empty) && Array.isArray(state[field]) && ["words", "verbs", "routine"].includes(field)
+      ? Array(state[field].length).fill(null)
+      : JSON.parse(JSON.stringify(empty));
+  }
+  if (extraActivitySlug === "frankenstein-easier") {
+    state.wrong = Object.fromEntries(Object.entries(state.wrong || {}).filter(([question]) => !question.startsWith("facts-")));
+    for (const historyKey of ["mye-wrong-choices", "mye-wrong-questions", "mye-first-try-correct"]) {
+      const storageKey = `${historyKey}:${location.pathname}`;
+      try {
+        const remaining = JSON.parse(localStorage.getItem(storageKey) || "[]").filter((question) => !question.startsWith("facts::"));
+        localStorage.setItem(storageKey, JSON.stringify(remaining));
+      } catch { localStorage.removeItem(storageKey); }
+    }
+  }
+  localStorage.setItem(key, JSON.stringify(state));
+  const user = window.myeAuth?.user;
+  if (user) sessionStorage.setItem(`mye-restored:${user.id}:${extraActivitySlug}`, "true");
+  if (user && ["project-hail-mary", "sheep-detectives"].includes(extraActivitySlug)) {
+    sessionStorage.setItem(`mye-extra-reset-sync:${extraActivitySlug}`, user.id);
+  }
+  sessionStorage.setItem("mye-extra-reset", extraActivitySlug);
+  location.reload();
+}, true);
 if (!document.querySelector("[data-auth-slot]")) {
   const authConfigScript = document.createElement("script");
   authConfigScript.src = new URL("auth-config.js", pageMotionSource).href;

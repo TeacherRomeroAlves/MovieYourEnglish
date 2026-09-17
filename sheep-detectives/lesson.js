@@ -70,10 +70,17 @@ function save() {
 async function syncRemoteProgress() {
   if (!authClient || !authUser) return;
   const progress = getProgress();
-  await authClient.from("lesson_progress").upsert({ user_id: authUser.id, lesson_slug: lessonSlug, state: lesson, completed: progress.completed, total: progress.total }, { onConflict: "user_id,lesson_slug" });
+  const { error } = await authClient.from("lesson_progress").upsert({ user_id: authUser.id, lesson_slug: lessonSlug, state: lesson, completed: progress.completed, total: progress.total }, { onConflict: "user_id,lesson_slug" });
+  if (!error && sessionStorage.getItem(`mye-extra-reset-sync:${lessonSlug}`) === authUser.id) {
+    sessionStorage.removeItem(`mye-extra-reset-sync:${lessonSlug}`);
+  }
 }
 async function loadRemoteProgress() {
   if (!authClient || !authUser) return;
+  if (sessionStorage.getItem(`mye-extra-reset-sync:${lessonSlug}`) === authUser.id) {
+    syncRemoteProgress();
+    return;
+  }
   const { data } = await authClient.from("lesson_progress").select("state").eq("user_id", authUser.id).eq("lesson_slug", lessonSlug).maybeSingle();
   if (data?.state) {
     lesson = { ...defaultState, ...data.state, orders: data.state.orders || {} };

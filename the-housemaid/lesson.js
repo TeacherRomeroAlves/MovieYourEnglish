@@ -28,7 +28,7 @@ const count = (object) => Object.keys(object).length;
 const writingComplete = () => state.writing.trim().length >= 50;
 const progress = () => count(state.before) + state.routine.filter(Boolean).length + state.during.length + count(state.after) + (writingComplete() ? 1 : 0);
 function shuffle(items) { return [...items].sort(() => Math.random() - .5); }
-if (!state.verbOrder.length) { state.verbOrder = shuffle(verbs); save(); }
+state.verbOrder = window.myeEnsureShuffledOrder(verbs, state.verbOrder); save();
 function order(group, id, options) { const orderKey = `${group}-${id}`; if (!state.orders[orderKey]) { state.orders[orderKey] = shuffle(options.map((_, index) => index)); save(); } return state.orders[orderKey]; }
 function renderQuiz(target, items, group) {
   const host = document.querySelector(target), position = host.querySelector(".question-carousel")?.scrollLeft || 0;
@@ -38,7 +38,7 @@ function renderQuiz(target, items, group) {
 function render() {
   renderQuiz("#before-questions", before, "before"); renderQuiz("#after-questions", after, "after");
   document.querySelectorAll("[data-slot]").forEach((slot) => { const value = state.routine[+slot.dataset.slot]; slot.textContent = value || "_____"; slot.classList.toggle("is-filled", Boolean(value)); });
-  const used = new Set(state.routine.filter(Boolean)); document.querySelector("#verb-bank").innerHTML = state.verbOrder.filter((verb) => !used.has(verb)).map((verb) => `<button type="button" data-verb="${verb}">${verb}</button>`).join("");
+  const used = new Set(state.routine.filter(Boolean)); document.querySelector("#verb-bank").innerHTML = state.verbOrder.filter((verb) => !used.has(verb)).map((verb) => `<button class="match-button" type="button" data-verb="${verb}">${verb}</button>`).join("");
   const correct = state.routine.filter((verb, index) => verb === verbs[index]).length; document.querySelector("#verb-feedback").textContent = correct === verbs.length ? "Excellent. The full routine is correct." : `${correct} / ${verbs.length} verbs in the correct gap`;
   document.querySelector("#during-checklist").innerHTML = during.map((item, index) => `<button class="watch-item ${state.during.includes(index) ? "done" : ""}" data-during="${index}" type="button"><span>${state.during.includes(index) ? "✓" : "○"}</span>${item}</button>`).join("");
   document.querySelector("#student-writing").value = state.writing; document.querySelector("#student-name").value = state.name; document.querySelector("#teacher-name").value = state.teacher; document.querySelector("#writing-feedback").textContent = writingComplete() ? "Writing task complete." : "Write at least 50 characters to complete this activity.";
@@ -52,5 +52,5 @@ document.addEventListener("click", (event) => {
   const nav = event.target.closest("[data-nav]"); if (nav) { const carousel = nav.closest(".question-carousel-shell").querySelector(".question-carousel"); carousel.scrollBy({ left: carousel.clientWidth * (nav.dataset.nav === "next" ? 1 : -1), behavior: "smooth" }); }
 });
 ["student-writing", "student-name", "teacher-name"].forEach((id) => document.querySelector(`#${id}`).addEventListener("input", (event) => { state[id === "student-writing" ? "writing" : id === "student-name" ? "name" : "teacher"] = event.target.value; save(); render(); }));
-document.querySelector("#reset-lesson").addEventListener("click", () => { if (confirm("Reset lesson progress?")) { state = { ...defaults, before: {}, routine: Array(verbs.length).fill(null), during: [], after: {}, orders: {}, verbOrder: shuffle(verbs) }; save(); render(); } });
+document.querySelector("#reset-lesson").addEventListener("click", () => { if (confirm("Reset lesson progress?")) { state = { ...defaults, before: {}, routine: Array(verbs.length).fill(null), during: [], after: {}, orders: {}, verbOrder: window.myeEnsureShuffledOrder(verbs) }; save(); render(); } });
 render();
