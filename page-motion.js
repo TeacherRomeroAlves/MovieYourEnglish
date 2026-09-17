@@ -152,7 +152,9 @@ const ensureLessonReport = () => {
   const report = document.createElement("section");
   report.id = "lesson-report";
   report.className = "report-card";
-  report.innerHTML = '<div><p class="eyebrow">Lesson complete?</p><h2>Save your lesson report</h2><p>Use your browser’s print dialog to save this completed lesson as a PDF and share it with your teacher.</p></div><div class="report-actions"><button class="activity-link" data-generic-report type="button">Save / share report <span aria-hidden="true">→</span></button></div>';
+  report.innerHTML = document.querySelector(".writing-card")
+    ? '<div><p class="eyebrow">Lesson complete?</p><h2>Save your lesson report</h2><p>Choose <strong>Save as PDF</strong> in your browser’s print dialog, then send the report to your teacher.</p></div><div class="report-actions"><button id="save-report" class="activity-link" type="button">Save / share report <span aria-hidden="true">→</span></button><button id="share-story" class="instagram-share-button" type="button">Create Instagram Story <span aria-hidden="true">✦</span></button><p id="story-status" class="story-status" aria-live="polite"></p></div>'
+    : '<div><p class="eyebrow">Lesson complete?</p><h2>Save your lesson report</h2><p>Use your browser’s print dialog to save this completed lesson as a PDF and share it with your teacher.</p></div><div class="report-actions"><button class="activity-link" data-generic-report type="button">Save / share report <span aria-hidden="true">→</span></button></div>';
   const footer = lessonPage.querySelector(".site-footer");
   lessonPage.insertBefore(report, footer || null);
 };
@@ -403,6 +405,12 @@ if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && "Intersect
 document.querySelectorAll(".writing-card").forEach((writingCard) => {
   if (writingCard.dataset.speakingReady) return;
   writingCard.dataset.speakingReady = "true";
+  if (!writingCard.querySelector("#student-name")) {
+    const fields = document.createElement("div");
+    fields.className = "student-fields";
+    fields.innerHTML = '<label>Your name<input id="student-name" type="text" autocomplete="name"></label><label>Your teacher\'s name <span>(optional)</span><input id="teacher-name" type="text"></label>';
+    (writingCard.querySelector(".form-feedback") || writingCard.lastElementChild)?.insertAdjacentElement("beforebegin", fields);
+  }
   const promptText = writingCard.querySelector("h2 + p")?.textContent || "Use the same prompt and record your answer in English.";
   const responseGrid = document.createElement("div");
   responseGrid.className = "response-mode-switcher";
