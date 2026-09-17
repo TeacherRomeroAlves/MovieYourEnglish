@@ -780,6 +780,48 @@ body:not(.platform-home) .watch-provider:hover,body:not(.platform-home) .watch-p
 /* Writing or speaking response options */
 .response-mode-switcher{display:grid;gap:14px}.response-mode-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:7px;border:1px solid #c5e1df;border-radius:16px;background:#effcfb}.response-mode-tab{border:0;border-radius:10px;padding:11px 15px;color:#416461;background:transparent;font:800 .88rem Outfit,Arial,sans-serif;cursor:pointer;transition:color .18s ease,background .18s ease,transform .18s ease}.response-mode-tab:hover{transform:translateY(-1px);color:#103b4e}.response-mode-tab.active{color:#fff;background:#087f7b;box-shadow:0 5px 12px rgba(8,127,123,.2)}.response-mode-switcher .writing-card{margin:0}.response-mode-switcher .writing-card>.eyebrow{display:none}.speaking-card{padding:clamp(22px,4vw,34px);border:1px solid #b8dedd;border-radius:20px;color:#102121;background:linear-gradient(135deg,#edfdfb,#e4f9f7)}.speaking-card h2{margin:.2rem 0 .7rem}.speaking-card>p:not(.eyebrow){line-height:1.55}.speaking-help{padding:11px 13px;border-radius:12px;color:#235654;background:rgba(22,185,180,.12);font-size:.88rem}.recording-timer{margin:18px 0 0;color:#b13b3b;font-size:1rem;font-weight:900;letter-spacing:.04em}.recording-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.record-button,.stop-recording,.save-recording,.share-recording{border:0;border-radius:999px;padding:11px 15px;color:#fff;background:#087f7b;font:800 .84rem Outfit,Arial,sans-serif;cursor:pointer;transition:transform .18s ease,background .18s ease}.record-button:hover,.stop-recording:hover,.save-recording:hover,.share-recording:hover{transform:translateY(-2px);background:#0b9d98}.stop-recording{background:#a84040}.stop-recording:hover{background:#bd4b4b}.save-recording{color:#103b4e;background:#d9ff00}.save-recording:hover{background:#e4ff3e}.share-recording{background:#103b4e}.share-recording:hover{background:#164f65}.speaking-audio{width:100%;margin-top:18px}.recording-status{min-height:2.5em;margin:16px 0 0;color:#52706d;font-size:.86rem;line-height:1.45}
 
+/* The final response follows the same prompt → mode → export hierarchy as Music Your English. */
+.response-prompt-box{padding:clamp(20px,4vw,28px);border:1px solid #a9d6d3;border-radius:20px;background:linear-gradient(130deg,#e8faf8,#f7fffe)}
+.response-prompt-label{margin:0 0 10px;color:#087f7b;font:.8rem Outfit,Arial,sans-serif;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.response-prompt-text{margin:0;color:#102121;font:700 clamp(1.1rem,2.4vw,1.45rem)/1.5 Outfit,Arial,sans-serif}
+.response-mode-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.response-mode-tab{min-height:48px;text-align:center}
+.response-mode-tab:focus-visible,.record-button:focus-visible,.stop-recording:focus-visible,.save-recording:focus-visible{outline:3px solid #d9ff00;outline-offset:3px}
+.response-internal-prompt{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.response-word-count{margin:8px 0 0;color:#52706d;font-size:.82rem;font-weight:700;text-align:right}
+.response-mode-switcher .writing-card,.response-mode-switcher .speaking-card{min-width:0;border:1px solid #b8dedd;border-radius:20px;padding:clamp(22px,4vw,32px);box-shadow:none}
+.speaking-status-heading{display:flex;align-items:center;gap:16px}
+.speaking-status-heading h2{margin:0 0 5px}
+body:not(.platform-home) .speaking-card h2{color:#102121}
+.speaking-status-heading p{margin:0;color:#52706d}
+.speaking-indicator{width:16px;height:16px;flex:none;border:3px solid #b7e0dd;border-radius:50%;background:#087f7b;box-shadow:0 0 0 6px rgba(8,127,123,.09)}
+.speaking-card.is-recording .speaking-indicator{background:#d73b46;box-shadow:0 0 0 6px rgba(215,59,70,.14);animation:mye-recording-pulse 1.2s ease-in-out infinite}
+@keyframes mye-recording-pulse{50%{transform:scale(.75);opacity:.65}}
+.lesson-report-export{margin-top:30px}
+.activity-page .lesson-report-export{color:#102121;background:var(--neon)}
+.activity-page .lesson-report-export h2{color:#102121}
+.activity-page .lesson-report-export p{color:#294a47}
+.lesson-report-export .report-actions{min-width:min(100%,220px)}
+.activity-page .lesson-report-export .activity-link{min-height:46px;border:0;border-radius:999px;color:#fff;background:#075b58;box-shadow:none}
+.activity-page .lesson-report-export .activity-link:hover{color:#fff;background:#064744}
+.activity-page .lesson-report-export .activity-link:focus-visible{color:#fff;background:#064744;outline:3px solid #103b4e;outline-offset:3px}
+.report-text-share-button{min-height:46px;border:1px solid #087f7b;border-radius:999px;padding:10px 18px;color:#075b58;background:#e8faf8;font:800 .86rem Outfit,Arial,sans-serif;cursor:pointer}
+.activity-page .report-text-share-button{color:#075b58;background:#fff}
+.report-text-share-button:hover,.activity-page .report-text-share-button:hover{color:#053f3d;background:#c7f1ec}
+.report-text-share-button:focus-visible,.story-share-card button:focus-visible{outline:3px solid #d9ff00;outline-offset:3px}
+.report-share-status{min-height:1.2em;margin:0;color:#315a57;font-size:.8rem;line-height:1.4}
+.story-share-card{display:flex;align-items:center;justify-content:space-between;gap:28px;margin-top:18px;padding:clamp(22px,4vw,32px);border:1px solid #9bcfca;border-radius:24px;color:#102121;background:linear-gradient(125deg,#f0fffd,#d8f2ef)}
+body:not(.platform-home) .story-share-card h2{margin:4px 0 8px;color:#075b58}
+.activity-page .story-share-card p{color:#294a47}
+.activity-page .story-share-card .eyebrow{color:#075b58}
+.story-share-card p:last-child{max-width:560px;margin:0;line-height:1.5}
+.story-share-action{display:grid;justify-items:stretch;gap:8px;flex:0 0 auto;min-width:min(100%,220px)}
+.story-share-card .instagram-share-button{min-height:46px;border:0;border-radius:999px;padding:11px 18px;color:#fff;background:#087f7b;font:800 .86rem Outfit,Arial,sans-serif}
+.story-share-card .instagram-share-button:hover{background:#0c6e6a;color:#fff}
+.story-share-card .story-status{max-width:240px;text-align:center}
+@media(max-width:700px){.story-share-card{align-items:stretch;flex-direction:column}.story-share-action{width:100%}.story-share-card .story-status{max-width:none;text-align:left}}
+@media(prefers-reduced-motion:reduce){.speaking-card.is-recording .speaking-indicator{animation:none}}
+
 /* Member sign-in modal: dark cinematic surface shared by the whole site. */
 /* Shared look and reset control for before-the-movie extra activities. */
 .extra-challenge-heading{position:relative;margin:0 0 16px;padding:22px 24px;border:1px solid #b8dedd;border-radius:20px;background:linear-gradient(120deg,#e9faf8,#f8fffe)}

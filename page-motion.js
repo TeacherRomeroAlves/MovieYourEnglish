@@ -403,7 +403,6 @@ if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && "Intersect
 document.querySelectorAll(".writing-card").forEach((writingCard) => {
   if (writingCard.dataset.speakingReady) return;
   writingCard.dataset.speakingReady = "true";
-  const promptTitle = writingCard.querySelector("h2")?.textContent || "Your speaking response";
   const promptText = writingCard.querySelector("h2 + p")?.textContent || "Use the same prompt and record your answer in English.";
   const responseGrid = document.createElement("div");
   responseGrid.className = "response-mode-switcher";
@@ -412,14 +411,44 @@ document.querySelectorAll(".writing-card").forEach((writingCard) => {
   if (!existingResponseHeading) {
     const responseHeading = document.createElement("div");
     responseHeading.className = "mini-heading response-heading";
-    responseHeading.innerHTML = '<p class="eyebrow">Wrap-up</p><h2>Express your opinion</h2><p>Answer the question below in a text or record yourself speaking.</p>';
+    responseHeading.innerHTML = '<p class="eyebrow">Wrap-up</p><h2>Express yourself</h2><p>Answer the prompt in writing or record yourself speaking.</p>';
     responseGrid.insertAdjacentElement("beforebegin", responseHeading);
   }
-  responseGrid.innerHTML = '<div class="response-mode-tabs" role="tablist" aria-label="Choose your response type"><button class="response-mode-tab active" type="button" role="tab" aria-selected="true" data-response-mode="write">Time to Write</button><button class="response-mode-tab" type="button" role="tab" aria-selected="false" data-response-mode="speak">Time to Speak</button></div>';
+  const promptBox = document.createElement("div");
+  promptBox.className = "response-prompt-box";
+  const promptLabel = document.createElement("p");
+  promptLabel.className = "response-prompt-label";
+  promptLabel.textContent = "Your prompt";
+  const promptBody = document.createElement("p");
+  promptBody.className = "response-prompt-text";
+  promptBody.textContent = promptText;
+  promptBox.append(promptLabel, promptBody);
+  responseGrid.appendChild(promptBox);
+  responseGrid.insertAdjacentHTML("beforeend", '<div class="response-mode-tabs" role="tablist" aria-label="Choose how to answer"><button class="response-mode-tab active" id="response-write-tab" type="button" role="tab" aria-controls="response-write-panel" aria-selected="true" data-response-mode="write">Time to Write</button><button class="response-mode-tab" id="response-speak-tab" type="button" role="tab" aria-controls="response-speak-panel" aria-selected="false" data-response-mode="speak">Time to Speak</button></div>');
   responseGrid.appendChild(writingCard);
+  writingCard.id = "response-write-panel";
+  writingCard.setAttribute("role", "tabpanel");
+  writingCard.setAttribute("aria-labelledby", "response-write-tab");
+  writingCard.querySelector("h2")?.classList.add("response-internal-prompt");
+  writingCard.querySelector("h2 + p")?.classList.add("response-internal-prompt");
+  const writingInput = writingCard.querySelector("textarea");
+  if (writingInput && !writingCard.querySelector(".response-word-count")) {
+    const wordCount = document.createElement("p");
+    wordCount.className = "response-word-count";
+    const updateWordCount = () => {
+      const count = writingInput.value.trim().split(/\s+/).filter(Boolean).length;
+      wordCount.textContent = `Word count: ${count}`;
+    };
+    writingInput.insertAdjacentElement("afterend", wordCount);
+    writingInput.addEventListener("input", updateWordCount);
+    updateWordCount();
+  }
   const speakingCard = document.createElement("section");
   speakingCard.className = "speaking-card";
-  speakingCard.innerHTML = `<h2>${promptTitle}</h2><p>${promptText}</p><p class="speaking-help">Record your answer, then save the audio file to send to your teacher.</p><p class="recording-timer" hidden>Recording 00:00</p><div class="recording-actions"><button class="record-button" type="button">Record answer</button><button class="stop-recording" type="button" hidden>Stop recording</button></div><audio class="speaking-audio" controls hidden></audio><div class="recording-actions saved-actions" hidden><button class="save-recording" type="button">Save recording</button></div><p class="recording-status" aria-live="polite">Your recording stays on this device until you choose to save it.</p>`;
+  speakingCard.id = "response-speak-panel";
+  speakingCard.setAttribute("role", "tabpanel");
+  speakingCard.setAttribute("aria-labelledby", "response-speak-tab");
+  speakingCard.innerHTML = '<div class="speaking-status-heading"><span class="speaking-indicator" aria-hidden="true"></span><div><h2>Record your answer</h2><p>Speak clearly and answer the prompt above.</p></div></div><p class="recording-timer" hidden>Recording 00:00</p><div class="recording-actions"><button class="record-button" type="button">Start recording</button><button class="stop-recording" type="button" hidden>Stop recording</button></div><audio class="speaking-audio" controls hidden></audio><div class="recording-actions saved-actions" hidden><button class="save-recording" type="button">Download audio</button></div><p class="recording-status" aria-live="polite">Download your recording to save it and send it to your teacher.</p>';
   speakingCard.hidden = true;
   responseGrid.appendChild(speakingCard);
   responseGrid.querySelectorAll(".response-mode-tab").forEach((tab) => tab.addEventListener("click", () => {
@@ -432,6 +461,15 @@ document.querySelectorAll(".writing-card").forEach((writingCard) => {
       item.setAttribute("aria-selected", String(active));
     });
   }));
+  responseGrid.querySelector(".response-mode-tabs").addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    event.preventDefault();
+    const tabs = [...responseGrid.querySelectorAll(".response-mode-tab")];
+    const current = tabs.indexOf(document.activeElement);
+    const next = tabs[(current + (event.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+    next?.focus();
+    next?.click();
+  });
 
   const recordButton = speakingCard.querySelector(".record-button");
   const stopButton = speakingCard.querySelector(".stop-recording");
@@ -486,11 +524,13 @@ document.querySelectorAll(".writing-card").forEach((writingCard) => {
         audio.src = recordingUrl; audio.hidden = false; savedActions.hidden = false;
         clearInterval(timerInterval); timer.hidden = true;
         recordButton.textContent = "Record again"; recordButton.hidden = false; stopButton.hidden = true;
+        speakingCard.classList.remove("is-recording");
         stream.getTracks().forEach((track) => track.stop());
         status.textContent = "Recording ready. Save the file to send it to your teacher.";
         document.dispatchEvent(new CustomEvent("mye-speaking-saved"));
       });
       recorder.start();
+      speakingCard.classList.add("is-recording");
       seconds = 0; timer.hidden = false; timer.textContent = "Recording 00:00";
       timerInterval = setInterval(() => { seconds += 1; timer.textContent = `Recording ${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`; }, 1000);
       recordButton.hidden = true; stopButton.hidden = false;
@@ -527,6 +567,66 @@ if (document.querySelector(".writing-card") && !document.querySelector("#lesson-
   report.innerHTML = '<div><p class="eyebrow">Lesson complete?</p><h2>Save your lesson report</h2><p>Choose <strong>Save as PDF</strong> in your browser\'s print dialog, then send the report to your teacher.</p></div><div class="report-actions"><button id="save-report" class="activity-link" type="button">Save / share report <span>→</span></button><button id="share-story" class="instagram-share-button" type="button">Create Instagram Story <span>✦</span></button><p id="story-status" class="story-status" aria-live="polite"></p></div>';
   footer?.parentNode.insertBefore(report, footer);
 }
+const arrangeLessonSharing = () => {
+  const report = document.querySelector("#lesson-report");
+  if (!report || report.dataset.sharingReady) return;
+  report.dataset.sharingReady = "true";
+  report.classList.add("lesson-report-export");
+  const heading = report.querySelector("h2");
+  if (heading) heading.textContent = "Save or share your report";
+  const description = heading?.nextElementSibling;
+  if (description?.tagName === "P") description.textContent = "Keep a PDF copy or share your progress and written answer with your teacher.";
+  const actions = report.querySelector(".report-actions");
+  const saveButton = report.querySelector("#save-report, [data-generic-report]");
+  if (saveButton) saveButton.innerHTML = 'Save as PDF <span aria-hidden="true">↓</span>';
+  if (actions && !actions.querySelector("#share-report-text")) {
+    const shareButton = document.createElement("button");
+    shareButton.id = "share-report-text";
+    shareButton.className = "report-text-share-button";
+    shareButton.type = "button";
+    shareButton.textContent = "Share report";
+    actions.appendChild(shareButton);
+    const shareStatus = document.createElement("p");
+    shareStatus.id = "report-share-status";
+    shareStatus.className = "report-share-status";
+    shareStatus.setAttribute("role", "status");
+    shareStatus.setAttribute("aria-live", "polite");
+    actions.appendChild(shareStatus);
+    shareButton.addEventListener("click", async () => {
+      const movie = document.body.dataset.reportTitle || document.querySelector(".lesson-hero h1")?.textContent?.trim() || "Movie lesson";
+      const prompt = document.querySelector(".response-prompt-text")?.textContent?.trim() || "";
+      const answer = document.querySelector("#student-writing, .writing-card textarea")?.value?.trim() || "No written answer yet.";
+      const progress = document.querySelector("#progress-label, .progress-panel strong")?.textContent?.trim() || "";
+      const name = document.querySelector("#student-name")?.value?.trim() || "Not added";
+      const teacher = document.querySelector("#teacher-name")?.value?.trim() || "Not added";
+      const shareText = [`${movie} student report`, `Student: ${name}`, `Teacher: ${teacher}`, `Lesson progress: ${progress}`, firstTryScoreText(), "", `Prompt: ${prompt}`, `Answer: ${answer}`].join("\n");
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: `${movie} student report`, text: shareText });
+          shareStatus.textContent = "Report shared.";
+        } else {
+          await navigator.clipboard.writeText(shareText);
+          shareStatus.textContent = "Report copied. Paste it into a message or email to your teacher.";
+        }
+      } catch (error) {
+        if (error?.name !== "AbortError") shareStatus.textContent = "Sharing is unavailable in this browser. Try Save as PDF instead.";
+      }
+    });
+  }
+  const storyButton = report.querySelector("#share-story");
+  const storyStatus = report.querySelector("#story-status");
+  if (storyButton) {
+    const storyCard = document.createElement("section");
+    storyCard.className = "story-share-card";
+    storyCard.setAttribute("aria-labelledby", "story-share-heading");
+    storyCard.innerHTML = '<div><p class="eyebrow">Share your progress</p><h2 id="story-share-heading">Make it a Story</h2><p>Get a ready-to-post Instagram Story featuring this movie. Share it from your phone.</p></div><div class="story-share-action"></div>';
+    storyButton.textContent = "Create Instagram Story";
+    storyCard.querySelector(".story-share-action").append(storyButton);
+    if (storyStatus) storyCard.querySelector(".story-share-action").append(storyStatus);
+    report.insertAdjacentElement("afterend", storyCard);
+  }
+};
+arrangeLessonSharing();
 if (document.querySelector(".writing-card")) {
   const exportsScript = document.createElement("script");
   exportsScript.src = new URL("lesson-exports.js", pageMotionSource).href;
