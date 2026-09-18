@@ -22,9 +22,11 @@ window.myeEnsureShuffledOrder = (answers, savedOrder) => {
 // state and lets the lesson's existing renderer rebuild the activity on reload.
 const extraActivityState = {
   "alien-romulus": { terms: {}, selected: null },
+  "captain-america-brave-new-world": { matches: {} },
   "eternity": { words: [], wordOrder: [] },
   "f1-the-movie": { teams: {} },
   "f1-the-movie-beginner": { teams: {} },
+  "freakier-friday": { crossword: {} },
   "forrest-gump": { brands: {} },
   "frankenstein-easier": { facts: {} },
   "frankenstein-harder": { matches: [], selectedMatch: "", matchOrder: [] },
@@ -187,11 +189,13 @@ const addCarouselInstructions = () => {
 };
 const beforeWatchHeadings = {
   "alien-romulus": "Survive the station",
+  "captain-america-brave-new-world": "Meet the new Captain America",
   "conclave": "Behind closed doors",
   "devil-wears-prada": "Fashion meets ambition",
   "eternity": "Love beyond life",
   "f1-the-movie": "Prepare for the race",
   "forrest-gump": "Life is full of surprises",
+  "freakier-friday": "Prepare for a freaky Friday",
   "harry-potter-philosophers-stone": "Magic begins at Hogwarts",
   "kpop-demon-hunters": "Music can save the world",
   "lilo-and-stitch": "Welcome to the family",

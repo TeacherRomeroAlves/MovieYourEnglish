@@ -1,12 +1,14 @@
 (function () {
   const lessons = [
     ["alien-romulus", "alien-romulus", "Alien: Romulus", "Intermediate+", "assets/alien-romulus-poster.webp"],
+    ["captain-america-brave-new-world", "captain-america-brave-new-world", "Captain America: Brave New World", "Elementary", "assets/captain-america-brave-new-world-poster.png"],
     ["conclave", "conclave", "Conclave", "Intermediate+", "assets/conclave-poster.webp"],
     ["devil-wears-prada", "devil-wears-prada", "The Devil Wears Prada", "Pre-Intermediate", "assets/devil-wears-prada-poster.webp"],
     ["eternity", "eternity", "Eternity", "Pre-Intermediate", "assets/Eternity-poster.webp"],
     ["f1-the-movie-beginner", "f1-the-movie", "F1: The Movie", "Beginner", "assets/f1-poster.webp"],
     ["f1-the-movie", "f1-the-movie", "F1: The Movie", "Pre-Intermediate", "assets/f1-poster.webp"],
     ["forrest-gump", "forrest-gump", "Forrest Gump", "Pre-Intermediate", "assets/forrest-gump-poster.webp"],
+    ["freakier-friday", "freakier-friday", "Freakier Friday", "Pre-Intermediate", "assets/freakier-friday-poster.png"],
     ["frankenstein-easier", "frankenstein", "Frankenstein", "Elementary", "assets/frankenstein-poster.webp"],
     ["frankenstein-harder", "frankenstein", "Frankenstein", "Intermediate+", "assets/frankenstein-poster.webp"],
     ["harry-potter-philosophers-stone", "harry-potter-philosophers-stone", "Harry Potter and the Philosopher’s Stone", "Pre-Intermediate", "assets/harry-potter-1-poster.webp"],

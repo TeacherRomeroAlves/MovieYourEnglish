@@ -832,8 +832,45 @@ body:not(.platform-home) .story-share-card h2{margin:4px 0 8px;color:#075b58}
 .reset-activity-button:hover{border-color:#087f7b;background:#dff8f4;transform:translateY(-1px)}
 .reset-activity-button:focus-visible{outline:3px solid #087f7b;outline-offset:3px}
 .extra-challenge-content{border-radius:20px}
+.crossword-activity{display:grid;gap:22px;max-width:760px}
+.crossword-board-wrap{width:100%;overflow-x:auto;padding:4px 2px 10px}
+.crossword-grid{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:2px;width:min(100%,520px);min-width:286px;aspect-ratio:13/15}
+.crossword-cell{position:relative;display:block;min-width:0;aspect-ratio:1;border:1px solid #8ebbb7;border-radius:4px;background:#fff}
+.crossword-cell.is-empty{border-color:transparent;background:transparent}
+.crossword-cell.is-complete{border-color:#087f7b;background:#d4f7ec}
+.crossword-cell input{display:block;width:100%;height:100%;border:0;border-radius:inherit;padding:0;color:#102121;background:transparent;font:800 clamp(.72rem,2.2vw,1.25rem) Outfit,Arial,sans-serif;text-align:center;text-transform:uppercase;outline:none}
+.crossword-cell:focus-within{border:2px solid #087f7b;box-shadow:0 0 0 2px #d9ff00}
+.crossword-number{position:absolute;top:1px;left:2px;z-index:1;color:#315a57;font:700 clamp(.38rem,1vw,.58rem) Outfit,Arial,sans-serif;pointer-events:none}
+.crossword-clues{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.crossword-clues h3{margin:0 0 10px;color:#103b4e;font-size:1.12rem;text-transform:capitalize}
+.crossword-clue{display:block;width:100%;margin:0 0 8px;border:1px solid #abd3cf;border-radius:12px;padding:10px 12px;color:#153d3a;background:#f6fffe;font:600 .9rem/1.4 Outfit,Arial,sans-serif;text-align:left;cursor:pointer}
+.crossword-clue span{display:block;margin-top:3px;color:#426a66;font-size:.76rem}
+.crossword-clue.is-active{border-color:#087f7b;background:#dff8f4;box-shadow:inset 4px 0 0 #087f7b}
+.crossword-clue.is-complete{border-color:#0b8173;background:#d4f7ec}
+.crossword-clue:hover{background:#e8faf8}
+.crossword-clue:focus-visible{outline:3px solid #087f7b;outline-offset:2px}
+.writing-starter{margin-top:12px;padding:10px 13px;border-left:4px solid #087f7b;border-radius:0 10px 10px 0;background:#e5f7f4}
+@media(max-width:620px){.crossword-clues{grid-template-columns:1fr}.crossword-grid{gap:1px}.crossword-cell{border-radius:2px}}
 .extra-challenge-content :is(.match-button,.word-chip,.verb-bank button,.check-animal,.letter,.paris-sort-item,.sentence-slot,.verb-slot){font-family:Outfit,Arial,sans-serif}
 .extra-challenge-content :is(.match-button,.word-chip,.verb-bank button,.check-animal,.letter,.paris-sort-item,.sentence-slot,.verb-slot):focus-visible{outline:3px solid #087f7b;outline-offset:2px}
 .sentence-challenge .extra-challenge-heading{padding:0;border:0;background:transparent}
 @media(max-width:620px){.extra-challenge-heading{padding:20px}.reset-activity-button{width:100%}}
+
+/* Compact movie-library filters keep the carousel controls beside the posters. */
+.movie-filter-panel .movie-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0;padding:15px 17px 17px}
+.movie-filter-field{display:grid;min-width:0;gap:7px}
+.movie-filter-field span{color:#a8d0cc;font-size:.69rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.movie-filter-field select{width:100%;min-height:42px;padding:8px 34px 8px 12px;border:1px solid rgba(151,242,237,.34);border-radius:11px;color:#f4fffe;background:#11312f;font:700 .86rem Outfit,Arial,sans-serif;cursor:pointer}
+.movie-filter-field select:hover{border-color:rgba(151,242,237,.68)}
+.movie-filter-field select:focus-visible{outline:3px solid var(--neon);outline-offset:2px}
+.movie-carousel-toolbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:8px 0 13px}
+.movie-carousel-toolbar .filter-status{margin:0;color:#a7c8c4;font-size:.84rem;font-weight:700}
+.movie-carousel-toolbar .carousel-controls{display:flex;flex:none}
+.movie-filter-panel{margin-bottom:12px}
+@media(max-width:620px){.movie-filter-panel .movie-filters{grid-template-columns:1fr;gap:10px}.movie-carousel-toolbar .carousel-button{width:42px;height:42px}}
+
+/* Curated rails share the main library width; extra posters scroll inside the rail. */
+.streaming-home > .curated-movie-rows{grid-template-columns:minmax(0,1fr);width:100%;max-width:100%;box-sizing:border-box}
+.curated-movie-rows .curated-row{min-width:0;max-width:100%}
+.curated-movie-rows .curated-poster-row{min-width:0;max-width:100%;box-sizing:border-box}
 .auth-modal{overflow:visible;width:min(100% - 32px,390px);padding:0;border:1px solid rgba(151,242,237,.3);border-radius:22px;color:#effffd;background:linear-gradient(145deg,#153836,#071111);box-shadow:0 30px 80px rgba(0,0,0,.62)}.auth-modal::before{content:"";position:absolute;top:-8px;right:28px;width:14px;height:14px;border-top:1px solid rgba(151,242,237,.3);border-left:1px solid rgba(151,242,237,.3);background:#12312f;transform:rotate(45deg)}.auth-modal::backdrop{background:rgba(0,9,9,.78);backdrop-filter:blur(6px)}.auth-form{position:relative;display:grid;gap:11px;padding:28px 24px 20px}.auth-form h2{margin:0;color:#fff;font:700 1.2rem "Josefin Sans",Arial,sans-serif;letter-spacing:-.025em;line-height:1.1}.auth-form>p:not(.auth-message){margin:2px 0 8px;color:rgba(233,255,252,.7);font-size:.88rem;line-height:1.5}.auth-form .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.auth-form input{box-sizing:border-box;width:100%;min-height:50px;border:1px solid rgba(151,242,237,.38);border-radius:13px;padding:0 14px;color:#fff;background:rgba(2,13,13,.7);font:600 1rem Outfit,Arial,sans-serif;outline:none;transition:border-color .18s ease,box-shadow .18s ease}.auth-form input:focus{border-color:var(--neon);box-shadow:0 0 0 4px rgba(217,255,0,.14)}.auth-form input::placeholder{color:rgba(219,245,242,.5)}.auth-form .activity-link{width:100%;min-height:48px;margin:0;border:0;border-radius:13px;padding:13px 18px;color:#103b4e;background:var(--neon);font:900 .92rem Outfit,Arial,sans-serif;box-shadow:none}.auth-form .activity-link:hover,.auth-form .activity-link:focus-visible{transform:translateY(-2px);box-shadow:0 10px 22px rgba(217,255,0,.18);outline:2px solid #fff;outline-offset:2px}.auth-message{min-height:0;margin:0;color:#bff8f4;font-size:.84rem;font-weight:700}.auth-message:empty{display:none}.auth-cancel{justify-self:center;border:0;padding:7px 12px;color:rgba(233,255,252,.68);background:transparent;font:800 .88rem Outfit,Arial,sans-serif;cursor:pointer}.auth-cancel:hover,.auth-cancel:focus-visible{color:var(--neon);outline:0;text-decoration:underline;text-underline-offset:4px}

@@ -42,6 +42,8 @@ const landingPosterPool = [
   { title: "Frankenstein", image: "assets/frankenstein-poster.webp", href: "./frankenstein-easier/index.html" },
   { title: "Inside Out 2", image: "assets/inside-out-2-poster.webp", href: "./inside-out-2/index.html" },
   { title: "Superman", image: "assets/superman-poster.webp", href: "./superman-beginner/index.html" },
+  { title: "Freakier Friday", image: "assets/freakier-friday-poster.png", href: "./freakier-friday/index.html" },
+  { title: "Captain America: Brave New World", image: "assets/captain-america-brave-new-world-poster.png", href: "./captain-america-brave-new-world/index.html" },
 ];
 
 const backgroundCards = document.querySelectorAll(".saas-home .hero-card-back, .saas-home .hero-card-front");
@@ -59,36 +61,26 @@ if (backgroundCards.length === 2) {
 }
 
 const filterState = { level: "all", genre: "all", platform: "all" };
-const levelFilterRow = document.querySelector('[data-filter-group="level"]')?.parentElement;
-const genreFilterRow = document.querySelector('[data-filter-group="genre"]')?.parentElement;
-const watchFilterRow = document.querySelector('[data-filter-group="platform"]')?.parentElement;
-if (levelFilterRow) {
-  const levels = [
-    ["beginner", "Beginner"], ["elementary", "Elementary"],
-    ["pre-intermediate", "Pre-Intermediate"], ["intermediate-plus", "Intermediate+"]
-  ];
-  levelFilterRow.innerHTML = '<span>Level</span><button class="movie-filter active" type="button" data-filter-group="level" data-filter-value="all">All levels</button>' + levels.map(([value, label]) => `<button class="movie-filter" type="button" data-filter-group="level" data-filter-value="${value}">${label}</button>`).join("");
-}
-if (genreFilterRow) {
-  const genres = [
-    ["action", "Action"], ["adventure", "Adventure"], ["animation", "Animation"], ["comedy", "Comedy"],
-    ["crime", "Crime"], ["drama", "Drama"], ["family", "Family"], ["fantasy", "Fantasy"], ["history", "History"],
-    ["horror", "Horror"], ["mystery", "Mystery"], ["romance", "Romance"],
-    ["sci-fi", "Sci-fi"], ["sports", "Sports"], ["thriller", "Thriller"]
-  ];
-  genreFilterRow.innerHTML = '<span>Genre</span><button class="movie-filter active" type="button" data-filter-group="genre" data-filter-value="all">All genres</button>' + genres.map(([value, label]) => `<button class="movie-filter" type="button" data-filter-group="genre" data-filter-value="${value}">${label}</button>`).join("");
-}
-if (watchFilterRow) {
-  const platforms = [
-    ["apple-tv", "Apple TV"], ["cinemas", "Cinemas"], ["disney-plus", "Disney+"],
-    ["max", "HBO Max"], ["netflix", "Netflix"], ["paramount-plus", "Paramount+"],
-    ["prime-video", "Prime Video"]
-  ];
-  watchFilterRow.innerHTML = '<span>Watch on</span><button class="movie-filter active" type="button" data-filter-group="platform" data-filter-value="all">All platforms</button>' + platforms.map(([value, label]) => `<button class="movie-filter" type="button" data-filter-group="platform" data-filter-value="${value}">${label}</button>`).join("");
-}
-const filterButtons = document.querySelectorAll(".movie-filter");
-const movieTiles = document.querySelectorAll(".movie-tile[data-level]");
+const filterOptions = {
+  level: [["all", "All levels"], ["beginner", "Beginner"], ["elementary", "Elementary"], ["pre-intermediate", "Pre-Intermediate"], ["intermediate-plus", "Intermediate+"]],
+  genre: [["all", "All genres"], ["action", "Action"], ["adventure", "Adventure"], ["animation", "Animation"], ["comedy", "Comedy"], ["crime", "Crime"], ["drama", "Drama"], ["fantasy", "Fantasy"], ["history", "History"], ["horror", "Horror"], ["mystery", "Mystery"], ["romance", "Romance"], ["sci-fi", "Sci-fi"], ["sports", "Sports"], ["thriller", "Thriller"]],
+  platform: [["all", "All platforms"], ["apple-tv", "Apple TV"], ["cinemas", "Cinemas"], ["disney-plus", "Disney+"], ["max", "HBO Max"], ["netflix", "Netflix"], ["paramount-plus", "Paramount+"], ["prime-video", "Prime Video"]]
+};
+const filterLabels = { level: "Level", genre: "Genre", platform: "Watch on" };
+const filterPanel = document.querySelector(".movie-filter-panel");
 const filterStatus = document.querySelector("#filter-status");
+if (filterPanel) {
+  filterPanel.innerHTML = `<summary><span>Filter movies</span><small>Level, genre &amp; where to watch</small></summary><div class="movie-filters" aria-label="Filter movies">${Object.entries(filterOptions).map(([group, options]) => `<label class="movie-filter-field" for="movie-filter-${group}"><span>${filterLabels[group]}</span><select id="movie-filter-${group}" data-filter-group="${group}">${options.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label>`).join("")}</div>`;
+}
+const filterSelects = document.querySelectorAll(".movie-filter-field select");
+const movieTiles = document.querySelectorAll(".movie-tile[data-level]");
+const carouselControls = document.querySelector(".activity-shelf .carousel-controls");
+if (carousel && filterStatus && carouselControls) {
+  const toolbar = document.createElement("div");
+  toolbar.className = "movie-carousel-toolbar";
+  carousel.before(toolbar);
+  toolbar.append(filterStatus, carouselControls);
+}
 
 if (carousel && !carousel.querySelector('[href="./se7en/index.html"]')) {
   carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="intermediate" data-genre="mystery crime" data-platform="max"><a href="./se7en/index.html" class="movie-poster-link"><img src="assets/Se7en-poster.png" alt="Se7en movie poster"><span class="content-warning-tag">Violence warning</span><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Se7en</h3><p><span>Intermediate</span> &middot; Mystery &middot; Crime &middot; Max</p></div></article>');
@@ -115,7 +107,7 @@ if (carousel && !carousel.querySelector('[href="./f1-the-movie/index.html"]')) {
   if (filterStatus) filterStatus.textContent = "Showing all 14 lessons.";
 }
 if (carousel && !carousel.querySelector('[href="./lilo-and-stitch/index.html"]')) {
-  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="adventure comedy family" data-platform="disney-plus"><a href="./lilo-and-stitch/index.html" class="movie-poster-link"><img src="assets/lilo-and-stitch-poster.png" alt="Lilo and Stitch movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Lilo &amp; Stitch</h3><p><span>Elementary</span> &middot; Adventure &middot; Comedy &middot; Family &middot; Disney+</p></div></article>');
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="adventure comedy" data-platform="disney-plus"><a href="./lilo-and-stitch/index.html" class="movie-poster-link"><img src="assets/lilo-and-stitch-poster.png" alt="Lilo and Stitch movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Lilo &amp; Stitch</h3><p><span>Elementary</span> &middot; Adventure &middot; Comedy &middot; Disney+</p></div></article>');
   if (filterStatus) filterStatus.textContent = "Showing all 15 lessons.";
 }
 if (carousel && !carousel.querySelector('[href="./conclave/index.html"]')) {
@@ -138,10 +130,16 @@ if (carousel && !carousel.querySelector('[data-level-choice="frankenstein"]')) {
   carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary intermediate-plus" data-genre="drama horror" data-platform="netflix"><a href="./frankenstein-easier/index.html" class="movie-poster-link" data-level-choice="frankenstein"><img src="assets/frankenstein-poster.webp" alt="Frankenstein movie poster"><span class="level-choice-tag">Two levels</span><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Frankenstein</h3><p><span>Elementary / Intermediate+</span> &middot; Drama &middot; Horror &middot; Netflix</p></div></article>');
 }
 if (carousel && !carousel.querySelector('[href="./inside-out-2/index.html"]')) {
-  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="animation family" data-platform="disney-plus"><a href="./inside-out-2/index.html" class="movie-poster-link"><img src="assets/inside-out-2-poster.webp" alt="Inside Out 2 movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Inside Out 2</h3><p><span>Elementary</span> &middot; Animation &middot; Family &middot; Disney+</p></div></article>');
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="animation comedy" data-platform="disney-plus"><a href="./inside-out-2/index.html" class="movie-poster-link"><img src="assets/inside-out-2-poster.webp" alt="Inside Out 2 movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Inside Out 2</h3><p><span>Elementary</span> &middot; Animation &middot; Comedy &middot; Disney+</p></div></article>');
 }
 if (carousel && !carousel.querySelector('[data-level-choice="superman"]')) {
   carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="beginner intermediate-plus" data-genre="action adventure" data-platform="max"><a href="./superman-beginner/index.html" class="movie-poster-link" data-level-choice="superman"><img src="assets/superman-poster.webp" alt="Superman movie poster"><span class="level-choice-tag">Two levels</span><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Superman</h3><p><span>Beginner / Intermediate+</span> &middot; Action &middot; Adventure &middot; HBO Max</p></div></article>');
+}
+if (carousel && !carousel.querySelector('[href="./freakier-friday/index.html"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="pre-intermediate" data-genre="comedy fantasy" data-platform="disney-plus"><a href="./freakier-friday/index.html" class="movie-poster-link"><img src="assets/freakier-friday-poster.png" alt="Freakier Friday movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Freakier Friday</h3><p><span>Pre-Intermediate</span> &middot; Comedy &middot; Fantasy &middot; Disney+</p></div></article>');
+}
+if (carousel && !carousel.querySelector('[href="./captain-america-brave-new-world/index.html"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="action adventure" data-platform="disney-plus"><a href="./captain-america-brave-new-world/index.html" class="movie-poster-link"><img src="assets/captain-america-brave-new-world-poster.png" alt="Captain America: Brave New World movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Captain America: Brave New World</h3><p><span>Elementary</span> &middot; Action &middot; Adventure &middot; Disney+</p></div></article>');
 }
 const movieLanguageLevels = {
   "./moana-2/index.html": ["elementary", "Elementary"],
@@ -163,7 +161,9 @@ const movieLanguageLevels = {
   "./the-wrong-paris/index.html": ["pre-intermediate", "Pre-Intermediate"],
   "./harry-potter-philosophers-stone/index.html": ["pre-intermediate", "Pre-Intermediate"],
   "./the-batman/index.html": ["intermediate-plus", "Intermediate+"],
-  "./inside-out-2/index.html": ["elementary", "Elementary"]
+  "./inside-out-2/index.html": ["elementary", "Elementary"],
+  "./freakier-friday/index.html": ["pre-intermediate", "Pre-Intermediate"],
+  "./captain-america-brave-new-world/index.html": ["elementary", "Elementary"]
 };
 Object.entries(movieLanguageLevels).forEach(([href, [value, label]]) => {
   const tile = carousel?.querySelector(`a[href="${href}"]`)?.closest(".movie-tile");
@@ -174,7 +174,7 @@ Object.entries(movieLanguageLevels).forEach(([href, [value, label]]) => {
 });
 const movieGenreUpdates = {
   "./odyssey/index.html": ["adventure history", "Adventure &middot; History"],
-  "./moana-2/index.html": ["animation family", "Animation &middot; Family"]
+  "./moana-2/index.html": ["animation adventure", "Animation &middot; Adventure"]
 };
 Object.entries(movieGenreUpdates).forEach(([href, [genres, label]]) => {
   const tile = carousel?.querySelector(`a[href="${href}"]`)?.closest(".movie-tile");
@@ -196,7 +196,7 @@ if (moanaTile) {
     if (!moanaLink.querySelector(".level-choice-tag")) moanaLink.insertAdjacentHTML("afterbegin", '<span class="level-choice-tag">Two levels</span>');
   }
   const moanaMeta = moanaTile.querySelector(".movie-meta p");
-  if (moanaMeta) moanaMeta.innerHTML = '<span>Beginner / Elementary</span> &middot; Animation &middot; Family &middot; Disney+';
+  if (moanaMeta) moanaMeta.innerHTML = '<span>Beginner / Elementary</span> &middot; Animation &middot; Adventure &middot; Disney+';
 }
 if (f1Tile) {
   f1Tile.dataset.level = "beginner pre-intermediate";
@@ -233,12 +233,23 @@ if (carousel && !document.querySelector("#curated-movie-rows")) {
       <a href="./materialists/index.html" class="curated-movie-card"><img src="assets/materialists-poster.webp" alt="Materialists movie poster"><span>Materialists</span></a>
       <a href="./frankenstein-easier/index.html" class="curated-movie-card" data-level-choice="frankenstein"><img src="assets/frankenstein-poster.webp" alt="Frankenstein movie poster"><span>Frankenstein</span></a>
     </div></section>
-    <section class="curated-row"><div class="curated-row-heading"><h2>Detective stories</h2><p>Follow the clues, question the suspects, and solve the case.</p></div><div class="curated-poster-row">
+    <section class="curated-row family-row"><div class="curated-row-heading"><h2>Family movies</h2><div class="curated-row-action"><p>Stories to enjoy together, with something for every generation.</p><div class="curated-scroll-controls"><button class="curated-scroll-button" type="button" data-curated-scroll="family" data-curated-direction="previous" aria-label="Scroll Family movies to the left">&#8592;</button><button class="curated-scroll-button" type="button" data-curated-scroll="family" data-curated-direction="next" aria-label="Scroll Family movies to the right">&#8594;</button></div></div></div><div class="curated-poster-row" data-curated-row="family">
+      <a href="./moana-2/index.html" class="curated-movie-card" data-level-choice="moana"><img src="assets/Moana-2-poster.webp" alt="Moana 2 movie poster"><span>Moana 2</span></a>
+      <a href="./inside-out-2/index.html" class="curated-movie-card"><img src="assets/inside-out-2-poster.webp" alt="Inside Out 2 movie poster"><span>Inside Out 2</span></a>
+      <a href="./lilo-and-stitch/index.html" class="curated-movie-card"><img src="assets/lilo-and-stitch-poster.png" alt="Lilo and Stitch movie poster"><span>Lilo &amp; Stitch</span></a>
       <a href="./zootopia-2/index.html" class="curated-movie-card"><img src="assets/zootopia-2-logo.webp" alt="Zootopia 2 movie poster"><span>Zootopia 2</span></a>
-      <a href="./sheep-detectives/index.html" class="curated-movie-card"><img src="assets/sheep-detectives-poster.png" alt="The Sheep Detectives movie poster"><span>The Sheep Detectives</span></a>
-      <a href="./se7en/index.html" class="curated-movie-card" data-content-warning="violent"><img src="assets/Se7en-poster.png" alt="Se7en movie poster"><span>Se7en</span></a>
-      <a href="./the-housemaid/index.html" class="curated-movie-card" data-content-warning="disturbing"><img src="assets/the-housemaid-poster.webp" alt="The Housemaid movie poster"><span>The Housemaid</span></a>
+      <a href="./kpop-demon-hunters/index.html" class="curated-movie-card"><img src="assets/kpop-demon-hunters-poster.webp" alt="KPop Demon Hunters movie poster"><span>KPop Demon Hunters</span></a>
+      <a href="./freakier-friday/index.html" class="curated-movie-card"><img src="assets/freakier-friday-poster.png" alt="Freakier Friday movie poster"><span>Freakier Friday</span></a>
+      <a href="./harry-potter-philosophers-stone/index.html" class="curated-movie-card"><img src="assets/harry-potter-1-poster.webp" alt="Harry Potter and the Philosopher's Stone movie poster"><span>Harry Potter and the Philosopher's Stone</span></a>
     </div></section>`;
+  curatedRows.querySelectorAll('[data-curated-row="debate"], [data-curated-row="family"]').forEach((row) => {
+    const posters = Array.from(row.querySelectorAll(".curated-movie-card"));
+    for (let index = posters.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [posters[index], posters[randomIndex]] = [posters[randomIndex], posters[index]];
+    }
+    row.replaceChildren(...posters);
+  });
   carousel.closest(".activity-shelf").insertAdjacentElement("afterend", curatedRows);
 }
 
@@ -264,12 +275,12 @@ function applyMovieFilters() {
   });
   if (filterStatus) filterStatus.textContent = visibleCount ? `Showing ${visibleCount} lesson${visibleCount === 1 ? "" : "s"}.` : "No lessons match these filters yet.";
 }
+applyMovieFilters();
 
-filterButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const group = button.dataset.filterGroup;
-    filterState[group] = button.dataset.filterValue;
-    document.querySelectorAll(`.movie-filter[data-filter-group="${group}"]`).forEach((item) => item.classList.toggle("active", item === button));
+filterSelects.forEach((select) => {
+  select.addEventListener("change", () => {
+    const group = select.dataset.filterGroup;
+    filterState[group] = select.value;
     applyMovieFilters();
   });
 });
