@@ -24,7 +24,9 @@
     ["sheep-detectives", "sheep-detectives", "The Sheep Detectives", "Elementary", "assets/sheep-detectives-poster.png"],
     ["superman-beginner", "superman", "Superman", "Beginner", "assets/superman-poster.webp"],
     ["superman-intermediate-plus", "superman", "Superman", "Intermediate+", "assets/superman-poster.webp"],
+    ["talk-to-me", "talk-to-me", "Talk to Me", "Elementary", "assets/talk-to-me-poster.png"],
     ["the-batman", "the-batman", "The Batman", "Intermediate+", "assets/batman-poster.webp"],
+    ["the-gorge", "the-gorge", "The Gorge", "Elementary", "assets/the-gorge-poster.png"],
     ["the-housemaid", "the-housemaid", "The Housemaid", "Intermediate+", "assets/the-housemaid-poster.webp"],
     ["the-wrong-paris", "the-wrong-paris", "The Wrong Paris", "Pre-Intermediate", "assets/the-wrong-paris-poster.webp"],
     ["zootopia-2", "zootopia-2", "Zootopia 2", "Elementary", "assets/zootopia-2-logo.webp"]

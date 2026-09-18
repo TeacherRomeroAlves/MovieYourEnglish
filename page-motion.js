@@ -42,7 +42,9 @@ const extraActivityState = {
   "sheep-detectives": { matchedTerms: [] },
   "superman-beginner": { gaps: {}, selectedWord: "", wordOrder: [] },
   "superman-intermediate-plus": { gaps: {}, selectedWord: "", wordOrder: [] },
+  "talk-to-me": { partLetters: {}, partOrder: {}, solvedParts: {} },
   "the-batman": { sorted: {}, selected: "" },
+  "the-gorge": { matches: {}, matchOrder: [] },
   "the-housemaid": { routine: [], verbOrder: [] },
   "the-wrong-paris": { sorted: {}, selected: "" },
   "zootopia-2": { animals: {} }
@@ -130,6 +132,7 @@ const adultContentNotes = {
   "alien-romulus": { label: "Content warning", text: "This movie contains intense violence, frightening scenes, and disturbing images. Recommended for adults." },
   "se7en": { label: "Content warning", text: "This movie contains graphic violence, disturbing crime scenes, and adult themes. Recommended for adults." },
   "materialists": { label: "Mild content warning", text: "This movie includes mature relationship themes and a reference to sexual assault. Viewer discretion is advised." },
+  "talk-to-me": { label: "Content warning", text: "This movie contains disturbing images of graphic violence. Recommended for adults." },
   "frankenstein-easier": { label: "Mild content warning", text: "This movie includes fantasy violence and some unsettling images. Viewer discretion is advised." },
   "frankenstein-harder": { label: "Mild content warning", text: "This movie includes fantasy violence and some unsettling images. Viewer discretion is advised." }
 };

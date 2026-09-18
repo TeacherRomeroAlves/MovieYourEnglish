@@ -44,6 +44,8 @@ const landingPosterPool = [
   { title: "Superman", image: "assets/superman-poster.webp", href: "./superman-beginner/index.html" },
   { title: "Freakier Friday", image: "assets/freakier-friday-poster.png", href: "./freakier-friday/index.html" },
   { title: "Captain America: Brave New World", image: "assets/captain-america-brave-new-world-poster.png", href: "./captain-america-brave-new-world/index.html" },
+  { title: "The Gorge", image: "assets/the-gorge-poster.png", href: "./the-gorge/index.html" },
+  { title: "Talk to Me", image: "assets/talk-to-me-poster.png", href: "./talk-to-me/index.html" },
 ];
 
 const backgroundCards = document.querySelectorAll(".saas-home .hero-card-back, .saas-home .hero-card-front");
@@ -140,6 +142,12 @@ if (carousel && !carousel.querySelector('[href="./freakier-friday/index.html"]')
 }
 if (carousel && !carousel.querySelector('[href="./captain-america-brave-new-world/index.html"]')) {
   carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="action adventure" data-platform="disney-plus"><a href="./captain-america-brave-new-world/index.html" class="movie-poster-link"><img src="assets/captain-america-brave-new-world-poster.png" alt="Captain America: Brave New World movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Captain America: Brave New World</h3><p><span>Elementary</span> &middot; Action &middot; Adventure &middot; Disney+</p></div></article>');
+}
+if (carousel && !carousel.querySelector('[href="./the-gorge/index.html"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="sci-fi thriller" data-platform="apple-tv"><a href="./the-gorge/index.html" class="movie-poster-link"><img src="assets/the-gorge-poster.png" alt="The Gorge movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>The Gorge</h3><p><span>Elementary</span> &middot; Sci-fi &middot; Thriller &middot; Apple TV+</p></div></article>');
+}
+if (carousel && !carousel.querySelector('[href="./talk-to-me/index.html"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="horror thriller" data-platform="max"><a href="./talk-to-me/index.html" class="movie-poster-link" data-content-warning="graphic-violence"><img src="assets/talk-to-me-poster.png" alt="Talk to Me movie poster"><span class="content-warning-tag">Adult content</span><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Talk to Me</h3><p><span>Elementary</span> &middot; Horror &middot; Thriller &middot; HBO Max</p></div></article>');
 }
 const movieLanguageLevels = {
   "./moana-2/index.html": ["elementary", "Elementary"],
@@ -285,7 +293,7 @@ filterSelects.forEach((select) => {
   });
 });
 
-const warningLinks = document.querySelectorAll("[data-content-warning], a[href='./se7en/index.html'], a[href='./the-housemaid/index.html']");
+const warningLinks = document.querySelectorAll("[data-content-warning], a[href='./se7en/index.html'], a[href='./the-housemaid/index.html'], a[href='./talk-to-me/index.html']");
 if (warningLinks.length) {
   const warningDialog = document.createElement("dialog");
   warningDialog.className = "content-warning-dialog";
@@ -295,8 +303,9 @@ if (warningLinks.length) {
     event.preventDefault();
     const isSe7en = link.getAttribute("href") === "./se7en/index.html";
     const isHousemaid = link.getAttribute("href") === "./the-housemaid/index.html";
-    warningDialog.querySelector("h2").textContent = isHousemaid ? "The Housemaid" : isSe7en ? "Se7en" : "Alien: Romulus";
-    warningDialog.querySelector("p:not(.eyebrow)").textContent = isHousemaid ? "This movie contains disturbing images and adult themes. The lesson is recommended for adult learners." : isSe7en ? "This movie includes graphic violence, disturbing crime scenes, and adult themes. The lesson is recommended for adult learners." : "This movie includes intense and violent scenes. The lesson is recommended for adult learners.";
+    const isTalkToMe = link.getAttribute("href") === "./talk-to-me/index.html";
+    warningDialog.querySelector("h2").textContent = isTalkToMe ? "Talk to Me" : isHousemaid ? "The Housemaid" : isSe7en ? "Se7en" : "Alien: Romulus";
+    warningDialog.querySelector("p:not(.eyebrow)").textContent = isTalkToMe ? "This movie contains disturbing images of graphic violence. Recommended for adults." : isHousemaid ? "This movie contains disturbing images and adult themes. The lesson is recommended for adult learners." : isSe7en ? "This movie includes graphic violence, disturbing crime scenes, and adult themes. The lesson is recommended for adult learners." : "This movie includes intense and violent scenes. The lesson is recommended for adult learners.";
     warningDialog.querySelector(".warning-continue").href = link.href;
     warningDialog.showModal();
   }));
