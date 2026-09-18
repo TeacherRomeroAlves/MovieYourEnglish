@@ -1,4 +1,12 @@
 const pageMotionSource = document.currentScript?.src || location.href;
+// Streaming links are examples for a particular region, not a guarantee of local availability.
+document.querySelectorAll(".lesson-page .watch-provider-grid, .lesson-page .watch-provider:not(.watch-provider-grid .watch-provider)").forEach((provider) => {
+  if (provider.nextElementSibling?.classList.contains("watch-availability-note")) return;
+  const note = document.createElement("p");
+  note.className = "watch-availability-note";
+  note.textContent = "Availability and platforms vary by country. Check your local listings before watching.";
+  provider.insertAdjacentElement("afterend", note);
+});
 const storyExportScript = document.createElement("script");
 storyExportScript.src = new URL("story-export.js", pageMotionSource).href;
 storyExportScript.async = false;
