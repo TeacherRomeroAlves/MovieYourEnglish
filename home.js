@@ -24,14 +24,18 @@ const landingPosterPool = [
   { title: "The Sheep Detectives", image: "assets/sheep-detectives-poster.png", href: "./sheep-detectives/index.html" },
   { title: "Zootopia 2", image: "assets/zootopia-2-logo.webp", href: "./zootopia-2/index.html" },
   { title: "The Odyssey", image: "assets/the-odyssey-poster.webp", href: "./odyssey/index.html" },
+  { title: "Oppenheimer", image: "assets/oppenheimer-poster.png", href: "./oppenheimer/index.html" },
   { title: "Eternity", image: "assets/Eternity-poster.webp", href: "./eternity/index.html" },
   { title: "KPop Demon Hunters", image: "assets/kpop-demon-hunters-poster.webp", href: "./kpop-demon-hunters/index.html" },
   { title: "Moana 2", image: "assets/Moana-2-poster.webp", href: "./moana-2/index.html" },
   { title: "Alien: Romulus", image: "assets/alien-romulus-poster.webp", href: "./alien-romulus/index.html" },
+  { title: "Barbie", image: "assets/barbie-poster.png", href: "./barbie/index.html" },
   { title: "Se7en", image: "assets/Se7en-poster.png", href: "./se7en/index.html" },
   { title: "The Devil Wears Prada", image: "assets/devil-wears-prada-poster.webp", href: "./devil-wears-prada/index.html" },
   { title: "Forrest Gump", image: "assets/forrest-gump-poster.webp", href: "./forrest-gump/index.html" },
+  { title: "Gladiator II", image: "assets/gladiator-2-poster.png", href: "./gladiator-2/index.html" },
   { title: "Materialists", image: "assets/materialists-poster.webp", href: "./materialists/index.html" },
+  { title: "My Oxford Year", image: "assets/my-oxford-year-poster.png", href: "./my-oxford-year/index.html" },
   { title: "The Housemaid", image: "assets/the-housemaid-poster.webp", href: "./the-housemaid/index.html" },
   { title: "F1: The Movie", image: "assets/f1-poster.webp", href: "./f1-the-movie/index.html" },
   { title: "Lilo & Stitch", image: "assets/lilo-and-stitch-poster.png", href: "./lilo-and-stitch/index.html" },
@@ -62,7 +66,7 @@ if (backgroundCards.length === 2) {
   });
 }
 
-const filterState = { level: "all", genre: "all", platform: "all" };
+const filterState = { search: "", level: "all", genre: "all", platform: "all" };
 const filterOptions = {
   level: [["all", "All levels"], ["beginner", "Beginner"], ["elementary", "Elementary"], ["pre-intermediate", "Pre-Intermediate"], ["intermediate-plus", "Intermediate+"]],
   genre: [["all", "All genres"], ["action", "Action"], ["adventure", "Adventure"], ["animation", "Animation"], ["comedy", "Comedy"], ["crime", "Crime"], ["drama", "Drama"], ["fantasy", "Fantasy"], ["history", "History"], ["horror", "Horror"], ["mystery", "Mystery"], ["romance", "Romance"], ["sci-fi", "Sci-fi"], ["sports", "Sports"], ["thriller", "Thriller"]],
@@ -72,9 +76,10 @@ const filterLabels = { level: "Level", genre: "Genre", platform: "Watch on" };
 const filterPanel = document.querySelector(".movie-filter-panel");
 const filterStatus = document.querySelector("#filter-status");
 if (filterPanel) {
-  filterPanel.innerHTML = `<summary><span>Filter movies</span><small>Level, genre &amp; where to watch</small></summary><div class="movie-filters" aria-label="Filter movies">${Object.entries(filterOptions).map(([group, options]) => `<label class="movie-filter-field" for="movie-filter-${group}"><span>${filterLabels[group]}</span><select id="movie-filter-${group}" data-filter-group="${group}">${options.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label>`).join("")}</div>`;
+  filterPanel.innerHTML = `<summary><span>Find a movie</span><small>Title, level, genre &amp; where to watch</small></summary><div class="movie-filters" aria-label="Filter movies"><label class="movie-filter-field movie-search-field" for="movie-title-search"><span>Movie title</span><div class="movie-search-control"><span aria-hidden="true">⌕</span><input id="movie-title-search" type="search" inputmode="search" autocomplete="off" placeholder="Search by title…" aria-describedby="filter-status"></div></label>${Object.entries(filterOptions).map(([group, options]) => `<label class="movie-filter-field" for="movie-filter-${group}"><span>${filterLabels[group]}</span><select id="movie-filter-${group}" data-filter-group="${group}">${options.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label>`).join("")}</div>`;
 }
 const filterSelects = document.querySelectorAll(".movie-filter-field select");
+const movieTitleSearch = document.querySelector("#movie-title-search");
 const movieTiles = document.querySelectorAll(".movie-tile[data-level]");
 const carouselControls = document.querySelector(".activity-shelf .carousel-controls");
 if (carousel && filterStatus && carouselControls) {
@@ -148,6 +153,18 @@ if (carousel && !carousel.querySelector('[href="./the-gorge/index.html"]')) {
 }
 if (carousel && !carousel.querySelector('[href="./talk-to-me/index.html"]')) {
   carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="horror thriller" data-platform="max"><a href="./talk-to-me/index.html" class="movie-poster-link" data-content-warning="graphic-violence"><img src="assets/talk-to-me-poster.png" alt="Talk to Me movie poster"><span class="content-warning-tag">Adult content</span><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Talk to Me</h3><p><span>Elementary</span> &middot; Horror &middot; Thriller &middot; HBO Max</p></div></article>');
+}
+if (carousel && !carousel.querySelector('[href="./barbie/index.html"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="pre-intermediate" data-genre="comedy fantasy" data-platform="max"><a href="./barbie/index.html" class="movie-poster-link"><img src="assets/barbie-poster.png" alt="Barbie movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Barbie</h3><p><span>Pre-Intermediate</span> &middot; Comedy &middot; Fantasy &middot; HBO Max</p></div></article>');
+}
+if (carousel && !carousel.querySelector('[href="./oppenheimer/index.html"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="pre-intermediate" data-genre="drama history" data-platform="prime-video"><a href="./oppenheimer/index.html" class="movie-poster-link" data-content-warning="mature"><img src="assets/oppenheimer-poster.png" alt="Oppenheimer movie poster"><span class="content-warning-tag">Mature content</span><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Oppenheimer</h3><p><span>Pre-Intermediate</span> &middot; Drama &middot; History &middot; Prime Video</p></div></article>');
+}
+if (carousel && !carousel.querySelector('[href="./my-oxford-year/index.html"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="drama romance" data-platform="netflix"><a href="./my-oxford-year/index.html" class="movie-poster-link"><img src="assets/my-oxford-year-poster.png" alt="My Oxford Year movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>My Oxford Year</h3><p><span>Elementary</span> &middot; Drama &middot; Romance &middot; Netflix</p></div></article>');
+}
+if (carousel && !carousel.querySelector('[href="./gladiator-2/index.html"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="beginner" data-genre="action history" data-platform="paramount-plus"><a href="./gladiator-2/index.html" class="movie-poster-link" data-content-warning="battle-violence"><img src="assets/gladiator-2-poster.png" alt="Gladiator II movie poster"><span class="content-warning-tag">Violence warning</span><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Gladiator II</h3><p><span>Beginner</span> &middot; Action &middot; History &middot; Paramount+</p></div></article>');
 }
 const movieLanguageLevels = {
   "./moana-2/index.html": ["elementary", "Elementary"],
@@ -240,6 +257,8 @@ if (carousel && !document.querySelector("#curated-movie-rows")) {
       <a href="./eternity/index.html" class="curated-movie-card"><img src="assets/Eternity-poster.webp" alt="Eternity movie poster"><span>Eternity</span></a>
       <a href="./materialists/index.html" class="curated-movie-card"><img src="assets/materialists-poster.webp" alt="Materialists movie poster"><span>Materialists</span></a>
       <a href="./frankenstein-easier/index.html" class="curated-movie-card" data-level-choice="frankenstein"><img src="assets/frankenstein-poster.webp" alt="Frankenstein movie poster"><span>Frankenstein</span></a>
+      <a href="./barbie/index.html" class="curated-movie-card"><img src="assets/barbie-poster.png" alt="Barbie movie poster"><span>Barbie</span></a>
+      <a href="./oppenheimer/index.html" class="curated-movie-card"><img src="assets/oppenheimer-poster.png" alt="Oppenheimer movie poster"><span>Oppenheimer</span></a>
     </div></section>
     <section class="curated-row family-row"><div class="curated-row-heading"><h2>Family movies</h2><div class="curated-row-action"><p>Stories to enjoy together, with something for every generation.</p><div class="curated-scroll-controls"><button class="curated-scroll-button" type="button" data-curated-scroll="family" data-curated-direction="previous" aria-label="Scroll Family movies to the left">&#8592;</button><button class="curated-scroll-button" type="button" data-curated-scroll="family" data-curated-direction="next" aria-label="Scroll Family movies to the right">&#8594;</button></div></div></div><div class="curated-poster-row" data-curated-row="family">
       <a href="./moana-2/index.html" class="curated-movie-card" data-level-choice="moana"><img src="assets/Moana-2-poster.webp" alt="Moana 2 movie poster"><span>Moana 2</span></a>
@@ -273,11 +292,14 @@ document.querySelectorAll("[data-curated-scroll]").forEach((button) => {
 
 function applyMovieFilters() {
   let visibleCount = 0;
+  const searchTerm = filterState.search.trim().toLocaleLowerCase();
   document.querySelectorAll(".movie-tile[data-level]").forEach((tile) => {
+    const title = tile.querySelector(".movie-meta h3")?.textContent.trim().toLocaleLowerCase() || "";
+    const matchesSearch = !searchTerm || title.includes(searchTerm);
     const matchesLevel = filterState.level === "all" || tile.dataset.level.split(" ").includes(filterState.level);
     const matchesGenre = filterState.genre === "all" || tile.dataset.genre.split(" ").includes(filterState.genre);
     const matchesPlatform = filterState.platform === "all" || tile.dataset.platform.split(" ").includes(filterState.platform);
-    const visible = matchesLevel && matchesGenre && matchesPlatform;
+    const visible = matchesSearch && matchesLevel && matchesGenre && matchesPlatform;
     tile.hidden = !visible;
     if (visible) visibleCount += 1;
   });
@@ -293,6 +315,11 @@ filterSelects.forEach((select) => {
   });
 });
 
+movieTitleSearch?.addEventListener("input", () => {
+  filterState.search = movieTitleSearch.value;
+  applyMovieFilters();
+});
+
 const warningLinks = document.querySelectorAll("[data-content-warning], a[href='./se7en/index.html'], a[href='./the-housemaid/index.html'], a[href='./talk-to-me/index.html']");
 if (warningLinks.length) {
   const warningDialog = document.createElement("dialog");
@@ -304,8 +331,10 @@ if (warningLinks.length) {
     const isSe7en = link.getAttribute("href") === "./se7en/index.html";
     const isHousemaid = link.getAttribute("href") === "./the-housemaid/index.html";
     const isTalkToMe = link.getAttribute("href") === "./talk-to-me/index.html";
-    warningDialog.querySelector("h2").textContent = isTalkToMe ? "Talk to Me" : isHousemaid ? "The Housemaid" : isSe7en ? "Se7en" : "Alien: Romulus";
-    warningDialog.querySelector("p:not(.eyebrow)").textContent = isTalkToMe ? "This movie contains disturbing images of graphic violence. Recommended for adults." : isHousemaid ? "This movie contains disturbing images and adult themes. The lesson is recommended for adult learners." : isSe7en ? "This movie includes graphic violence, disturbing crime scenes, and adult themes. The lesson is recommended for adult learners." : "This movie includes intense and violent scenes. The lesson is recommended for adult learners.";
+    const isOppenheimer = link.getAttribute("href") === "./oppenheimer/index.html";
+    const isGladiator = link.getAttribute("href") === "./gladiator-2/index.html";
+    warningDialog.querySelector("h2").textContent = isGladiator ? "Gladiator II" : isOppenheimer ? "Oppenheimer" : isTalkToMe ? "Talk to Me" : isHousemaid ? "The Housemaid" : isSe7en ? "Se7en" : "Alien: Romulus";
+    warningDialog.querySelector("p:not(.eyebrow)").textContent = isGladiator ? "This movie contains intense battle violence, blood, and mature themes. Recommended for mature learners." : isOppenheimer ? "This movie includes mature themes, brief sexual content, and disturbing images related to war and nuclear weapons. Recommended for mature learners." : isTalkToMe ? "This movie contains disturbing images of graphic violence. Recommended for adults." : isHousemaid ? "This movie contains disturbing images and adult themes. The lesson is recommended for adult learners." : isSe7en ? "This movie includes graphic violence, disturbing crime scenes, and adult themes. The lesson is recommended for adult learners." : "This movie includes intense and violent scenes. The lesson is recommended for adult learners.";
     warningDialog.querySelector(".warning-continue").href = link.href;
     warningDialog.showModal();
   }));

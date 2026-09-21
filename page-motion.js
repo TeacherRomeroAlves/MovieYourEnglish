@@ -30,6 +30,7 @@ window.myeEnsureShuffledOrder = (answers, savedOrder) => {
 // state and lets the lesson's existing renderer rebuild the activity on reload.
 const extraActivityState = {
   "alien-romulus": { terms: {}, selected: null },
+  "barbie": { gaps: [], wordOrder: [] },
   "captain-america-brave-new-world": { matches: {} },
   "eternity": { words: [], wordOrder: [] },
   "f1-the-movie": { teams: {} },
@@ -38,13 +39,16 @@ const extraActivityState = {
   "forrest-gump": { brands: {} },
   "frankenstein-easier": { facts: {} },
   "frankenstein-harder": { matches: [], selectedMatch: "", matchOrder: [] },
+  "gladiator-2": { sorted: {}, selected: "", sortOrder: [] },
   "harry-potter-philosophers-stone": { verbs: [], verbOrder: [] },
   "inside-out-2": { sorted: {}, selected: "" },
   "lilo-and-stitch": { adjectives: {} },
   "materialists": { words: [] },
   "moana-2": { sentences: {}, selectedWord: "", wordOrder: [] },
   "moana-2-beginner": { sentences: {}, selectedWord: "", wordOrder: [] },
+  "my-oxford-year": { words: [] },
   "odyssey": { verbs: [], verbOrder: [] },
+  "oppenheimer": { starterLetters: {}, starterOrder: {}, solvedStarter: {} },
   "project-hail-mary": { foundWords: [] },
   "se7en": { w: [] },
   "sheep-detectives": { matchedTerms: [] },
@@ -140,9 +144,11 @@ const adultContentNotes = {
   "alien-romulus": { label: "Content warning", text: "This movie contains intense violence, frightening scenes, and disturbing images. Recommended for adults." },
   "se7en": { label: "Content warning", text: "This movie contains graphic violence, disturbing crime scenes, and adult themes. Recommended for adults." },
   "materialists": { label: "Mild content warning", text: "This movie includes mature relationship themes and a reference to sexual assault. Viewer discretion is advised." },
+  "oppenheimer": { label: "Content warning", text: "This movie includes mature themes, brief sexual content, and disturbing images related to war and nuclear weapons. Recommended for mature learners." },
   "talk-to-me": { label: "Content warning", text: "This movie contains disturbing images of graphic violence. Recommended for adults." },
   "frankenstein-easier": { label: "Mild content warning", text: "This movie includes fantasy violence and some unsettling images. Viewer discretion is advised." },
-  "frankenstein-harder": { label: "Mild content warning", text: "This movie includes fantasy violence and some unsettling images. Viewer discretion is advised." }
+  "frankenstein-harder": { label: "Mild content warning", text: "This movie includes fantasy violence and some unsettling images. Viewer discretion is advised." },
+  "gladiator-2": { label: "Content warning", text: "This movie contains intense battle violence, blood, and mature themes. Recommended for mature learners." }
 };
 const addAdultContentNote = () => {
   if (document.querySelector(".content-note")) return;
