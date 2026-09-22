@@ -233,6 +233,12 @@ h2 { margin: 0; font-size: clamp(1.65rem, 4vw, 2.3rem); letter-spacing: -0.04em;
 .account-save-status { margin: 12px 0 0; color: #d5e6e6; font-size: 0.82rem; font-weight: 700; text-align: right; }
 .lesson-intro { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 20px 0 30px; color: var(--muted); font-size: 0.94rem; }
 .lesson-intro p { margin: 0; }
+.lesson-print-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: 0 0 auto; border: 2px solid #087f7b; border-radius: 999px; padding: 9px 14px; color: #073a38; background: #d9f7f4; font: 800 0.82rem "Outfit", sans-serif; cursor: pointer; transition: background-color 160ms ease, color 160ms ease, transform 160ms ease; }
+.lesson-print-button span { font-size: 1.05rem; line-height: 1; }
+.lesson-print-button:hover { color: #fff; background: #087f7b; transform: translateY(-1px); }
+.lesson-print-button:focus-visible { outline: 3px solid var(--neon); outline-offset: 3px; }
+.lesson-print-button:active { transform: translateY(0); }
+.lesson-print-export { display: none; }
 .quiet-button { border: 0; padding: 0; color: var(--teal-dark); background: transparent; font: 800 0.82rem "DM Sans", sans-serif; text-decoration: underline; cursor: pointer; }
 .lesson-section { margin: 20px 0; border: 4px solid var(--ink); background: var(--paper); box-shadow: 6px 6px 0 rgba(10, 10, 10, 0.12); }
 .lesson-section summary { display: grid; grid-template-columns: minmax(0, 1fr) 190px 25px; align-items: center; gap: 16px; padding: 18px 20px; background: #eefefd; font: 700 clamp(1rem, 3vw, 1.3rem) "Josefin Sans", sans-serif; cursor: pointer; list-style: none; }
@@ -319,6 +325,24 @@ h2 { margin: 0; font-size: clamp(1.65rem, 4vw, 2.3rem); letter-spacing: -0.04em;
 .site-footer { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 28px; color: var(--muted); font-size: 0.9rem; }
 .site-footer p { margin: 0; }
 .site-footer a { color: var(--teal-dark); font-weight: 800; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+/* Shared footer, adapted from the Music Your English layout. */
+.mye-footer{box-sizing:border-box;width:100%;margin:72px 0 0;padding:0 clamp(20px,4vw,44px);border-top:1px solid rgba(151,242,237,.2);border-radius:24px 24px 0 0;color:#e9f8f6;background:linear-gradient(145deg,#0d2928,#071312 72%);font:400 .92rem Outfit,Arial,sans-serif}
+.mye-footer-main{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(32px,7vw,90px);padding:clamp(40px,6vw,68px) 0 44px}
+.mye-footer-brand .brand{display:inline-flex;align-items:center;gap:10px;color:#fff;font:700 1.2rem "Josefin Sans",Arial,sans-serif;text-decoration:none}
+.mye-footer-brand .brand-logo{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.mye-footer-brand .brand strong{color:#46c7c1}
+.mye-footer-brand p{max-width:390px;margin:22px 0 10px;color:#bdd2cf;font-size:1rem;line-height:1.6}
+.mye-footer-brand>span{color:#90aba7;font-size:.84rem}
+.mye-footer-nav{display:grid;grid-template-columns:repeat(2,minmax(130px,1fr));align-content:start;gap:16px 38px}
+.mye-footer-nav a,.mye-footer-bottom a{color:#dcece9;text-decoration:none;transition:color .18s ease}
+.mye-footer-nav a{font-weight:700}
+.mye-footer-nav a:hover,.mye-footer-bottom a:hover{color:#d9ff00}
+.mye-footer :is(a:focus-visible){outline:2px solid #d9ff00;outline-offset:4px;border-radius:3px}
+.mye-footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:76px;padding:20px 0;border-top:1px solid rgba(151,242,237,.16);color:#92aaa6;font-size:.8rem}
+.mye-footer-bottom a{font-weight:800}
+@media(max-width:800px){.mye-footer-main{grid-template-columns:1fr;gap:36px}.mye-footer-nav{justify-content:start}.mye-footer-bottom{align-items:flex-start;flex-direction:column;gap:9px}}
+@media(max-width:520px){.mye-footer{margin-top:52px;padding:0 22px}.mye-footer-main{padding:42px 0 34px}.mye-footer-nav{gap:14px 18px;grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 @media (max-width: 560px) {
   .streaming-home { width: min(100% - 24px, 1180px); padding-top: 14px; }
@@ -856,6 +880,70 @@ body:not(.platform-home) .story-share-card h2{margin:4px 0 8px;color:#075b58}
 .extra-challenge-content :is(.match-button,.word-chip,.verb-bank button,.check-animal,.letter,.paris-sort-item,.sentence-slot,.verb-slot):focus-visible{outline:3px solid #087f7b;outline-offset:2px}
 .sentence-challenge .extra-challenge-heading{padding:0;border:0;background:transparent}
 @media(max-width:620px){.extra-challenge-heading{padding:20px}.reset-activity-button{width:100%}}
+
+@page { size: A4; margin: 12mm; }
+@media print {
+  body.lesson-printing { color: #172323 !important; background: #fff !important; }
+  body.lesson-printing > *:not(.lesson-print-export) { display: none !important; }
+  body.lesson-printing .lesson-print-export { display: block !important; width: auto; color: #172323; background: #fff; font: 10.5pt/1.4 Arial, sans-serif; }
+  .lesson-print-export * { box-sizing: border-box; box-shadow: none !important; text-shadow: none !important; }
+  .lesson-print-export button { font: inherit; }
+  .lesson-print-header { display: grid; grid-template-columns: minmax(0, 1fr) 34mm; grid-template-rows: auto 1fr; gap: 6mm 9mm; min-height: 61mm; margin-bottom: 5mm; border: 1.5pt solid #0f7772; border-radius: 5mm; padding: 8mm; color: #fff; background: linear-gradient(120deg, #107b75 0%, #0b4f4c 42%, #061312 100%); -webkit-print-color-adjust: exact; print-color-adjust: exact; break-inside: avoid; }
+  .lesson-print-brand { align-self: start; color: #fff; font-weight: 900; letter-spacing: .06em; }
+  .lesson-print-brand strong { color: #8ff3ec; }
+  .lesson-print-brand small { display: block; margin-top: 1.5mm; color: #d0ece9; font-size: 7.5pt; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .lesson-print-header > img { grid-column: 2; grid-row: 1 / span 2; align-self: center; width: 34mm; height: 50mm; border: 1pt solid #8dd8d3; border-radius: 3mm; object-fit: cover; }
+  .lesson-print-title { align-self: end; }
+  .lesson-print-title > p { margin: 0 0 1mm; color: #a4faf4; font-size: 7.5pt; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+  .lesson-print-title h1 { margin: 0 0 2.5mm; color: #fff; font: 900 25pt/1 "Outfit", Arial, sans-serif; }
+  .lesson-print-title > div { max-width: 135mm; color: #d8e9e7; font-size: 9pt; }
+  .lesson-print-student-fields { display: grid; grid-template-columns: 1.35fr 1.1fr .75fr; gap: 5mm; margin: 0 0 8mm; border-bottom: 1pt solid #b9cdcb; padding: 0 1mm 4mm; font-size: 8.5pt; font-weight: 700; break-inside: avoid; }
+  .lesson-print-section { margin: 0 0 9mm; }
+  .lesson-print-section > header { display: flex; align-items: center; gap: 4mm; margin: 0 0 5mm; border-bottom: 2pt solid #087f7b; padding: 0 0 3mm; break-after: avoid; }
+  .lesson-print-section > header > span { display: grid; flex: 0 0 11mm; width: 11mm; height: 11mm; place-items: center; border-radius: 50%; color: #fff; background: #087f7b; font-size: 8pt; font-weight: 900; }
+  .lesson-print-section > header h2 { margin: 0; color: #112c2b; font: 900 16pt/1.15 "Outfit", Arial, sans-serif; }
+  .lesson-print-section > header p { margin: 1mm 0 0; color: #58706f; font-size: 8pt; font-weight: 700; }
+  .lesson-print-section .lesson-section-content { padding: 0; }
+  .lesson-print-section .mini-heading { margin: 5mm 0 3mm; break-after: avoid; }
+  .lesson-print-section .mini-heading:first-child { margin-top: 0; }
+  .lesson-print-section .mini-heading .eyebrow { margin: 0 0 1mm; color: #087f7b; font-size: 7pt; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+  .lesson-print-section .mini-heading h2 { margin: 0 0 1mm; color: #172323; font: 900 13pt/1.2 "Outfit", Arial, sans-serif; }
+  .lesson-print-section .mini-heading p,
+  .lesson-print-section .section-lead { margin: 1mm 0 3mm; color: #4c5d5c; font-size: 8.5pt; }
+  .lesson-print-section .extra-challenge-heading { border: 0; border-radius: 0; padding: 0; background: none; }
+  .lesson-print-section .question-carousel-shell { overflow: visible; border: 0; background: transparent; }
+  .lesson-print-section .question-carousel,
+  .lesson-print-section .lesson-print-questions,
+  .lesson-print-section .question-list { display: block; overflow: visible; }
+  .lesson-print-section .question-slide,
+  .lesson-print-section .lesson-print-question { display: block; width: auto; min-width: 0; padding: 0; break-inside: avoid; }
+  .lesson-print-section .question-card { margin: 0 0 4mm; border: 1pt solid #b8c9c8; border-radius: 3mm; padding: 4mm; background: #fff; break-inside: avoid; }
+  .lesson-print-section .slide-number { margin: 0 0 1.5mm; color: #087f7b; font-size: 7pt; font-weight: 900; letter-spacing: .07em; text-transform: uppercase; }
+  .lesson-print-section .question-text { margin: 0 0 2.5mm; font-size: 9.5pt; font-weight: 800; }
+  .lesson-print-section .answer-options { display: grid; gap: 1.5mm; }
+  .lesson-print-section .answer-choice { display: flex; align-items: flex-start; gap: 2mm; width: 100%; border: 0; padding: 0; color: #172323; background: transparent; font-size: 8.5pt; font-weight: 500; text-align: left; }
+  .lesson-print-section .answer-choice span { display: inline; flex: 0 0 auto; width: auto; height: auto; border: 0; font-size: 9pt; line-height: 1.25; }
+  .lesson-print-section .watch-checklist { display: grid; gap: 2mm; }
+  .lesson-print-section .watch-item { display: flex; gap: 2mm; border: 0; border-bottom: .6pt solid #d5dfde; padding: 1.5mm 0 2mm; color: #172323; background: transparent; font-size: 9pt; break-inside: avoid; }
+  .lesson-print-section .watch-item span { display: inline; flex: 0 0 auto; width: auto; height: auto; border: 0; }
+  .lesson-print-section .watching-tip { margin: 4mm 0 0; border-left: 3pt solid #b8d600; padding: 3mm; color: #314240; background: #f4f9e8; font-size: 8.5pt; break-inside: avoid; }
+  .lesson-print-section :is(.matching-board,.match-board) { display: grid; grid-template-columns: 1fr 1.45fr; gap: 4mm; }
+  .lesson-print-section :is(.match-column,.matching-column) { display: grid; gap: 2mm; }
+  .lesson-print-section :is(.match-button,.matching-option,.word-chip,.verb-bank button,.letter,.body-part-letter,.paris-sort-item,.sort-item) { border: 1pt solid #a9bcba !important; border-radius: 2mm !important; padding: 2mm !important; color: #172323 !important; background: #fff !important; }
+  .lesson-print-section .lesson-print-word-bank,
+  .lesson-print-section .lesson-print-sort-bank { margin: 3mm 0; border: 1pt dashed #087f7b; border-radius: 2mm; padding: 3mm; color: #243b3a; background: #effaf8; }
+  .lesson-print-section :is(.verb-slot,.sentence-slot,.word-slot,.gap-slot,.fill-slot) { min-width: 25mm; border: 0 !important; border-bottom: 1pt solid #172323 !important; padding: 0 1mm !important; color: transparent !important; background: transparent !important; }
+  .lesson-print-section :is(.wordsearch-grid,.crossword-grid) { break-inside: avoid; }
+  .lesson-print-section :is(.wordsearch-cell,.crossword-cell,.letter) { color: #172323 !important; background: #fff !important; }
+  .lesson-print-section .lesson-print-zone-lines { min-height: 18mm; margin-top: 2mm; background: repeating-linear-gradient(to bottom, transparent 0 6mm, #c8d5d4 6mm 6.3mm); }
+  .lesson-print-section .writing-card { margin-top: 5mm; border: 1.5pt solid #087f7b; border-radius: 4mm; padding: 5mm; background: #f6fbfa; break-inside: avoid; }
+  .lesson-print-section .writing-card h2 { margin: 1mm 0 2mm; font: 900 14pt/1.2 "Outfit", Arial, sans-serif; }
+  .lesson-print-section .writing-card label,
+  .lesson-print-section .student-fields { display: none; }
+  .lesson-print-writing-lines { min-height: 55mm; margin-top: 4mm; background: repeating-linear-gradient(to bottom, transparent 0 8mm, #9eb2b0 8mm 8.35mm); }
+  .lesson-print-footer { display: flex; justify-content: space-between; gap: 5mm; margin-top: 7mm; border-top: 1pt solid #9db1af; padding-top: 3mm; color: #506361; font-size: 7.5pt; }
+  .lesson-print-footer strong { color: #087f7b; }
+}
 
 /* Compact movie-library filters keep the carousel controls beside the posters. */
 .movie-filter-panel .movie-filters{display:grid;grid-template-columns:minmax(190px,1.35fr) repeat(3,minmax(0,1fr));gap:12px;margin:0;padding:15px 17px 17px}

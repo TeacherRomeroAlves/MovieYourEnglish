@@ -1,4 +1,7 @@
 const pageMotionSource = document.currentScript?.src || location.href;
+const sharedFooterScript = document.createElement("script");
+sharedFooterScript.src = new URL("site-footer.js", pageMotionSource).href;
+document.body.appendChild(sharedFooterScript);
 // Streaming links are examples for a particular region, not a guarantee of local availability.
 document.querySelectorAll(".lesson-page .watch-provider-grid, .lesson-page .watch-provider:not(.watch-provider-grid .watch-provider)").forEach((provider) => {
   if (provider.nextElementSibling?.classList.contains("watch-availability-note")) return;
@@ -11,6 +14,14 @@ const storyExportScript = document.createElement("script");
 storyExportScript.src = new URL("story-export.js", pageMotionSource).href;
 storyExportScript.async = false;
 document.body.appendChild(storyExportScript);
+const learningDataScript = document.createElement("script");
+learningDataScript.async = false;
+learningDataScript.src = new URL("learning-data.js", pageMotionSource).href;
+document.body.appendChild(learningDataScript);
+const lessonPrintScript = document.createElement("script");
+lessonPrintScript.async = false;
+lessonPrintScript.src = new URL("lesson-print.js", pageMotionSource).href;
+document.body.appendChild(lessonPrintScript);
 // Keep a word bank stable during an attempt, but never show it in answer order.
 window.myeEnsureShuffledOrder = (answers, savedOrder) => {
   const original = [...answers];
