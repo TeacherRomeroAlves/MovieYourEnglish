@@ -434,6 +434,12 @@ if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && "Intersect
   });
 }
 
+if (location.pathname.includes("/odyssey/")) {
+  const odysseyWritingCard = document.querySelector(".writing-card");
+  const title = odysseyWritingCard?.querySelector("h2");
+  if (title) title.textContent = "Treat strangers the way you would want to be treated.";
+}
+
 document.querySelectorAll(".writing-card").forEach((writingCard) => {
   if (writingCard.dataset.speakingReady) return;
   writingCard.dataset.speakingReady = "true";
