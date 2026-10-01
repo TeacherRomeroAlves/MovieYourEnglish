@@ -260,6 +260,14 @@ h2 { margin: 0; font-size: clamp(1.65rem, 4vw, 2.3rem); letter-spacing: -0.04em;
 .section-lead, .mini-heading > p:not(.eyebrow) { max-width: 720px; color: var(--muted); line-height: 1.55; }
 .mini-heading { margin-bottom: 22px; }
 .mini-heading h2 { margin-top: 0; }
+.lesson-section-heading-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; column-gap: 18px; }
+.lesson-section-heading-row .mini-heading { margin-bottom: 22px; }
+.lesson-section-share { display: inline-flex; align-items: center; justify-content: center; gap: 7px; margin-top: 1px; border: 1px solid #79bcb8; border-radius: 999px; padding: 9px 13px; color: #075b58; background: #eefcfb; font: 800 .8rem "Outfit", Arial, sans-serif; white-space: nowrap; cursor: pointer; transition: color .18s ease, background .18s ease, transform .18s ease; }
+.lesson-section-share span { font-size: 1rem; line-height: 1; }
+.lesson-section-share:hover { color: #fff; background: #087f7b; transform: translateY(-1px); }
+.lesson-section-share:focus-visible { outline: 3px solid var(--neon); outline-offset: 3px; }
+.lesson-section-share-status { grid-column: 2; min-height: 1.1em; margin-top: 5px; color: #087f7b; font-size: .72rem; font-weight: 800; text-align: center; }
+@media (max-width: 560px) { .lesson-section-heading-row { column-gap: 10px; }.lesson-section-share { padding: 8px 11px; font-size: .75rem; }.lesson-section-share-status { max-width: 105px; } }
 .lesson-divider { height: 3px; margin: clamp(34px, 6vw, 58px) 0; background: repeating-linear-gradient(90deg, var(--ink) 0 9px, transparent 9px 16px); }
 .question-list { display: grid; }
 .question-carousel-shell { overflow: hidden; border: 3px solid var(--ink); background: #f7f7f7; }

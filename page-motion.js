@@ -22,6 +22,45 @@ const lessonPrintScript = document.createElement("script");
 lessonPrintScript.async = false;
 lessonPrintScript.src = new URL("lesson-print.js", pageMotionSource).href;
 document.body.appendChild(lessonPrintScript);
+// Give teachers a fast way to share the complete lesson from the viewing guide.
+document.querySelectorAll(".lesson-section").forEach((section) => {
+  const sectionNumber = section.querySelector("summary b")?.textContent.trim();
+  if (sectionNumber !== "02" || section.querySelector(".lesson-section-share")) return;
+  const content = section.querySelector(".lesson-section-content");
+  const heading = content?.querySelector(":scope > .mini-heading");
+  if (!content || !heading) return;
+  const actions = document.createElement("div");
+  actions.className = "lesson-section-heading-row";
+  const shareButton = document.createElement("button");
+  shareButton.type = "button";
+  shareButton.className = "lesson-section-share";
+  shareButton.innerHTML = '<span aria-hidden="true">↗</span> Share lesson';
+  shareButton.setAttribute("aria-label", "Share this movie lesson");
+  const status = document.createElement("span");
+  status.className = "lesson-section-share-status";
+  status.setAttribute("aria-live", "polite");
+  actions.append(heading, shareButton, status);
+  content.prepend(actions);
+
+  shareButton.addEventListener("click", async () => {
+    const shareData = { title: document.title, text: "Try this Movie Your English lesson.", url: location.href };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        status.textContent = "Lesson shared.";
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(location.href);
+        status.textContent = "Link copied.";
+      } else {
+        window.prompt("Copy this lesson link:", location.href);
+        status.textContent = "Copy the link above.";
+      }
+    } catch (error) {
+      if (error?.name !== "AbortError") status.textContent = "Could not share the link. Please try again.";
+    }
+    setTimeout(() => { status.textContent = ""; }, 2600);
+  });
+});
 // Keep a word bank stable during an attempt, but never show it in answer order.
 window.myeEnsureShuffledOrder = (answers, savedOrder) => {
   const original = [...answers];
