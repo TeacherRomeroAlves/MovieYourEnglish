@@ -2,6 +2,15 @@
   const currentScript = document.currentScript;
   const root = new URL("./", currentScript?.src || location.href);
   const href = (path) => new URL(path, root).href;
+  // Official Vercel Web Analytics integration for this static site.
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  if (!document.querySelector("script[data-vercel-analytics]")) {
+    const analytics = document.createElement("script");
+    analytics.defer = true;
+    analytics.dataset.vercelAnalytics = "true";
+    analytics.src = "/_vercel/insights/script.js";
+    document.head.appendChild(analytics);
+  }
   const footer = document.querySelector("footer.saas-footer, footer.site-footer");
   if (!footer) return;
   footer.className = "mye-footer";
