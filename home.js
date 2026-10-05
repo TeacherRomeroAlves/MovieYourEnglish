@@ -142,6 +142,10 @@ if (carousel && !carousel.querySelector('[href="./inside-out-2/index.html"]')) {
 if (carousel && !carousel.querySelector('[data-level-choice="superman"]')) {
   carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="beginner intermediate-plus" data-genre="action adventure" data-platform="max"><a href="./superman-beginner/index.html" class="movie-poster-link" data-level-choice="superman"><img src="assets/superman-poster.webp" alt="Superman movie poster"><span class="level-choice-tag">Two levels</span><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Superman</h3><p><span>Beginner / Intermediate+</span> &middot; Action &middot; Adventure &middot; HBO Max</p></div></article>');
 }
+
+if (carousel && !carousel.querySelector('[data-level-choice="fall-guy"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary intermediate-plus" data-genre="action comedy" data-platform="prime-video"><a href="./fall-guy-elementary/index.html" class="movie-poster-link" data-level-choice="fall-guy"><img src="assets/fall-guy-poster.png" alt="The Fall Guy movie poster"><span class="level-choice-tag">Two levels</span><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>The Fall Guy</h3><p><span>Elementary / Intermediate+</span> &middot; Action &middot; Comedy &middot; Prime Video</p></div></article>');
+}
 if (carousel && !carousel.querySelector('[href="./freakier-friday/index.html"]')) {
   carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="pre-intermediate" data-genre="comedy fantasy" data-platform="disney-plus"><a href="./freakier-friday/index.html" class="movie-poster-link"><img src="assets/freakier-friday-poster.png" alt="Freakier Friday movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Freakier Friday</h3><p><span>Pre-Intermediate</span> &middot; Comedy &middot; Fantasy &middot; Disney+</p></div></article>');
 }
@@ -384,4 +388,15 @@ if (supermanLevelLinks.length) {
   supermanLevelLinks.forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); supermanDialog.showModal(); }));
   supermanDialog.querySelector(".warning-cancel").addEventListener("click", () => supermanDialog.close());
   supermanDialog.addEventListener("click", (event) => { if (event.target === supermanDialog) supermanDialog.close(); });
+}
+
+const fallGuyLevelLinks = document.querySelectorAll('[data-level-choice="fall-guy"], a[href="./fall-guy-elementary/index.html"]');
+if (fallGuyLevelLinks.length) {
+  const fallGuyDialog = document.createElement("dialog");
+  fallGuyDialog.className = "content-warning-dialog level-choice-dialog";
+  fallGuyDialog.innerHTML = `<div class="content-warning-dialog__body"><p class="eyebrow">Choose your lesson</p><h2>The Fall Guy</h2><p>The same movie is available at two language levels. Choose the lesson that feels right for you.</p><div class="level-choice-options"><a href="./fall-guy-elementary/index.html"><small>More support</small><strong>Elementary</strong><span>Clear language, essential movie vocabulary, and guided reflection.</span></a><a href="./fall-guy-intermediate-plus/index.html"><small>More challenge</small><strong>Intermediate+</strong><span>Richer language, filmmaking vocabulary, and a deeper debate.</span></a></div><button class="warning-cancel" type="button">Go back</button></div>`;
+  document.body.appendChild(fallGuyDialog);
+  fallGuyLevelLinks.forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); fallGuyDialog.showModal(); }));
+  fallGuyDialog.querySelector(".warning-cancel").addEventListener("click", () => fallGuyDialog.close());
+  fallGuyDialog.addEventListener("click", (event) => { if (event.target === fallGuyDialog) fallGuyDialog.close(); });
 }

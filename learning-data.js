@@ -8,6 +8,8 @@
     ["eternity", "eternity", "Eternity", "Pre-Intermediate", "assets/Eternity-poster.webp"],
     ["f1-the-movie-beginner", "f1-the-movie", "F1: The Movie", "Beginner", "assets/f1-poster.webp"],
     ["f1-the-movie", "f1-the-movie", "F1: The Movie", "Pre-Intermediate", "assets/f1-poster.webp"],
+    ["fall-guy-elementary", "fall-guy", "The Fall Guy", "Elementary", "assets/fall-guy-poster.png"],
+    ["fall-guy-intermediate-plus", "fall-guy", "The Fall Guy", "Intermediate+", "assets/fall-guy-poster.png"],
     ["forrest-gump", "forrest-gump", "Forrest Gump", "Pre-Intermediate", "assets/forrest-gump-poster.webp"],
     ["freakier-friday", "freakier-friday", "Freakier Friday", "Pre-Intermediate", "assets/freakier-friday-poster.png"],
     ["frankenstein-easier", "frankenstein", "Frankenstein", "Elementary", "assets/frankenstein-poster.webp"],
