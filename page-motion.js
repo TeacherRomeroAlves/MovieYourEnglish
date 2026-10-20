@@ -476,7 +476,9 @@ if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && "Intersect
 if (location.pathname.includes("/odyssey/")) {
   const odysseyWritingCard = document.querySelector(".writing-card");
   const title = odysseyWritingCard?.querySelector("h2");
-  if (title) title.textContent = "Treat strangers the way you would want to be treated.";
+  if (title) title.textContent = "Zeus’ law: treating strangers with kindness";
+  const prompt = odysseyWritingCard?.querySelector("h2 + p");
+  if (prompt) prompt.textContent = '“Treat strangers as you would like to be treated.” In The Odyssey, this principle is known as Zeus’ law. Do you agree or disagree with it? Explain your opinion and use examples from the movie or your own life. Should this principle apply to every stranger? Why or why not?';
 }
 
 document.querySelectorAll(".writing-card").forEach((writingCard) => {
