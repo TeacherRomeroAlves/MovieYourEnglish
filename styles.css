@@ -239,6 +239,18 @@ h2 { margin: 0; font-size: clamp(1.65rem, 4vw, 2.3rem); letter-spacing: -0.04em;
 .lesson-print-button:focus-visible { outline: 3px solid var(--neon); outline-offset: 3px; }
 .lesson-print-button:active { transform: translateY(0); }
 .lesson-print-export { display: none; }
+.music-platform-card{display:flex;align-items:center;gap:24px;margin:0 0 32px;padding:26px 30px;border:1px solid #94516f;border-radius:26px;background:linear-gradient(110deg,#170d19,#382037 60%,#64113f);color:#fff}
+.music-platform-card>img{width:88px;height:88px;flex:none;border-radius:20px;object-fit:contain}
+.music-platform-copy{flex:1;min-width:0}
+.music-platform-copy .music-platform-kicker{margin:0 0 6px;color:#f6b4d7;font-size:.72rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
+.music-platform-copy h2{margin:0 0 8px;color:#fff;font-size:clamp(1.5rem,2.6vw,2rem);line-height:1.1}
+.music-platform-copy>p:last-child{margin:0;color:#ead7e5;font-size:.95rem;line-height:1.5}
+.music-platform-card>a{display:inline-flex;align-items:center;justify-content:center;gap:12px;flex:none;padding:15px 20px;border-radius:15px;color:#310c25;background:#f3a9d0;font-weight:800;text-decoration:none;transition:background .18s ease}
+.music-platform-card>a:hover{background:#ffd0e9}
+.music-platform-card>a:focus-visible{outline:3px solid #fff;outline-offset:4px}
+.music-platform-card>a:active{background:#e88fbd}
+@media(max-width:960px){.music-platform-card{flex-wrap:wrap;gap:18px}.music-platform-card>a{margin-left:106px}}
+@media(max-width:560px){.music-platform-card{padding:20px;gap:14px;border-radius:22px}.music-platform-card>img{width:62px;height:62px;border-radius:14px}.music-platform-copy{flex-basis:calc(100% - 76px)}.music-platform-copy>p:last-child{font-size:.86rem}.music-platform-card>a{width:100%;margin-left:0;padding:13px;font-size:.88rem}}
 .quiet-button { border: 0; padding: 0; color: var(--teal-dark); background: transparent; font: 800 0.82rem "DM Sans", sans-serif; text-decoration: underline; cursor: pointer; }
 .lesson-section { margin: 20px 0; border: 4px solid var(--ink); background: var(--paper); box-shadow: 6px 6px 0 rgba(10, 10, 10, 0.12); }
 .lesson-section summary { display: grid; grid-template-columns: minmax(0, 1fr) 190px 25px; align-items: center; gap: 16px; padding: 18px 20px; background: #eefefd; font: 700 clamp(1rem, 3vw, 1.3rem) "Josefin Sans", sans-serif; cursor: pointer; list-style: none; }

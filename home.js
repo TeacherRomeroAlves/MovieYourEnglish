@@ -1,4 +1,18 @@
 const carousel = document.querySelector("#poster-carousel");
+// Introduce the sister platform just beneath the library's featured lesson.
+const libraryHero = document.querySelector(".platform-hero");
+if (carousel && libraryHero && !document.querySelector(".music-platform-card")) {
+  libraryHero.insertAdjacentHTML("afterend", `
+    <aside class="music-platform-card" aria-labelledby="music-platform-title">
+      <img src="assets/music-your-english-logo.png" alt="Music Your English" width="88" height="88">
+      <div class="music-platform-copy">
+        <p class="music-platform-kicker">Meet our sister platform</p>
+        <h2 id="music-platform-title">Love music, too?</h2>
+        <p>Practice English with the songs you love. Explore interactive lessons on Music Your English.</p>
+      </div>
+      <a href="https://musicyourenglish.com/" target="_blank" rel="noopener">Explore Music Your English <span aria-hidden="true">↗</span></a>
+    </aside>`);
+}
 document.querySelectorAll("[data-carousel-direction]").forEach((button) => {
   button.addEventListener("click", () => {
     const direction = button.dataset.carouselDirection === "next" ? 1 : -1;

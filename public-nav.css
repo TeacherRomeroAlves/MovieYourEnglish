@@ -1,4 +1,25 @@
 /* Keep the shared public-page header identical to the homepage header. */
+.streaming-home > .platform-hero {
+  margin-block: 24px;
+}
+.streaming-home .library-actions { align-items: stretch; }
+.streaming-home .library-actions > :is(.member-library-cta, .instagram-cta) {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin: 0;
+  padding: 12px 17px;
+  font: 800 .84rem/1.4 Outfit, Arial, sans-serif;
+}
+.streaming-home > .music-platform-card + .activity-shelf {
+  margin-top: clamp(40px, 6.5vw, 75px);
+}
+@media (max-width: 560px) {
+  .streaming-home > .music-platform-card + .activity-shelf { margin-top: 39px; }
+}
+
 .platform-home .saas-shell,
 .platform-home .streaming-home,
 .platform-home .how-shell,
