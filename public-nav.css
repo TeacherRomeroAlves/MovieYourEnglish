@@ -113,6 +113,7 @@
 .mobile-nav-toggle:focus-visible { outline: 3px solid #d9ff00; outline-offset: 3px; }
 
 @media (max-width: 620px) {
+  .platform-home .saas-nav .nav-start { display: none; }
   .platform-home .saas-shell,
   .platform-home .streaming-home,
   .platform-home .how-shell,
