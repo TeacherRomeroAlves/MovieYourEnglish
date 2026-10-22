@@ -22,7 +22,7 @@ const after = [
 const during = ["Who are Rumi, Mira, and Zoey? What is their job? Are they good at it? Are they similar to each other?", "Who are Gwi-Ma and Ji-Nu? What do they want?", "Who are the Saja Boys? Are they friends of Huntrix?", "What is the Honmoon?"];
 const save = () => localStorage.setItem(key, JSON.stringify(state));
 const count = (items) => Object.keys(items).length;
-const writingComplete = () => state.writing.trim().length >= 50;
+const writingComplete = () => window.myeResponseComplete(state.writing);
 const progress = () => count(state.before) + state.during.length + count(state.after) + (writingComplete() ? 1 : 0);
 function optionOrder(group, id, options) { const orderKey = `${group}-${id}`; if (!state.orders[orderKey]) state.orders[orderKey] = options.map((_, index) => index).sort(() => Math.random() - 0.5); return state.orders[orderKey]; }
 function renderQuiz(target, items, group) {
@@ -44,7 +44,7 @@ document.addEventListener("click", (event) => {
   if (nav) { const carousel = nav.closest(".question-carousel-shell").querySelector(".question-carousel"); carousel.scrollBy({ left: carousel.clientWidth * (nav.dataset.nav === "next" ? 1 : -1), behavior: "smooth" }); }
 });
 ["student-writing", "student-name", "teacher-name"].forEach((id) => document.querySelector(`#${id}`).addEventListener("input", (event) => { state[id === "student-writing" ? "writing" : id === "student-name" ? "name" : "teacher"] = event.target.value; save(); render(); }));
-document.querySelector("#reset-lesson").addEventListener("click", () => { if (confirm("Reset lesson progress?")) { state = { ...defaults }; save(); render(); } });
+document.querySelector("#reset-lesson").addEventListener("click", () => { if ((confirm("Reset lesson progress?") && window.myeResetSpeaking())) { state = { ...defaults }; save(); render(); } });
 function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[character])); }
 function openReport() {
   const completed = progress(), beforeDone = count(state.before), duringDone = state.during.length, afterDone = count(state.after) + (writingComplete() ? 1 : 0), popup = window.open("", "_blank");

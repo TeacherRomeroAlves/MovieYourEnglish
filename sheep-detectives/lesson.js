@@ -52,7 +52,7 @@ function getChoiceOrder(question, group) {
   return lesson.orders[key];
 }
 function isAnswered(value) { return Number.isInteger(value); }
-function writingComplete() { return lesson.writing.trim().length >= 50; }
+function writingComplete() { return window.myeResponseComplete(lesson.writing); }
 function getProgress() {
   return {
     completed: Object.keys(lesson.before).length + lesson.matchedTerms.length + lesson.during.length + Object.keys(lesson.after).length + (writingComplete() ? 1 : 0),
@@ -165,6 +165,7 @@ document.addEventListener("click", (event) => {
 
 document.querySelector("#reset-lesson").addEventListener("click", () => {
   if (!window.confirm("Reset all progress for The Sheep Detectives lesson?")) return;
+  window.myeResetSpeaking();
   lesson = { ...defaultState };
   selectedTerm = null; feedbackMessage = ""; save(); renderAll();
 });

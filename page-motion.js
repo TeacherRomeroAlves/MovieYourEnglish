@@ -1,4 +1,14 @@
 const pageMotionSource = document.currentScript?.src || location.href;
+const responsePath = location.pathname.replace(/\/index\.html$/, "/").replace(/\/$/, "");
+const speakingCompletionKey = `mye-speaking-complete:${responsePath}`;
+window.myeSpeakingComplete = () => localStorage.getItem(speakingCompletionKey) === "true";
+window.myeResponseComplete = (writing) => String(writing || "").trim().length >= 50 || window.myeSpeakingComplete();
+window.myeResetSpeaking = () => { localStorage.removeItem(speakingCompletionKey); return true; };
+document.addEventListener("mye-speaking-saved", () => {
+  localStorage.setItem(speakingCompletionKey, "true");
+  // Existing renderers save and recalculate their own lesson progress on input.
+  document.querySelector("#student-writing, .writing-card textarea")?.dispatchEvent(new Event("input", { bubbles: true }));
+});
 const sharedFooterScript = document.createElement("script");
 sharedFooterScript.src = new URL("site-footer.js", pageMotionSource).href;
 document.body.appendChild(sharedFooterScript);
@@ -79,6 +89,7 @@ window.myeEnsureShuffledOrder = (answers, savedOrder) => {
 // Each lesson owns its challenge state, but this shared control resets only that
 // state and lets the lesson's existing renderer rebuild the activity on reload.
 const extraActivityState = {
+  "obsession": { gaps: [], wordOrder: [] },
   "alien-romulus": { terms: {}, selected: null },
   "barbie": { gaps: [], wordOrder: [] },
   "captain-america-brave-new-world": { matches: {} },
@@ -191,6 +202,7 @@ if (!document.querySelector("[data-auth-slot]")) {
 }
 const motionTargets = document.querySelectorAll(".activity-page > section, .activity-page > .watch-provider");
 const adultContentNotes = {
+  "obsession": { label: "Content warning", text: "This movie contains disturbing images and graphic violence. Recommended for adults." },
   "alien-romulus": { label: "Content warning", text: "This movie contains intense violence, frightening scenes, and disturbing images. Recommended for adults." },
   "se7en": { label: "Content warning", text: "This movie contains graphic violence, disturbing crime scenes, and adult themes. Recommended for adults." },
   "materialists": { label: "Mild content warning", text: "This movie includes mature relationship themes and a reference to sexual assault. Viewer discretion is advised." },
@@ -614,7 +626,7 @@ document.querySelectorAll(".writing-card").forEach((writingCard) => {
         speakingCard.classList.remove("is-recording");
         stream.getTracks().forEach((track) => track.stop());
         status.textContent = "Recording ready. Save the file to send it to your teacher.";
-        document.dispatchEvent(new CustomEvent("mye-speaking-saved"));
+        if (recordingBlob.size > 0) document.dispatchEvent(new CustomEvent("mye-speaking-saved"));
       });
       recorder.start();
       speakingCard.classList.add("is-recording");

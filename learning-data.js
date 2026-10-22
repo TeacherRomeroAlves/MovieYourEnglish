@@ -1,5 +1,6 @@
 (function () {
   const lessons = [
+    ["obsession", "obsession", "Obsession", "Elementary", "assets/obsession-poster.webp"],
     ["alien-romulus", "alien-romulus", "Alien: Romulus", "Intermediate+", "assets/alien-romulus-poster.webp"],
     ["barbie", "barbie", "Barbie", "Pre-Intermediate", "assets/barbie-poster.png"],
     ["captain-america-brave-new-world", "captain-america-brave-new-world", "Captain America: Brave New World", "Elementary", "assets/captain-america-brave-new-world-poster.png"],

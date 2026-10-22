@@ -908,6 +908,8 @@ body:not(.platform-home) .story-share-card h2{margin:4px 0 8px;color:#075b58}
   body.lesson-printing .lesson-print-export { display: block !important; width: auto; color: #172323; background: #fff; font: 10.5pt/1.4 Arial, sans-serif; }
   .lesson-print-export * { box-sizing: border-box; box-shadow: none !important; text-shadow: none !important; }
   .lesson-print-export button { font: inherit; }
+  .lesson-print-export .response-internal-prompt { position: static; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; }
+  .lesson-print-export .response-prompt-box + .writing-card .response-internal-prompt { display: none; }
   .lesson-print-header { display: grid; grid-template-columns: minmax(0, 1fr) 34mm; grid-template-rows: auto 1fr; gap: 6mm 9mm; min-height: 61mm; margin-bottom: 5mm; border: 1.5pt solid #0f7772; border-radius: 5mm; padding: 8mm; color: #fff; background: linear-gradient(120deg, #107b75 0%, #0b4f4c 42%, #061312 100%); -webkit-print-color-adjust: exact; print-color-adjust: exact; break-inside: avoid; }
   .lesson-print-brand { align-self: start; color: #fff; font-weight: 900; letter-spacing: .06em; }
   .lesson-print-brand strong { color: #8ff3ec; }

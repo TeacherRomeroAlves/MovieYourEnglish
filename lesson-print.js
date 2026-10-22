@@ -35,6 +35,15 @@
   }
 
   function sanitizeActivity(root) {
+    root.querySelectorAll(".word-item").forEach((item) => {
+      const word = item.querySelector("strong");
+      if (word && !/letters$/i.test(word.textContent.trim())) word.textContent = `${word.textContent.trim().length} letters`;
+      item.querySelector(".found-mark")?.remove();
+    });
+    root.querySelectorAll(".correction-card").forEach((card) => {
+      card.querySelectorAll("small, button").forEach((node) => node.remove());
+      card.insertAdjacentHTML("beforeend", '<div class="lesson-print-zone-lines">Your correction:</div>');
+    });
     root.querySelectorAll(removeSelectors).forEach((node) => node.remove());
     root.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
     root.querySelectorAll("[aria-live]").forEach((node) => node.removeAttribute("aria-live"));
@@ -82,6 +91,14 @@
       lines.className = "lesson-print-writing-lines";
       textarea.replaceWith(lines);
     });
+    root.querySelectorAll(".response-word-count,.check-animal").forEach((node) => node.remove());
+    root.querySelectorAll(".mini-heading > p:not(.eyebrow)").forEach((node) => {
+      const instruction = node.textContent;
+      if (/arrows/i.test(instruction)) node.textContent = "Choose the best answer for each question.";
+      else if (/click each question/i.test(instruction)) node.textContent = "Discuss these questions and make notes while you watch.";
+      else if (/click.*match|click a character|click a word.*definition/i.test(instruction)) node.textContent = "Match each item with its correct partner.";
+      else if (/click|drag/i.test(instruction)) node.textContent = /gap|blank/i.test(instruction) ? "Complete the gaps using the word bank." : /sort|group/i.test(instruction) ? "Write each item in the correct group." : "Complete the activity below.";
+    });
     root.querySelectorAll(".response-heading").forEach((heading) => {
       const eyebrow = heading.querySelector(".eyebrow");
       const title = heading.querySelector("h2");
@@ -120,6 +137,7 @@
 
     root.querySelectorAll(".wordsearch-cell,.crossword-cell,.letter").forEach((cell) => {
       cell.classList.remove("found", "is-found", "selected", "correct", "is-correct");
+      [...cell.classList].filter((name) => /^color-\d+$/.test(name)).forEach((name) => cell.classList.remove(name));
     });
     root.querySelectorAll(".word-list li,.word-list-item").forEach((word) => {
       word.classList.remove("found", "is-found");

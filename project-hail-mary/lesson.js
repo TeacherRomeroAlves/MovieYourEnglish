@@ -120,7 +120,7 @@ async function loadRemoteProgress() {
 function correctCount(items, answers) { return items.filter((item) => Number(answers[item.id]) === item.correct).length; }
 function normalise(value) { return value.toLowerCase().replace(/[^a-z]/g, ""); }
 function rockyCount() { return rockyItems.filter((item) => normalise(lesson.rocky[item.id] || "") === normalise(item.answer)).length; }
-function writingComplete() { return lesson.writing.trim().length >= 50; }
+function writingComplete() { return window.myeResponseComplete(lesson.writing); }
 function getProgress() {
   const plot = Number(lesson.plot) === plotQuestion.correct ? 1 : 0;
   const vocabCount = correctCount(vocab, lesson.vocab); const wordCount = lesson.foundWords.length;
@@ -236,7 +236,7 @@ document.addEventListener("input", (event) => {
   if (event.target.id === "teacher-name") { lesson.teacherName = event.target.value; save(); }
 });
 
-document.querySelector("#reset-lesson").addEventListener("click", () => { if (confirm("Reset all saved answers and progress for this lesson?")) { lesson = { ...defaultState }; save(); renderAll(); } });
+document.querySelector("#reset-lesson").addEventListener("click", () => { if (confirm("Reset all saved answers and progress for this lesson?") && window.myeResetSpeaking()) { lesson = { ...defaultState }; save(); renderAll(); } });
 
 document.addEventListener("mye-auth-ready", (event) => {
   authClient = event.detail.client;

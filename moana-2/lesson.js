@@ -40,7 +40,7 @@ if (!Array.isArray(state.wordOrder) || state.wordOrder.length !== sentenceWords.
 const during = ["Who are Moana and Maui?", "What is Motufetu? Where is it, and why is it important?", "Who are Matangi and Nalo?", "What is Moana's mission?", "Who helps Moana on her journey? Does she accomplish her goal?"];
 const save = () => localStorage.setItem(key, JSON.stringify(state));
 const count = (items) => Object.keys(items).length;
-const writingComplete = () => state.writing.trim().length >= 50;
+const writingComplete = () => window.myeResponseComplete(state.writing);
 const progress = () => count(state.before) + count(state.sentences) + state.during.length + count(state.after) + count(state.interview) + (writingComplete() ? 1 : 0);
 function optionOrder(group, id, options) { const orderKey = `${group}-${id}`; if (!state.orders[orderKey]) { state.orders[orderKey] = options.map((_, index) => index).sort(() => Math.random() - 0.5); save(); } return state.orders[orderKey]; }
 function renderQuiz(target, items, group) {
@@ -72,7 +72,7 @@ document.addEventListener("click", (event) => {
   const nav = event.target.closest("[data-nav]"); if (nav) { const carousel = nav.closest(".question-carousel-shell").querySelector(".question-carousel"); carousel.scrollBy({ left: carousel.clientWidth * (nav.dataset.nav === "next" ? 1 : -1), behavior: "smooth" }); }
 });
 ["student-writing", "student-name", "teacher-name"].forEach((id) => document.querySelector(`#${id}`).addEventListener("input", (event) => { state[id === "student-writing" ? "writing" : id === "student-name" ? "name" : "teacher"] = event.target.value; save(); render(); }));
-document.querySelector("#reset-lesson").addEventListener("click", () => { if (confirm("Reset lesson progress?")) { state = { ...defaults, before: {}, sentences: {}, during: [], after: {}, interview: {}, orders: {}, wordOrder: createWordOrder() }; save(); render(); } });
+document.querySelector("#reset-lesson").addEventListener("click", () => { if ((confirm("Reset lesson progress?") && window.myeResetSpeaking())) { state = { ...defaults, before: {}, sentences: {}, during: [], after: {}, interview: {}, orders: {}, wordOrder: createWordOrder() }; save(); render(); } });
 function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[character])); }
 function openReport() {
   const completed = progress(), beforeDone = count(state.before) + count(state.sentences), duringDone = state.during.length, afterDone = count(state.after) + count(state.interview) + (writingComplete() ? 1 : 0), popup = window.open("", "_blank"); if (!popup) return;

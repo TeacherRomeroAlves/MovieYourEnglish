@@ -25,7 +25,7 @@ const after = [
 const during = ["Who is Millie? Is she in a good situation?", "Where does Millie live and work?", "Who are Nina and Andrew?", "What is Nina and Andrew's relationship like?", "Who is Enzo?", "Is Enzo a good man?"];
 const save = () => localStorage.setItem(key, JSON.stringify(state));
 const count = (object) => Object.keys(object).length;
-const writingComplete = () => state.writing.trim().length >= 50;
+const writingComplete = () => window.myeResponseComplete(state.writing);
 const progress = () => count(state.before) + state.routine.filter(Boolean).length + state.during.length + count(state.after) + (writingComplete() ? 1 : 0);
 function shuffle(items) { return [...items].sort(() => Math.random() - .5); }
 state.verbOrder = window.myeEnsureShuffledOrder(verbs, state.verbOrder); save();
@@ -52,5 +52,5 @@ document.addEventListener("click", (event) => {
   const nav = event.target.closest("[data-nav]"); if (nav) { const carousel = nav.closest(".question-carousel-shell").querySelector(".question-carousel"); carousel.scrollBy({ left: carousel.clientWidth * (nav.dataset.nav === "next" ? 1 : -1), behavior: "smooth" }); }
 });
 ["student-writing", "student-name", "teacher-name"].forEach((id) => document.querySelector(`#${id}`).addEventListener("input", (event) => { state[id === "student-writing" ? "writing" : id === "student-name" ? "name" : "teacher"] = event.target.value; save(); render(); }));
-document.querySelector("#reset-lesson").addEventListener("click", () => { if (confirm("Reset lesson progress?")) { state = { ...defaults, before: {}, routine: Array(verbs.length).fill(null), during: [], after: {}, orders: {}, verbOrder: window.myeEnsureShuffledOrder(verbs) }; save(); render(); } });
+document.querySelector("#reset-lesson").addEventListener("click", () => { if ((confirm("Reset lesson progress?") && window.myeResetSpeaking())) { state = { ...defaults, before: {}, routine: Array(verbs.length).fill(null), during: [], after: {}, orders: {}, verbOrder: window.myeEnsureShuffledOrder(verbs) }; save(); render(); } });
 render();

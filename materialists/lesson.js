@@ -39,7 +39,7 @@ grid.forEach((row) => row.forEach((letter, index) => { if (!letter) row[index] =
 
 const save = () => localStorage.setItem(key, JSON.stringify(state));
 const count = (object) => Object.keys(object).length;
-const writingComplete = () => state.writing.trim().length >= 50;
+const writingComplete = () => window.myeResponseComplete(state.writing);
 const progress = () => count(state.before) + state.words.length + state.during.length + count(state.after) + (writingComplete() ? 1 : 0);
 function order(group, id, options) { const orderKey = `${group}-${id}`; if (!state.orders[orderKey]) { state.orders[orderKey] = options.map((_, index) => index).sort(() => Math.random() - .5); save(); } return state.orders[orderKey]; }
 function renderQuiz(target, items, group) {
@@ -64,5 +64,5 @@ document.addEventListener("click", (event) => {
   const nav = event.target.closest("[data-nav]"); if (nav) { const carousel = nav.closest(".question-carousel-shell").querySelector(".question-carousel"); carousel.scrollBy({ left: carousel.clientWidth * (nav.dataset.nav === "next" ? 1 : -1), behavior: "smooth" }); }
 });
 ["student-writing", "student-name", "teacher-name"].forEach((id) => document.querySelector(`#${id}`).addEventListener("input", (event) => { state[id === "student-writing" ? "writing" : id === "student-name" ? "name" : "teacher"] = event.target.value; save(); render(); }));
-document.querySelector("#reset-lesson").addEventListener("click", () => { if (confirm("Reset lesson progress?")) { state = { ...defaults, before: {}, words: [], during: [], after: {}, orders: {} }; save(); render(); } });
+document.querySelector("#reset-lesson").addEventListener("click", () => { if ((confirm("Reset lesson progress?") && window.myeResetSpeaking())) { state = { ...defaults, before: {}, words: [], during: [], after: {}, orders: {} }; save(); render(); } });
 render();

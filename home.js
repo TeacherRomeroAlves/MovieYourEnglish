@@ -1,4 +1,7 @@
 const carousel = document.querySelector("#poster-carousel");
+if (carousel && !carousel.querySelector('[href="./obsession/index.html"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="horror thriller" data-platform="prime-video"><a href="./obsession/index.html" class="movie-poster-link" data-content-warning="obsession"><img src="assets/obsession-poster.webp" alt="Obsession movie poster"><span class="content-warning-tag">Adult content</span><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Obsession</h3><p><span>Elementary</span> &middot; Horror &middot; Thriller &middot; Prime Video</p></div></article>');
+}
 // Introduce the sister platform just beneath the library's featured lesson.
 const libraryHero = document.querySelector(".platform-hero");
 if (carousel && libraryHero && !document.querySelector(".music-platform-card")) {
@@ -64,6 +67,7 @@ const landingPosterPool = [
   { title: "Captain America: Brave New World", image: "assets/captain-america-brave-new-world-poster.png", href: "./captain-america-brave-new-world/index.html" },
   { title: "The Gorge", image: "assets/the-gorge-poster.png", href: "./the-gorge/index.html" },
   { title: "Talk to Me", image: "assets/talk-to-me-poster.png", href: "./talk-to-me/index.html" },
+    { title: "Obsession", image: "assets/obsession-poster.webp", href: "./obsession/index.html" },
 ];
 
 const backgroundCards = document.querySelectorAll(".saas-home .hero-card-back, .saas-home .hero-card-front");
@@ -354,6 +358,10 @@ if (warningLinks.length) {
     warningDialog.querySelector("h2").textContent = isGladiator ? "Gladiator II" : isOppenheimer ? "Oppenheimer" : isTalkToMe ? "Talk to Me" : isHousemaid ? "The Housemaid" : isSe7en ? "Se7en" : "Alien: Romulus";
     warningDialog.querySelector("p:not(.eyebrow)").textContent = isGladiator ? "This movie contains intense battle violence, blood, and mature themes. Recommended for mature learners." : isOppenheimer ? "This movie includes mature themes, brief sexual content, and disturbing images related to war and nuclear weapons. Recommended for mature learners." : isTalkToMe ? "This movie contains disturbing images of graphic violence. Recommended for adults." : isHousemaid ? "This movie contains disturbing images and adult themes. The lesson is recommended for adult learners." : isSe7en ? "This movie includes graphic violence, disturbing crime scenes, and adult themes. The lesson is recommended for adult learners." : "This movie includes intense and violent scenes. The lesson is recommended for adult learners.";
     warningDialog.querySelector(".warning-continue").href = link.href;
+      if (link.getAttribute("href") === "./obsession/index.html") {
+        warningDialog.querySelector("h2").textContent = "Obsession";
+        warningDialog.querySelector("p:not(.eyebrow)").textContent = "This movie contains disturbing images and graphic violence. Recommended for adults.";
+      }
     warningDialog.showModal();
   }));
   warningDialog.querySelector(".warning-cancel").addEventListener("click", () => warningDialog.close());

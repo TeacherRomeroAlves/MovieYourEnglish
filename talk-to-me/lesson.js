@@ -85,10 +85,10 @@
   }
   function updateProgress() {
     const quizDone = [["before", before], ["after", after]].reduce((count, [group, questions]) => count + questions.filter((question) => state[group][question[0]] === question[3]).length, 0);
-    const done = quizDone + Object.keys(state.solvedParts).length + state.during.length + (state.writing.trim().length >= 50 ? 1 : 0);
+    const done = quizDone + Object.keys(state.solvedParts).length + state.during.length + (window.myeResponseComplete(state.writing) ? 1 : 0);
     document.querySelector("#progress-label").textContent = `${done} / 24 complete`;
     document.querySelector("#progress-bar").style.width = `${done / 24 * 100}%`;
-    document.querySelector("#writing-feedback").textContent = state.writing.trim().length >= 50 ? "Writing task complete." : "Write at least 50 characters to complete this activity.";
+    document.querySelector("#writing-feedback").textContent = window.myeResponseComplete(state.writing) ? "Writing task complete." : "Write at least 50 characters to complete this activity.";
     save();
   }
   function render() {
@@ -158,7 +158,7 @@
     document.getElementById(id).addEventListener("input", (event) => { state[field] = event.target.value; updateProgress(); });
   }
   document.querySelector("#reset-lesson").addEventListener("click", () => {
-    if (!confirm("Reset lesson progress?")) return;
+    if (!(confirm("Reset lesson progress?") && window.myeResetSpeaking())) return;
     state = defaults();
     render();
   });

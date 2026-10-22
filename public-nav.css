@@ -104,7 +104,13 @@
 @media (max-width: 900px) {
   .platform-home .saas-nav { grid-template-columns: 1fr auto; }
   .platform-home .saas-nav .global-nav { display: none; }
+  .platform-home .saas-nav .mobile-nav-toggle { display: inline-flex; }
+  .platform-home .saas-nav.navigation-open .global-nav { display: flex; grid-column: 1 / -1; grid-row: 2; flex-wrap: wrap; gap: 8px; padding: 8px 0; }
+  .platform-home .saas-nav.navigation-open { border-radius: 24px; }
+  .platform-home .saas-nav.navigation-open .global-nav a { padding: 10px 12px; border-radius: 12px; background: #143634; color: #fff; }
 }
+.mobile-nav-toggle { display: none; align-items: center; min-height: 40px; border: 1px solid #679c96; border-radius: 999px; padding: 8px 12px; color: #fff; background: #143634; font: 700 .82rem Outfit, Arial, sans-serif; cursor: pointer; }
+.mobile-nav-toggle:focus-visible { outline: 3px solid #d9ff00; outline-offset: 3px; }
 
 @media (max-width: 620px) {
   .platform-home .saas-shell,
