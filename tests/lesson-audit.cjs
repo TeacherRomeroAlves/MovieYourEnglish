@@ -41,6 +41,40 @@ const root = path.resolve(__dirname, '..');
       await page.evaluate(() => { window.print = () => {}; document.querySelector('[data-print-lesson]').click(); });
       assert.equal(await page.locator('.lesson-print-section').count(), 3, `${slug}: three printable stages`);
       assert.equal(await page.locator('.lesson-print-export .speaking-card').count(), 0, `${slug}: no printable recording controls`);
+      if (slug === 'about-time') {
+        await page.evaluate(() => {
+          document.body.classList.remove('lesson-printing');
+          document.querySelector('.lesson-print-export').replaceChildren();
+          document.querySelector('#preference-activity').closest('details').open = true;
+        });
+        await page.locator('#preference-activity [data-nav="next"]').click();
+        await page.waitForFunction(() => { const carousel = document.querySelector('#preference-activity .question-carousel'); return Math.round(carousel.scrollLeft / carousel.clientWidth) === 1; });
+        await page.locator('[data-preference="dreams"][data-preference-option="0"]').click();
+        assert.equal(await page.locator('#preference-activity .question-carousel').evaluate((node) => Math.round(node.scrollLeft / node.clientWidth)), 1, 'Choosing an option preserves the active slide');
+        await page.locator('#preference-activity [data-nav="previous"]').click();
+        await page.waitForFunction(() => { const carousel = document.querySelector('#preference-activity .question-carousel'); return Math.round(carousel.scrollLeft / carousel.clientWidth) === 0; });
+        await page.evaluate(() => {
+          document.body.classList.remove('lesson-printing');
+          document.querySelector('.lesson-print-export').replaceChildren();
+          for (const question of window.ABOUT_TIME_LESSON.preferences) document.querySelector(`[data-preference="${question.id}"][data-preference-option="0"]`).click();
+        });
+        assert.equal(await page.locator('.progress-panel strong').innerText(), '4 / 24 complete');
+        assert.equal(await page.locator('.preference-option.is-selected').count(), 3);
+        assert((await page.locator('.preference-follow-up').allTextContents()).every((text) => text.includes('Let’s talk:')));
+        await page.evaluate(() => document.querySelector('[data-preference="powers"][data-preference-option="1"]').click());
+        assert.equal(await page.locator('.progress-panel strong').innerText(), '4 / 24 complete');
+        await page.reload();
+        await page.waitForFunction(() => !!document.querySelector('[data-print-lesson]'));
+        assert.equal(await page.locator('.preference-option.is-selected').count(), 3);
+        await page.evaluate(() => { window.print = () => {}; document.querySelector('[data-print-lesson]').click(); });
+        assert.equal(await page.locator('.lesson-print-export .preference-option.is-selected').count(), 0);
+        assert.equal(await page.locator('.lesson-print-export .preference-option small').count(), 6);
+        await page.evaluate(() => { document.body.classList.remove('lesson-printing'); document.querySelector('[data-reset-activity]').click(); });
+        await page.waitForLoadState('load');
+        await page.waitForFunction(() => !!document.querySelector('[data-print-lesson]'));
+        assert.equal(await page.locator('.progress-panel strong').innerText(), '1 / 24 complete');
+        assert.equal(await page.locator('.preference-option.is-selected').count(), 0);
+      }
       if (slug === 'obsession') {
         await page.evaluate(() => {
           document.body.classList.remove('lesson-printing');
@@ -94,6 +128,8 @@ const root = path.resolve(__dirname, '..');
     console.log('Passed report prompt check.');
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('http://mye.test/movies.html');
+    assert.equal(await page.locator('a.movie-poster-link[href="./about-time/index.html"]').count(), 1);
+    assert.equal(await page.locator('.curated-row a[href="./about-time/index.html"]').count(), 2);
     await page.locator('a.movie-poster-link[href="./obsession/index.html"]').click();
     assert.equal(await page.locator('.content-warning-dialog[open] h2').innerText(), 'Obsession');
     await page.locator('.content-warning-dialog[open] .warning-cancel').click();

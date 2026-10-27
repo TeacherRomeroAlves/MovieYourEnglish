@@ -1,5 +1,6 @@
 (function () {
   const lessons = [
+    ["about-time", "about-time", "About Time", "Elementary", "assets/about-time-poster.webp"],
     ["obsession", "obsession", "Obsession", "Elementary", "assets/obsession-poster.webp"],
     ["alien-romulus", "alien-romulus", "Alien: Romulus", "Intermediate+", "assets/alien-romulus-poster.webp"],
     ["barbie", "barbie", "Barbie", "Pre-Intermediate", "assets/barbie-poster.png"],

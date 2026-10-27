@@ -35,6 +35,19 @@
   }
 
   function sanitizeActivity(root) {
+    root.querySelectorAll('.preference-card').forEach((card) => {
+      card.querySelectorAll('.preference-option').forEach((button) => {
+        button.classList.remove('is-selected');
+        const followUp = document.createElement('small');
+        followUp.textContent = button.dataset.followUp || '';
+        button.appendChild(followUp);
+      });
+      const discussion = card.querySelector('.preference-follow-up');
+      if (discussion) {
+        discussion.className = 'lesson-print-zone-lines';
+        discussion.textContent = 'My choice and reasons:';
+      }
+    });
     root.querySelectorAll(".word-item").forEach((item) => {
       const word = item.querySelector("strong");
       if (word && !/letters$/i.test(word.textContent.trim())) word.textContent = `${word.textContent.trim().length} letters`;

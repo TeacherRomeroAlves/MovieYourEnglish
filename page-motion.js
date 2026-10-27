@@ -89,6 +89,7 @@ window.myeEnsureShuffledOrder = (answers, savedOrder) => {
 // Each lesson owns its challenge state, but this shared control resets only that
 // state and lets the lesson's existing renderer rebuild the activity on reload.
 const extraActivityState = {
+  "about-time": { preferences: {} },
   "obsession": { gaps: [], wordOrder: [] },
   "alien-romulus": { terms: {}, selected: null },
   "barbie": { gaps: [], wordOrder: [] },

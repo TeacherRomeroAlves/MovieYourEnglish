@@ -239,6 +239,17 @@ h2 { margin: 0; font-size: clamp(1.65rem, 4vw, 2.3rem); letter-spacing: -0.04em;
 .lesson-print-button:focus-visible { outline: 3px solid var(--neon); outline-offset: 3px; }
 .lesson-print-button:active { transform: translateY(0); }
 .lesson-print-export { display: none; }
+.preference-activity{display:block;min-width:0}
+.preference-card{padding:22px;border:1px solid #b8dedd;border-radius:20px;background:#f5fcfb;break-inside:avoid}
+.preference-card h3{margin:0 0 18px;color:#173b38;font:800 1.15rem/1.4 Outfit,Arial,sans-serif}
+.preference-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.preference-option{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:105px;padding:16px 10px;border:2px solid #a5cecb;border-radius:16px;color:#16443f;background:#fff;font:800 1rem/1.4 Outfit,Arial,sans-serif;cursor:pointer}
+.preference-option>span{font-size:1.7rem}
+.preference-option:hover{border-color:#087f7b;background:#e2f7f3}
+.preference-option.is-selected{border-color:#087f7b;color:#fff;background:#087f7b}
+.preference-option:focus-visible{outline:3px solid #102121;outline-offset:3px}
+.preference-follow-up{margin:16px 0 0;color:#345e58;line-height:1.5}
+@media(max-width:560px){.preference-card{padding:16px}.preference-options{gap:8px}.preference-option{font-size:.88rem;padding:13px 8px}}
 .music-platform-card{display:flex;align-items:center;gap:24px;margin:0 0 32px;padding:26px 30px;border:1px solid #94516f;border-radius:26px;background:linear-gradient(110deg,#170d19,#382037 60%,#64113f);color:#fff}
 .music-platform-card>img{width:88px;height:88px;flex:none;border-radius:20px;object-fit:contain}
 .music-platform-copy{flex:1;min-width:0}
@@ -908,6 +919,9 @@ body:not(.platform-home) .story-share-card h2{margin:4px 0 8px;color:#075b58}
   body.lesson-printing .lesson-print-export { display: block !important; width: auto; color: #172323; background: #fff; font: 10.5pt/1.4 Arial, sans-serif; }
   .lesson-print-export * { box-sizing: border-box; box-shadow: none !important; text-shadow: none !important; }
   .lesson-print-export button { font: inherit; }
+  .lesson-print-export .preference-card { padding: 4mm; margin-bottom: 4mm; background: #fff; }
+  .lesson-print-export .preference-option { min-height: 20mm; padding: 3mm; border: 1pt solid #9cbbb7; color: #173b38; background: #fff; }
+  .lesson-print-export .preference-option small { display: block; font-size: 8pt; font-weight: 400; }
   .lesson-print-export .response-internal-prompt { position: static; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; }
   .lesson-print-export .response-prompt-box + .writing-card .response-internal-prompt { display: none; }
   .lesson-print-header { display: grid; grid-template-columns: minmax(0, 1fr) 34mm; grid-template-rows: auto 1fr; gap: 6mm 9mm; min-height: 61mm; margin-bottom: 5mm; border: 1.5pt solid #0f7772; border-radius: 5mm; padding: 8mm; color: #fff; background: linear-gradient(120deg, #107b75 0%, #0b4f4c 42%, #061312 100%); -webkit-print-color-adjust: exact; print-color-adjust: exact; break-inside: avoid; }

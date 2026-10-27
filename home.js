@@ -1,4 +1,7 @@
 const carousel = document.querySelector("#poster-carousel");
+if (carousel && !carousel.querySelector('[href="./about-time/index.html"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="romance drama" data-platform="prime-video netflix"><a href="./about-time/index.html" class="movie-poster-link"><img src="assets/about-time-poster.webp" alt="About Time movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>About Time</h3><p><span>Elementary</span> &middot; Romance &middot; Drama &middot; Prime Video / Netflix</p></div></article>');
+}
 if (carousel && !carousel.querySelector('[href="./obsession/index.html"]')) {
   carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="horror thriller" data-platform="prime-video"><a href="./obsession/index.html" class="movie-poster-link" data-content-warning="obsession"><img src="assets/obsession-poster.webp" alt="Obsession movie poster"><span class="content-warning-tag">Adult content</span><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Obsession</h3><p><span>Elementary</span> &middot; Horror &middot; Thriller &middot; Prime Video</p></div></article>');
 }
@@ -68,6 +71,7 @@ const landingPosterPool = [
   { title: "The Gorge", image: "assets/the-gorge-poster.png", href: "./the-gorge/index.html" },
   { title: "Talk to Me", image: "assets/talk-to-me-poster.png", href: "./talk-to-me/index.html" },
     { title: "Obsession", image: "assets/obsession-poster.webp", href: "./obsession/index.html" },
+    { title: "About Time", image: "assets/about-time-poster.webp", href: "./about-time/index.html" },
 ];
 
 const backgroundCards = document.querySelectorAll(".saas-home .hero-card-back, .saas-home .hero-card-front");
@@ -292,6 +296,7 @@ if (carousel && !document.querySelector("#curated-movie-rows")) {
       <a href="./harry-potter-philosophers-stone/index.html" class="curated-movie-card"><img src="assets/harry-potter-1-poster.webp" alt="Harry Potter and the Philosopher's Stone movie poster"><span>Harry Potter and the Philosopher's Stone</span></a>
     </div></section>`;
   curatedRows.querySelectorAll('[data-curated-row="debate"], [data-curated-row="family"]').forEach((row) => {
+    row.insertAdjacentHTML("beforeend", '<a href="./about-time/index.html" class="curated-movie-card"><img src="assets/about-time-poster.webp" alt="About Time movie poster"><span>About Time</span></a>');
     const posters = Array.from(row.querySelectorAll(".curated-movie-card"));
     for (let index = posters.length - 1; index > 0; index -= 1) {
       const randomIndex = Math.floor(Math.random() * (index + 1));
