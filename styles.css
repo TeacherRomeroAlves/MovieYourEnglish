@@ -239,6 +239,7 @@ h2 { margin: 0; font-size: clamp(1.65rem, 4vw, 2.3rem); letter-spacing: -0.04em;
 .lesson-print-button:focus-visible { outline: 3px solid var(--neon); outline-offset: 3px; }
 .lesson-print-button:active { transform: translateY(0); }
 .lesson-print-export { display: none; }
+.lesson-hero h1.long-movie-title{font-size:clamp(2rem,4.6vw,4rem);line-height:1.05;letter-spacing:-.045em}
 .preference-activity{display:block;min-width:0}
 .preference-card{padding:22px;border:1px solid #b8dedd;border-radius:20px;background:#f5fcfb;break-inside:avoid}
 .preference-card h3{margin:0 0 18px;color:#173b38;font:800 1.15rem/1.4 Outfit,Arial,sans-serif}

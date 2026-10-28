@@ -97,6 +97,23 @@ const root = path.resolve(__dirname, '..');
         await page.waitForFunction(() => !!document.querySelector('[data-print-lesson]'));
         assert.equal(await page.locator('.progress-panel strong').innerText(), '23 / 27 complete', 'Extra challenge reset preserves other answers');
       }
+      if (slug === 'ballad-of-songbirds-and-snakes') {
+        await page.evaluate(() => {
+          document.body.classList.remove('lesson-printing');
+          document.querySelector('.lesson-print-export').replaceChildren();
+          for (const group of ['before', 'after']) {
+            for (const question of window.BALLAD_LESSON[group]) document.querySelector(`[data-group="${group}"][data-id="${question[0]}"][data-answer="${question[3]}"]`).click();
+          }
+          for (let i = 0; i < window.BALLAD_LESSON.during.length; i++) document.querySelector(`[data-during="${i}"]`).click();
+          for (const question of window.BALLAD_LESSON.preferences) document.querySelector(`[data-preference="${question.id}"][data-preference-option="0"]`).click();
+        });
+        assert.equal(await page.locator('.progress-panel strong').innerText(), '22 / 22 complete');
+        assert.equal(await page.locator('.content-note .eyebrow').textContent(), 'Mild content warning');
+        await page.evaluate(() => document.querySelector('[data-reset-activity]').click());
+        await page.waitForLoadState('load');
+        await page.waitForFunction(() => !!document.querySelector('[data-print-lesson]'));
+        assert.equal(await page.locator('.progress-panel strong').innerText(), '19 / 22 complete');
+      }
       await page.evaluate(() => { document.body.classList.remove('lesson-printing'); document.querySelector('#reset-lesson').click(); });
       assert.equal(parseInt(await page.locator('.progress-panel strong').innerText()), 0, `${slug}: reset clears speaking completion`);
       assert.deepEqual(errors, [], `${slug}: no lesson runtime errors`);
@@ -128,6 +145,12 @@ const root = path.resolve(__dirname, '..');
     console.log('Passed report prompt check.');
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('http://mye.test/movies.html');
+    assert.equal(await page.locator('.family-row a[href="./ballad-of-songbirds-and-snakes/index.html"]').count(), 0);
+    assert.equal(await page.locator('.debate-row a[href="./ballad-of-songbirds-and-snakes/index.html"]').count(), 1);
+    await page.locator('a.movie-poster-link[href="./ballad-of-songbirds-and-snakes/index.html"]').click();
+    assert.equal(await page.locator('.content-warning-dialog[open] .eyebrow').textContent(), 'Mild content warning');
+    assert((await page.locator('.content-warning-dialog[open] h2').innerText()).includes('The Ballad of Songbirds'));
+    await page.locator('.content-warning-dialog[open] .warning-cancel').click();
     assert.equal(await page.locator('a.movie-poster-link[href="./about-time/index.html"]').count(), 1);
     assert.equal(await page.locator('.curated-row a[href="./about-time/index.html"]').count(), 2);
     await page.locator('a.movie-poster-link[href="./obsession/index.html"]').click();

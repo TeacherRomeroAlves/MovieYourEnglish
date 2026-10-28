@@ -1,4 +1,7 @@
 const carousel = document.querySelector("#poster-carousel");
+if (carousel && !carousel.querySelector('[href="./ballad-of-songbirds-and-snakes/index.html"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="romance action" data-platform="prime-video apple-tv"><a href="./ballad-of-songbirds-and-snakes/index.html" class="movie-poster-link" data-content-warning="ballad-mild"><img src="assets/ballad-of-songbirds-and-snakes-poster.webp" alt="The Hunger Games: The Ballad of Songbirds &amp; Snakes movie poster"><span class="content-warning-tag">Mild content warning</span><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>The Hunger Games: The Ballad of Songbirds &amp; Snakes</h3><p><span>Elementary</span> &middot; Romance &middot; Action &middot; Prime Video / Apple TV</p></div></article>');
+}
 if (carousel && !carousel.querySelector('[href="./about-time/index.html"]')) {
   carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="romance drama" data-platform="prime-video netflix"><a href="./about-time/index.html" class="movie-poster-link"><img src="assets/about-time-poster.webp" alt="About Time movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>About Time</h3><p><span>Elementary</span> &middot; Romance &middot; Drama &middot; Prime Video / Netflix</p></div></article>');
 }
@@ -72,6 +75,7 @@ const landingPosterPool = [
   { title: "Talk to Me", image: "assets/talk-to-me-poster.png", href: "./talk-to-me/index.html" },
     { title: "Obsession", image: "assets/obsession-poster.webp", href: "./obsession/index.html" },
     { title: "About Time", image: "assets/about-time-poster.webp", href: "./about-time/index.html" },
+    { title: "The Hunger Games: The Ballad of Songbirds & Snakes", image: "assets/ballad-of-songbirds-and-snakes-poster.webp", href: "./ballad-of-songbirds-and-snakes/index.html" },
 ];
 
 const backgroundCards = document.querySelectorAll(".saas-home .hero-card-back, .saas-home .hero-card-front");
@@ -296,6 +300,7 @@ if (carousel && !document.querySelector("#curated-movie-rows")) {
       <a href="./harry-potter-philosophers-stone/index.html" class="curated-movie-card"><img src="assets/harry-potter-1-poster.webp" alt="Harry Potter and the Philosopher's Stone movie poster"><span>Harry Potter and the Philosopher's Stone</span></a>
     </div></section>`;
   curatedRows.querySelectorAll('[data-curated-row="debate"], [data-curated-row="family"]').forEach((row) => {
+    if (row.dataset.curatedRow === "debate") row.insertAdjacentHTML("beforeend", '<a href="./ballad-of-songbirds-and-snakes/index.html" class="curated-movie-card" data-content-warning="ballad-mild"><img src="assets/ballad-of-songbirds-and-snakes-poster.webp" alt="The Hunger Games: The Ballad of Songbirds &amp; Snakes movie poster"><span>The Hunger Games: The Ballad of Songbirds &amp; Snakes</span></a>');
     row.insertAdjacentHTML("beforeend", '<a href="./about-time/index.html" class="curated-movie-card"><img src="assets/about-time-poster.webp" alt="About Time movie poster"><span>About Time</span></a>');
     const posters = Array.from(row.querySelectorAll(".curated-movie-card"));
     for (let index = posters.length - 1; index > 0; index -= 1) {
@@ -363,6 +368,13 @@ if (warningLinks.length) {
     warningDialog.querySelector("h2").textContent = isGladiator ? "Gladiator II" : isOppenheimer ? "Oppenheimer" : isTalkToMe ? "Talk to Me" : isHousemaid ? "The Housemaid" : isSe7en ? "Se7en" : "Alien: Romulus";
     warningDialog.querySelector("p:not(.eyebrow)").textContent = isGladiator ? "This movie contains intense battle violence, blood, and mature themes. Recommended for mature learners." : isOppenheimer ? "This movie includes mature themes, brief sexual content, and disturbing images related to war and nuclear weapons. Recommended for mature learners." : isTalkToMe ? "This movie contains disturbing images of graphic violence. Recommended for adults." : isHousemaid ? "This movie contains disturbing images and adult themes. The lesson is recommended for adult learners." : isSe7en ? "This movie includes graphic violence, disturbing crime scenes, and adult themes. The lesson is recommended for adult learners." : "This movie includes intense and violent scenes. The lesson is recommended for adult learners.";
     warningDialog.querySelector(".warning-continue").href = link.href;
+      if (link.dataset.contentWarning === "ballad-mild") {
+        warningDialog.querySelector("h2").textContent = "The Hunger Games: The Ballad of Songbirds & Snakes";
+        warningDialog.querySelector(".eyebrow").textContent = "Mild content warning";
+        warningDialog.querySelector("p:not(.eyebrow)").textContent = "This movie includes violent scenes. Viewer discretion is advised.";
+      } else {
+        warningDialog.querySelector(".eyebrow").textContent = "Content note";
+      }
       if (link.getAttribute("href") === "./obsession/index.html") {
         warningDialog.querySelector("h2").textContent = "Obsession";
         warningDialog.querySelector("p:not(.eyebrow)").textContent = "This movie contains disturbing images and graphic violence. Recommended for adults.";

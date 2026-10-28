@@ -89,6 +89,7 @@ window.myeEnsureShuffledOrder = (answers, savedOrder) => {
 // Each lesson owns its challenge state, but this shared control resets only that
 // state and lets the lesson's existing renderer rebuild the activity on reload.
 const extraActivityState = {
+  "ballad-of-songbirds-and-snakes": { preferences: {} },
   "about-time": { preferences: {} },
   "obsession": { gaps: [], wordOrder: [] },
   "alien-romulus": { terms: {}, selected: null },
@@ -203,6 +204,7 @@ if (!document.querySelector("[data-auth-slot]")) {
 }
 const motionTargets = document.querySelectorAll(".activity-page > section, .activity-page > .watch-provider");
 const adultContentNotes = {
+  "ballad-of-songbirds-and-snakes": { label: "Mild content warning", text: "This movie includes violent scenes. Viewer discretion is advised." },
   "obsession": { label: "Content warning", text: "This movie contains disturbing images and graphic violence. Recommended for adults." },
   "alien-romulus": { label: "Content warning", text: "This movie contains intense violence, frightening scenes, and disturbing images. Recommended for adults." },
   "se7en": { label: "Content warning", text: "This movie contains graphic violence, disturbing crime scenes, and adult themes. Recommended for adults." },

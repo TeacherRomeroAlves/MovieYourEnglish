@@ -1,5 +1,6 @@
 (function () {
   const lessons = [
+    ["ballad-of-songbirds-and-snakes", "ballad-of-songbirds-and-snakes", "The Hunger Games: The Ballad of Songbirds & Snakes", "Elementary", "assets/ballad-of-songbirds-and-snakes-poster.webp"],
     ["about-time", "about-time", "About Time", "Elementary", "assets/about-time-poster.webp"],
     ["obsession", "obsession", "Obsession", "Elementary", "assets/obsession-poster.webp"],
     ["alien-romulus", "alien-romulus", "Alien: Romulus", "Intermediate+", "assets/alien-romulus-poster.webp"],
