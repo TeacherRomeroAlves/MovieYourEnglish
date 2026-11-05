@@ -1,4 +1,24 @@
 const carousel = document.querySelector("#poster-carousel");
+// Oldest addition first. Append new movies here; the library displays this in reverse.
+// Years identify the film version, independently of when its lesson was added.
+const movieLibraryEntries = [
+  ["moana-2", 2024], ["project-hail-mary", 2026], ["sheep-detectives", 2026],
+  ["odyssey", 2026], ["zootopia-2", 2025], ["eternity", 2025], ["kpop-demon-hunters", 2025],
+  ["alien-romulus", 2024], ["se7en", 1995], ["devil-wears-prada", 2006],
+  ["forrest-gump", 1994], ["materialists", 2025], ["the-housemaid", 2025],
+  ["f1-the-movie", 2025], ["lilo-and-stitch", 2025], ["conclave", 2024],
+  ["the-wrong-paris", 2025], ["harry-potter-philosophers-stone", 2001],
+  ["the-batman", 2022], ["frankenstein-easier", 2025], ["inside-out-2", 2024],
+  ["superman-beginner", 2025], ["freakier-friday", 2025],
+  ["captain-america-brave-new-world", 2025], ["the-gorge", 2025], ["talk-to-me", 2023],
+  ["barbie", 2023], ["oppenheimer", 2023], ["my-oxford-year", 2025], ["gladiator-2", 2024],
+  ["fall-guy-elementary", 2024], ["obsession", 2026], ["about-time", 2013],
+  ["ballad-of-songbirds-and-snakes", 2023], ["spider-man-brand-new-day", 2026]
+];
+const movieLibraryMetadata = new Map(movieLibraryEntries.map(([slug, year], addedOrder) => [slug, { year, addedOrder }]));
+if (carousel && !carousel.querySelector('[href="./spider-man-brand-new-day/index.html"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="action" data-platform="prime-video"><a href="./spider-man-brand-new-day/index.html" class="movie-poster-link"><img src="assets/spider-man-brand-new-day-poster.webp" alt="Spider-Man: Brand New Day movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Spider-Man: Brand New Day</h3><p><span>Elementary</span> &middot; Action &middot; Prime Video</p></div></article>');
+}
 if (carousel && !carousel.querySelector('[href="./ballad-of-songbirds-and-snakes/index.html"]')) {
   carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="romance action" data-platform="prime-video apple-tv"><a href="./ballad-of-songbirds-and-snakes/index.html" class="movie-poster-link" data-content-warning="ballad-mild"><img src="assets/ballad-of-songbirds-and-snakes-poster.webp" alt="The Hunger Games: The Ballad of Songbirds &amp; Snakes movie poster"><span class="content-warning-tag">Mild content warning</span><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>The Hunger Games: The Ballad of Songbirds &amp; Snakes</h3><p><span>Elementary</span> &middot; Romance &middot; Action &middot; Prime Video / Apple TV</p></div></article>');
 }
@@ -10,6 +30,11 @@ if (carousel && !carousel.querySelector('[href="./obsession/index.html"]')) {
 }
 // Introduce the sister platform just beneath the library's featured lesson.
 const libraryHero = document.querySelector(".platform-hero");
+if (carousel && libraryHero) {
+  const featuredScript = document.createElement("script");
+  featuredScript.src = new URL("featured-rotation.js", document.currentScript.src).href;
+  document.body.appendChild(featuredScript);
+}
 if (carousel && libraryHero && !document.querySelector(".music-platform-card")) {
   libraryHero.insertAdjacentHTML("afterend", `
     <aside class="music-platform-card" aria-labelledby="music-platform-title">
@@ -75,6 +100,7 @@ const landingPosterPool = [
   { title: "Talk to Me", image: "assets/talk-to-me-poster.png", href: "./talk-to-me/index.html" },
     { title: "Obsession", image: "assets/obsession-poster.webp", href: "./obsession/index.html" },
     { title: "About Time", image: "assets/about-time-poster.webp", href: "./about-time/index.html" },
+    { title: "Spider-Man: Brand New Day", image: "assets/spider-man-brand-new-day-poster.webp", href: "./spider-man-brand-new-day/index.html" },
     { title: "The Hunger Games: The Ballad of Songbirds & Snakes", image: "assets/ballad-of-songbirds-and-snakes-poster.webp", href: "./ballad-of-songbirds-and-snakes/index.html" },
 ];
 
@@ -92,17 +118,18 @@ if (backgroundCards.length === 2) {
   });
 }
 
-const filterState = { search: "", level: "all", genre: "all", platform: "all" };
+const filterState = { search: "", level: "all", genre: "all", platform: "all", year: "all" };
 const filterOptions = {
   level: [["all", "All levels"], ["beginner", "Beginner"], ["elementary", "Elementary"], ["pre-intermediate", "Pre-Intermediate"], ["intermediate-plus", "Intermediate+"]],
   genre: [["all", "All genres"], ["action", "Action"], ["adventure", "Adventure"], ["animation", "Animation"], ["comedy", "Comedy"], ["crime", "Crime"], ["drama", "Drama"], ["fantasy", "Fantasy"], ["history", "History"], ["horror", "Horror"], ["mystery", "Mystery"], ["romance", "Romance"], ["sci-fi", "Sci-fi"], ["sports", "Sports"], ["thriller", "Thriller"]],
-  platform: [["all", "All platforms"], ["apple-tv", "Apple TV"], ["cinemas", "Cinemas"], ["disney-plus", "Disney+"], ["max", "HBO Max"], ["netflix", "Netflix"], ["paramount-plus", "Paramount+"], ["prime-video", "Prime Video"]]
+  platform: [["all", "All platforms"], ["apple-tv", "Apple TV"], ["cinemas", "Cinemas"], ["disney-plus", "Disney+"], ["max", "HBO Max"], ["netflix", "Netflix"], ["paramount-plus", "Paramount+"], ["prime-video", "Prime Video"]],
+  year: [["all", "All years"], ...[...new Set(movieLibraryEntries.map(([, year]) => year))].sort((a, b) => b - a).map((year) => [String(year), String(year)])]
 };
-const filterLabels = { level: "Level", genre: "Genre", platform: "Watch on" };
+const filterLabels = { level: "Level", genre: "Genre", platform: "Watch on", year: "Release year" };
 const filterPanel = document.querySelector(".movie-filter-panel");
 const filterStatus = document.querySelector("#filter-status");
 if (filterPanel) {
-  filterPanel.innerHTML = `<summary><span>Find a movie</span><small>Title, level, genre &amp; where to watch</small></summary><div class="movie-filters" aria-label="Filter movies"><label class="movie-filter-field movie-search-field" for="movie-title-search"><span>Movie title</span><div class="movie-search-control"><span aria-hidden="true">⌕</span><input id="movie-title-search" type="search" inputmode="search" autocomplete="off" placeholder="Search by title…" aria-describedby="filter-status"></div></label>${Object.entries(filterOptions).map(([group, options]) => `<label class="movie-filter-field" for="movie-filter-${group}"><span>${filterLabels[group]}</span><select id="movie-filter-${group}" data-filter-group="${group}">${options.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label>`).join("")}</div>`;
+  filterPanel.innerHTML = `<summary><span>Find a movie</span><small>Title, level, genre, year &amp; where to watch</small></summary><div class="movie-filters" aria-label="Filter movies"><label class="movie-filter-field movie-search-field" for="movie-title-search"><span>Movie title</span><div class="movie-search-control"><span aria-hidden="true">⌕</span><input id="movie-title-search" type="search" inputmode="search" autocomplete="off" placeholder="Search by title…" aria-describedby="filter-status"></div></label>${Object.entries(filterOptions).map(([group, options]) => `<label class="movie-filter-field" for="movie-filter-${group}"><span>${filterLabels[group]}</span><select id="movie-filter-${group}" data-filter-group="${group}">${options.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label>`).join("")}</div>`;
 }
 const filterSelects = document.querySelectorAll(".movie-filter-field select");
 const movieTitleSearch = document.querySelector("#movie-title-search");
@@ -263,11 +290,17 @@ if (f1Tile) {
   const f1Meta = f1Tile.querySelector(".movie-meta p");
   if (f1Meta) f1Meta.innerHTML = '<span>Beginner / Pre-Intermediate</span> &middot; Drama &middot; Sports &middot; Apple TV';
 }
-if (moanaTile && odysseyTile) {
-  const positionMarker = document.createComment("movie-position");
-  carousel.replaceChild(positionMarker, moanaTile);
-  carousel.replaceChild(moanaTile, odysseyTile);
-  carousel.replaceChild(odysseyTile, positionMarker);
+if (carousel) {
+  const tiles = [...carousel.querySelectorAll(".movie-tile")];
+  tiles.forEach((tile) => {
+    const slug = tile.querySelector(".movie-poster-link")?.getAttribute("href")?.split("/").at(-2);
+    const metadata = movieLibraryMetadata.get(slug);
+    tile.dataset.year = metadata ? String(metadata.year) : "";
+    tile.dataset.addedOrder = metadata ? String(metadata.addedOrder) : String(movieLibraryEntries.length);
+    const meta = tile.querySelector(".movie-meta p");
+    if (metadata && meta) meta.insertAdjacentHTML("beforeend", ` &middot; <time class="movie-release-year" datetime="${metadata.year}">${metadata.year}</time>`);
+  });
+  tiles.sort((a, b) => Number(b.dataset.addedOrder) - Number(a.dataset.addedOrder)).forEach((tile) => carousel.appendChild(tile));
 }
 const resetMainCarouselPosition = () => {
   if (carousel) carousel.scrollLeft = 0;
@@ -300,6 +333,7 @@ if (carousel && !document.querySelector("#curated-movie-rows")) {
       <a href="./harry-potter-philosophers-stone/index.html" class="curated-movie-card"><img src="assets/harry-potter-1-poster.webp" alt="Harry Potter and the Philosopher's Stone movie poster"><span>Harry Potter and the Philosopher's Stone</span></a>
     </div></section>`;
   curatedRows.querySelectorAll('[data-curated-row="debate"], [data-curated-row="family"]').forEach((row) => {
+    if (row.dataset.curatedRow === "family") row.insertAdjacentHTML("beforeend", '<a href="./spider-man-brand-new-day/index.html" class="curated-movie-card"><img src="assets/spider-man-brand-new-day-poster.webp" alt="Spider-Man: Brand New Day movie poster"><span>Spider-Man: Brand New Day</span></a>');
     if (row.dataset.curatedRow === "debate") row.insertAdjacentHTML("beforeend", '<a href="./ballad-of-songbirds-and-snakes/index.html" class="curated-movie-card" data-content-warning="ballad-mild"><img src="assets/ballad-of-songbirds-and-snakes-poster.webp" alt="The Hunger Games: The Ballad of Songbirds &amp; Snakes movie poster"><span>The Hunger Games: The Ballad of Songbirds &amp; Snakes</span></a>');
     row.insertAdjacentHTML("beforeend", '<a href="./about-time/index.html" class="curated-movie-card"><img src="assets/about-time-poster.webp" alt="About Time movie poster"><span>About Time</span></a>');
     const posters = Array.from(row.querySelectorAll(".curated-movie-card"));
@@ -331,11 +365,13 @@ function applyMovieFilters() {
     const matchesLevel = filterState.level === "all" || tile.dataset.level.split(" ").includes(filterState.level);
     const matchesGenre = filterState.genre === "all" || tile.dataset.genre.split(" ").includes(filterState.genre);
     const matchesPlatform = filterState.platform === "all" || tile.dataset.platform.split(" ").includes(filterState.platform);
-    const visible = matchesSearch && matchesLevel && matchesGenre && matchesPlatform;
+    const matchesYear = filterState.year === "all" || tile.dataset.year === filterState.year;
+    const visible = matchesSearch && matchesLevel && matchesGenre && matchesPlatform && matchesYear;
     tile.hidden = !visible;
     if (visible) visibleCount += 1;
   });
   if (filterStatus) filterStatus.textContent = visibleCount ? `Showing ${visibleCount} lesson${visibleCount === 1 ? "" : "s"}.` : "No lessons match these filters yet.";
+  resetMainCarouselPosition();
 }
 applyMovieFilters();
 

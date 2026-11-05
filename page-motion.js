@@ -89,6 +89,7 @@ window.myeEnsureShuffledOrder = (answers, savedOrder) => {
 // Each lesson owns its challenge state, but this shared control resets only that
 // state and lets the lesson's existing renderer rebuild the activity on reload.
 const extraActivityState = {
+  "spider-man-brand-new-day": { gridSelected: [], gridOrder: [], gridChecked: false, gridSolved: false },
   "ballad-of-songbirds-and-snakes": { preferences: {} },
   "about-time": { preferences: {} },
   "obsession": { gaps: [], wordOrder: [] },
@@ -248,9 +249,21 @@ document.addEventListener("click", (event) => {
   updateGenericReportScore();
   window.print();
 });
-let questionPosition = 0;
-document.addEventListener("click", (event) => { const choice = event.target.closest(".answer-choice"); if (choice) questionPosition = choice.closest(".question-carousel")?.scrollLeft || 0; }, true);
-document.addEventListener("click", (event) => { if (event.target.closest(".answer-choice")) setTimeout(() => { document.querySelectorAll(".question-carousel").forEach((carousel) => { carousel.scrollLeft = questionPosition; }); }, 0); });
+// Lesson renderers may rebuild several quizzes after an answer. Keep each quiz's
+// own slide index; never transfer a position from one activity to another.
+document.addEventListener("click", (event) => {
+  if (!event.target.closest(".answer-choice") || event.target.closest(".lesson-print-export")) return;
+  const positions = [...document.querySelectorAll(".lesson-page .question-carousel")].map((carousel) => ({
+    host: carousel.closest(".question-carousel-shell")?.parentElement,
+    index: carousel.clientWidth ? Math.round(carousel.scrollLeft / carousel.clientWidth) : 0
+  }));
+  setTimeout(() => {
+    positions.forEach(({ host, index }) => {
+      const carousel = host?.querySelector(":scope > .question-carousel-shell > .question-carousel");
+      if (carousel) carousel.scrollLeft = index * carousel.clientWidth;
+    });
+  }, 0);
+}, true);
 const addCarouselControls = () => {
   document.querySelectorAll(".question-carousel-shell").forEach((shell) => {
     const toolbar = shell.querySelector(".question-carousel-toolbar");

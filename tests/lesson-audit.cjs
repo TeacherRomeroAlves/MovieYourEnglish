@@ -33,6 +33,19 @@ const root = path.resolve(__dirname, '..');
       await page.goto(`http://mye.test/${slug}/index.html`);
       await page.waitForFunction(() => !!document.querySelector('[data-print-lesson]'));
       const before = parseInt(await page.locator('.progress-panel strong').innerText());
+      if (slug === 'spider-man-brand-new-day' || slug === 'about-time') {
+        await page.evaluate(() => {
+          document.querySelectorAll('details.lesson-section').forEach((section) => { section.open = true; });
+          const carousel = document.querySelector('#before-questions .question-carousel');
+          carousel.scrollLeft = carousel.clientWidth;
+          carousel.querySelectorAll('.question-slide')[1].querySelector('.answer-choice').click();
+        });
+        await page.waitForTimeout(100);
+        const positions = await page.locator('.lesson-page .question-carousel').evaluateAll((carousels) => carousels.map((carousel) => Math.round(carousel.scrollLeft / Math.max(1, carousel.clientWidth))));
+        assert.equal(positions[0], 1, 'Answering preserves the active question');
+        assert(positions.slice(1).every((index) => index === 0), 'Other activities remain on question one');
+        await page.evaluate(() => document.querySelector('#reset-lesson').click());
+      }
       await page.evaluate(() => document.dispatchEvent(new CustomEvent('mye-speaking-saved')));
       assert.equal(parseInt(await page.locator('.progress-panel strong').innerText()), before + 1, `${slug}: speaking adds one task`);
       await page.reload();
@@ -97,6 +110,36 @@ const root = path.resolve(__dirname, '..');
         await page.waitForFunction(() => !!document.querySelector('[data-print-lesson]'));
         assert.equal(await page.locator('.progress-panel strong').innerText(), '23 / 27 complete', 'Extra challenge reset preserves other answers');
       }
+      if (slug === 'spider-man-brand-new-day') {
+        await page.evaluate(() => {
+          document.body.classList.remove('lesson-printing');
+          document.querySelector('.lesson-print-export').replaceChildren();
+          const distractors = window.SPIDER_MAN_LESSON.gridDistractors.slice(0, 5);
+          distractors.forEach((word) => document.querySelector(`[data-vocab-word="${word}"]`).click());
+          document.querySelector('[data-check-vocab]').click();
+        });
+        assert.equal(await page.locator('.vocab-grid-word.is-wrong').count(), 5);
+        assert.equal(await page.locator('.progress-panel strong').innerText(), '1 / 25 complete', 'Incorrect grid must not count as completed');
+        await page.evaluate(() => {
+          window.SPIDER_MAN_LESSON.gridDistractors.slice(0, 5).forEach((word) => document.querySelector(`[data-vocab-word="${word}"]`).click());
+          window.SPIDER_MAN_LESSON.gridAnswers.forEach((word) => document.querySelector(`[data-vocab-word="${word}"]`).click());
+          document.querySelector('[data-check-vocab]').click();
+          for (const group of ['before', 'after', 'scene']) for (const question of window.SPIDER_MAN_LESSON[group]) document.querySelector(`[data-group="${group}"][data-id="${question[0]}"][data-answer="${question[3]}"]`).click();
+          for (let i = 0; i < window.SPIDER_MAN_LESSON.during.length; i++) document.querySelector(`[data-during="${i}"]`).click();
+        });
+        assert.equal(await page.locator('.progress-panel strong').innerText(), '25 / 25 complete');
+        await page.reload();
+        await page.waitForFunction(() => !!document.querySelector('[data-print-lesson]'));
+        assert.equal(await page.locator('.vocab-grid-word.is-correct').count(), 5);
+        assert.equal(await page.locator('.vocab-grid-word').count(), 16);
+        await page.evaluate(() => { window.print = () => {}; document.querySelector('[data-print-lesson]').click(); });
+        assert.equal(await page.locator('.lesson-print-export .vocab-grid-word.is-correct, .lesson-print-export .vocab-grid-word.is-selected, .lesson-print-export [data-check-vocab]').count(), 0);
+        await page.evaluate(() => { document.body.classList.remove('lesson-printing'); document.querySelector('[data-reset-activity]').click(); });
+        await page.waitForLoadState('load');
+        await page.waitForFunction(() => !!document.querySelector('[data-print-lesson]'));
+        assert.equal(await page.locator('.progress-panel strong').innerText(), '24 / 25 complete');
+        assert.equal(await page.locator('.vocab-grid-word.is-selected').count(), 0);
+      }
       if (slug === 'ballad-of-songbirds-and-snakes') {
         await page.evaluate(() => {
           document.body.classList.remove('lesson-printing');
@@ -145,6 +188,48 @@ const root = path.resolve(__dirname, '..');
     console.log('Passed report prompt check.');
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('http://mye.test/movies.html');
+    await page.waitForFunction(() => document.querySelectorAll('.featured-slide').length === 3);
+    assert.equal(await page.locator('.featured-slide[aria-hidden="false"]').count(), 1);
+    await page.mouse.move(0, 0);
+    await page.waitForTimeout(3300);
+    assert.equal(await page.locator('.featured-slide.is-active .activity-link').getAttribute('href'), './project-hail-mary/index.html', 'Featured movies rotate automatically');
+    await page.locator('[data-featured-slide="1"]').click();
+    assert.equal(await page.locator('.featured-slide.is-active .activity-link').getAttribute('href'), './project-hail-mary/index.html');
+    await page.locator('[data-featured-slide="2"]').click();
+    assert.equal(await page.locator('.featured-slide.is-active .activity-link').getAttribute('href'), './spider-man-brand-new-day/index.html');
+    assert.equal(await page.locator('.featured-slide[inert]').count(), 2);
+    await page.locator('.featured-pause').click();
+    assert.equal(await page.locator('.featured-pause').innerText(), 'Play');
+    await page.locator('[data-featured-slide="0"]').click();
+    for (let index = 0; index < 3; index++) {
+      await page.locator(`[data-featured-slide="${index}"]`).click();
+      const fits = await page.locator('.featured-slide.is-active').evaluate((slide) => {
+        const actions = slide.querySelector('.hero-actions').getBoundingClientRect();
+        const controls = slide.parentElement.querySelector('.featured-rotation-controls').getBoundingClientRect();
+        return actions.bottom <= controls.top && slide.scrollWidth <= slide.clientWidth + 1;
+      });
+      assert(fits, 'Mobile featured content fits above its controls');
+    }
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    assert.equal(await page.locator('.featured-pause').innerText(), 'Play');
+    console.log('Passed featured movie links, slide selection, and pause checks.');
+    const newest = await page.locator('#poster-carousel .movie-poster-link').evaluateAll((links) => links.slice(0, 4).map((link) => link.getAttribute('href')));
+    assert.deepEqual(newest, ['./spider-man-brand-new-day/index.html', './ballad-of-songbirds-and-snakes/index.html', './about-time/index.html', './obsession/index.html']);
+    assert.equal(await page.locator('#poster-carousel .movie-tile[data-year=""]').count(), 0, 'Every movie has a release year');
+    await page.locator('.movie-filter-panel').evaluate((panel) => { panel.open = true; });
+    await page.locator('#movie-filter-year').selectOption('1994');
+    assert.equal(await page.locator('#poster-carousel .movie-tile:not([hidden])').count(), 1);
+    assert.equal(await page.locator('#poster-carousel .movie-tile:not([hidden]) h3').innerText(), 'Forrest Gump');
+    await page.locator('#movie-title-search').fill('Spider');
+    assert.equal(await page.locator('#poster-carousel .movie-tile:not([hidden])').count(), 0, 'Year combines with title search');
+    await page.locator('#movie-filter-year').selectOption('2026');
+    assert.equal(await page.locator('#poster-carousel .movie-tile:not([hidden])').count(), 1);
+    assert.equal(await page.locator('#poster-carousel').evaluate((node) => node.scrollLeft), 0);
+    await page.locator('#movie-title-search').fill('');
+    await page.locator('#movie-filter-year').selectOption('all');
+    console.log('Passed newest-added order, release-year coverage, and combined filters.');
+    assert.equal(await page.locator('.family-row a[href="./spider-man-brand-new-day/index.html"]').count(), 1);
+    assert.equal(await page.locator('.debate-row a[href="./spider-man-brand-new-day/index.html"]').count(), 0);
     assert.equal(await page.locator('.family-row a[href="./ballad-of-songbirds-and-snakes/index.html"]').count(), 0);
     assert.equal(await page.locator('.debate-row a[href="./ballad-of-songbirds-and-snakes/index.html"]').count(), 1);
     await page.locator('a.movie-poster-link[href="./ballad-of-songbirds-and-snakes/index.html"]').click();

@@ -35,6 +35,12 @@
   }
 
   function sanitizeActivity(root) {
+    root.querySelectorAll('.vocab-grid-activity').forEach((activity) => {
+      activity.querySelectorAll('.vocab-grid-word').forEach((word) => {
+        word.classList.remove('is-selected', 'is-correct', 'is-wrong');
+      });
+      activity.querySelector('.vocab-grid-actions')?.remove();
+    });
     root.querySelectorAll('.preference-card').forEach((card) => {
       card.querySelectorAll('.preference-option').forEach((button) => {
         button.classList.remove('is-selected');
@@ -107,6 +113,7 @@
     root.querySelectorAll(".response-word-count,.check-animal").forEach((node) => node.remove());
     root.querySelectorAll(".mini-heading > p:not(.eyebrow)").forEach((node) => {
       const instruction = node.textContent;
+      if (/Select five words related to Spider-Man/i.test(instruction)) { node.textContent = 'Circle five words related to Spider-Man.'; return; }
       if (/arrows/i.test(instruction)) node.textContent = "Choose the best answer for each question.";
       else if (/click each question/i.test(instruction)) node.textContent = "Discuss these questions and make notes while you watch.";
       else if (/click.*match|click a character|click a word.*definition/i.test(instruction)) node.textContent = "Match each item with its correct partner.";

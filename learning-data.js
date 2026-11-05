@@ -1,5 +1,6 @@
 (function () {
   const lessons = [
+    ["spider-man-brand-new-day", "spider-man-brand-new-day", "Spider-Man: Brand New Day", "Elementary", "assets/spider-man-brand-new-day-poster.webp"],
     ["ballad-of-songbirds-and-snakes", "ballad-of-songbirds-and-snakes", "The Hunger Games: The Ballad of Songbirds & Snakes", "Elementary", "assets/ballad-of-songbirds-and-snakes-poster.webp"],
     ["about-time", "about-time", "About Time", "Elementary", "assets/about-time-poster.webp"],
     ["obsession", "obsession", "Obsession", "Elementary", "assets/obsession-poster.webp"],
