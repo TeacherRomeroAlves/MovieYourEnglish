@@ -1,5 +1,5 @@
 const carousel = document.querySelector("#poster-carousel");
-// Oldest addition first. Append new movies here; the library displays this in reverse.
+// Oldest addition first. Append new movies here for the Recently added ordering.
 // Years identify the film version, independently of when its lesson was added.
 const movieLibraryEntries = [
   ["moana-2", 2024], ["project-hail-mary", 2026], ["sheep-detectives", 2026],
@@ -118,18 +118,18 @@ if (backgroundCards.length === 2) {
   });
 }
 
-const filterState = { search: "", level: "all", genre: "all", platform: "all", year: "all" };
+const filterState = { search: "", level: "all", genre: "all", platform: "all", order: "random" };
 const filterOptions = {
   level: [["all", "All levels"], ["beginner", "Beginner"], ["elementary", "Elementary"], ["pre-intermediate", "Pre-Intermediate"], ["intermediate-plus", "Intermediate+"]],
   genre: [["all", "All genres"], ["action", "Action"], ["adventure", "Adventure"], ["animation", "Animation"], ["comedy", "Comedy"], ["crime", "Crime"], ["drama", "Drama"], ["fantasy", "Fantasy"], ["history", "History"], ["horror", "Horror"], ["mystery", "Mystery"], ["romance", "Romance"], ["sci-fi", "Sci-fi"], ["sports", "Sports"], ["thriller", "Thriller"]],
   platform: [["all", "All platforms"], ["apple-tv", "Apple TV"], ["cinemas", "Cinemas"], ["disney-plus", "Disney+"], ["max", "HBO Max"], ["netflix", "Netflix"], ["paramount-plus", "Paramount+"], ["prime-video", "Prime Video"]],
-  year: [["all", "All years"], ...[...new Set(movieLibraryEntries.map(([, year]) => year))].sort((a, b) => b - a).map((year) => [String(year), String(year)])]
+  order: [["random", "Random order"], ["recent", "Recently added"], ["newest", "Newest releases"], ["oldest", "Oldest releases"], ["az", "A to Z"]]
 };
-const filterLabels = { level: "Level", genre: "Genre", platform: "Watch on", year: "Release year" };
+const filterLabels = { level: "Level", genre: "Genre", platform: "Watch on", order: "Order by" };
 const filterPanel = document.querySelector(".movie-filter-panel");
 const filterStatus = document.querySelector("#filter-status");
 if (filterPanel) {
-  filterPanel.innerHTML = `<summary><span>Find a movie</span><small>Title, level, genre, year &amp; where to watch</small></summary><div class="movie-filters" aria-label="Filter movies"><label class="movie-filter-field movie-search-field" for="movie-title-search"><span>Movie title</span><div class="movie-search-control"><span aria-hidden="true">⌕</span><input id="movie-title-search" type="search" inputmode="search" autocomplete="off" placeholder="Search by title…" aria-describedby="filter-status"></div></label>${Object.entries(filterOptions).map(([group, options]) => `<label class="movie-filter-field" for="movie-filter-${group}"><span>${filterLabels[group]}</span><select id="movie-filter-${group}" data-filter-group="${group}">${options.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label>`).join("")}</div>`;
+  filterPanel.innerHTML = `<summary><span>Find a movie</span><small>Search, filters &amp; order</small></summary><div class="movie-filters" aria-label="Filter movies"><label class="movie-filter-field movie-search-field" for="movie-title-search"><span>Movie title</span><div class="movie-search-control"><span aria-hidden="true">⌕</span><input id="movie-title-search" type="search" inputmode="search" autocomplete="off" placeholder="Search by title…" aria-describedby="filter-status"></div></label>${Object.entries(filterOptions).map(([group, options]) => `<label class="movie-filter-field" for="movie-filter-${group}"><span>${filterLabels[group]}</span><select id="movie-filter-${group}" data-filter-group="${group}">${options.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label>`).join("")}</div>`;
 }
 const filterSelects = document.querySelectorAll(".movie-filter-field select");
 const movieTitleSearch = document.querySelector("#movie-title-search");
@@ -300,7 +300,13 @@ if (carousel) {
     const meta = tile.querySelector(".movie-meta p");
     if (metadata && meta) meta.insertAdjacentHTML("beforeend", ` &middot; <time class="movie-release-year" datetime="${metadata.year}">${metadata.year}</time>`);
   });
-  tiles.sort((a, b) => Number(b.dataset.addedOrder) - Number(a.dataset.addedOrder)).forEach((tile) => carousel.appendChild(tile));
+  // Shuffle once per page load. Filtering preserves that shuffle instead of
+  // moving posters around on every keystroke.
+  for (let index = tiles.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [tiles[index], tiles[randomIndex]] = [tiles[randomIndex], tiles[index]];
+  }
+  tiles.forEach((tile, index) => { tile.dataset.randomOrder = String(index); carousel.appendChild(tile); });
 }
 const resetMainCarouselPosition = () => {
   if (carousel) carousel.scrollLeft = 0;
@@ -365,12 +371,22 @@ function applyMovieFilters() {
     const matchesLevel = filterState.level === "all" || tile.dataset.level.split(" ").includes(filterState.level);
     const matchesGenre = filterState.genre === "all" || tile.dataset.genre.split(" ").includes(filterState.genre);
     const matchesPlatform = filterState.platform === "all" || tile.dataset.platform.split(" ").includes(filterState.platform);
-    const matchesYear = filterState.year === "all" || tile.dataset.year === filterState.year;
-    const visible = matchesSearch && matchesLevel && matchesGenre && matchesPlatform && matchesYear;
+    const visible = matchesSearch && matchesLevel && matchesGenre && matchesPlatform;
     tile.hidden = !visible;
     if (visible) visibleCount += 1;
   });
   if (filterStatus) filterStatus.textContent = visibleCount ? `Showing ${visibleCount} lesson${visibleCount === 1 ? "" : "s"}.` : "No lessons match these filters yet.";
+  if (carousel) {
+    const tiles = [...carousel.querySelectorAll(".movie-tile")];
+    const recentlyAdded = (a, b) => Number(b.dataset.addedOrder) - Number(a.dataset.addedOrder);
+    tiles.sort((a, b) => {
+      if (filterState.order === "az") return (a.querySelector(".movie-meta h3")?.textContent || "").localeCompare(b.querySelector(".movie-meta h3")?.textContent || "", "en", { sensitivity: "base" });
+      if (filterState.order === "recent") return recentlyAdded(a, b);
+      if (filterState.order === "newest") return Number(b.dataset.year) - Number(a.dataset.year) || recentlyAdded(a, b);
+      if (filterState.order === "oldest") return Number(a.dataset.year) - Number(b.dataset.year) || recentlyAdded(a, b);
+      return Number(a.dataset.randomOrder) - Number(b.dataset.randomOrder);
+    }).forEach((tile) => carousel.appendChild(tile));
+  }
   resetMainCarouselPosition();
 }
 applyMovieFilters();
