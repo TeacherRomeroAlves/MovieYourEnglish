@@ -113,6 +113,7 @@
     root.querySelectorAll(".response-word-count,.check-animal").forEach((node) => node.remove());
     root.querySelectorAll(".mini-heading > p:not(.eyebrow)").forEach((node) => {
       const instruction = node.textContent;
+      if (/Use the clues to find five hidden words/i.test(instruction)) { node.textContent = 'Use the clues to find and circle five alien-related words. Words read left to right or top to bottom.'; return; }
       if (/Select five words related to Spider-Man/i.test(instruction)) { node.textContent = 'Circle five words related to Spider-Man.'; return; }
       if (/arrows/i.test(instruction)) node.textContent = "Choose the best answer for each question.";
       else if (/click each question/i.test(instruction)) node.textContent = "Discuss these questions and make notes while you watch.";

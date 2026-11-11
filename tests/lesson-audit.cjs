@@ -140,6 +140,30 @@ const root = path.resolve(__dirname, '..');
         assert.equal(await page.locator('.progress-panel strong').innerText(), '24 / 25 complete');
         assert.equal(await page.locator('.vocab-grid-word.is-selected').count(), 0);
       }
+      if (slug === 'disclosure-day') {
+        assert.equal(await page.locator('#clue-word-search .letter').count(), 144);
+        assert.deepEqual(await page.locator('#clue-word-search .word-item strong').allTextContents(), ['3 letters', '9 letters', '5 letters', '9 letters', '9 letters']);
+        await page.evaluate(() => {
+          document.body.classList.remove('lesson-printing');
+          document.querySelector('.lesson-print-export').replaceChildren();
+          for (const group of ['before', 'after', 'scene']) for (const question of window.DISCLOSURE_LESSON[group]) document.querySelector(`[data-group="${group}"][data-id="${question[0]}"][data-answer="${question[3]}"]`).click();
+          for (let i = 0; i < window.DISCLOSURE_LESSON.during.length; i++) document.querySelector(`[data-during="${i}"]`).click();
+          for (const word of window.DISCLOSURE_LESSON.searchWords) document.querySelector(`[data-search-cell="${word.row}-${word.col}"]`).click();
+        });
+        assert.equal(await page.locator('.progress-panel strong').innerText(), '29 / 29 complete');
+        assert.equal(await page.locator('#clue-word-search .is-found').count(), 5);
+        await page.reload();
+        await page.waitForFunction(() => !!document.querySelector('[data-print-lesson]'));
+        assert.equal(await page.locator('#clue-word-search .is-found').count(), 5);
+        await page.evaluate(() => { window.print = () => {}; document.querySelector('[data-print-lesson]').click(); });
+        assert.equal(await page.locator('.lesson-print-export .found, .lesson-print-export .found-mark').count(), 0);
+        assert((await page.locator('.lesson-print-export .word-item strong').allTextContents()).every((text) => /letters$/.test(text)));
+        await page.evaluate(() => { document.body.classList.remove('lesson-printing'); document.querySelector('[data-reset-activity]').click(); });
+        await page.waitForLoadState('load');
+        await page.waitForFunction(() => !!document.querySelector('[data-print-lesson]'));
+        assert.equal(await page.locator('.progress-panel strong').innerText(), '24 / 29 complete');
+        assert.equal(await page.locator('#clue-word-search .is-found').count(), 0);
+      }
       if (slug === 'ballad-of-songbirds-and-snakes') {
         await page.evaluate(() => {
           document.body.classList.remove('lesson-printing');
@@ -220,7 +244,7 @@ const root = path.resolve(__dirname, '..');
     const originalShuffle = await page.locator('#poster-carousel .movie-poster-link').evaluateAll((links) => links.map((link) => link.getAttribute('href')));
     await page.locator('#movie-filter-order').selectOption('recent');
     const newest = await page.locator('#poster-carousel .movie-poster-link').evaluateAll((links) => links.slice(0, 4).map((link) => link.getAttribute('href')));
-    assert.deepEqual(newest, ['./spider-man-brand-new-day/index.html', './ballad-of-songbirds-and-snakes/index.html', './about-time/index.html', './obsession/index.html']);
+    assert.deepEqual(newest, ['./disclosure-day/index.html', './spider-man-brand-new-day/index.html', './ballad-of-songbirds-and-snakes/index.html', './about-time/index.html']);
     for (const mode of ['newest', 'oldest']) {
       await page.locator('#movie-filter-order').selectOption(mode);
       const years = await page.locator('#poster-carousel .movie-tile').evaluateAll((tiles) => tiles.map((tile) => Number(tile.dataset.year)));
@@ -238,6 +262,8 @@ const root = path.resolve(__dirname, '..');
     assert.deepEqual(await page.locator('#poster-carousel .movie-poster-link').evaluateAll((links) => links.map((link) => link.getAttribute('href'))), originalShuffle, 'Random order stays stable while changing filters');
     console.log('Passed random order, recently added, release-year ordering, and combined filters.');
     assert.equal(await page.locator('.family-row a[href="./spider-man-brand-new-day/index.html"]').count(), 1);
+    assert.equal(await page.locator('.debate-row a[href="./disclosure-day/index.html"]').count(), 1);
+    assert.equal(await page.locator('.family-row a[href="./disclosure-day/index.html"]').count(), 0);
     assert.equal(await page.locator('.debate-row a[href="./spider-man-brand-new-day/index.html"]').count(), 0);
     assert.equal(await page.locator('.family-row a[href="./ballad-of-songbirds-and-snakes/index.html"]').count(), 0);
     assert.equal(await page.locator('.debate-row a[href="./ballad-of-songbirds-and-snakes/index.html"]').count(), 1);

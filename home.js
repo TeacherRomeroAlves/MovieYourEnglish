@@ -13,9 +13,12 @@ const movieLibraryEntries = [
   ["captain-america-brave-new-world", 2025], ["the-gorge", 2025], ["talk-to-me", 2023],
   ["barbie", 2023], ["oppenheimer", 2023], ["my-oxford-year", 2025], ["gladiator-2", 2024],
   ["fall-guy-elementary", 2024], ["obsession", 2026], ["about-time", 2013],
-  ["ballad-of-songbirds-and-snakes", 2023], ["spider-man-brand-new-day", 2026]
+  ["ballad-of-songbirds-and-snakes", 2023], ["spider-man-brand-new-day", 2026], ["disclosure-day", 2026]
 ];
 const movieLibraryMetadata = new Map(movieLibraryEntries.map(([slug, year], addedOrder) => [slug, { year, addedOrder }]));
+if (carousel && !carousel.querySelector('[href="./disclosure-day/index.html"]')) {
+  carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="pre-intermediate" data-genre="action sci-fi" data-platform="prime-video apple-tv"><a href="./disclosure-day/index.html" class="movie-poster-link"><img src="assets/disclosure-day-poster.webp" alt="Disclosure Day movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Disclosure Day</h3><p><span>Pre-Intermediate</span> &middot; Action &middot; Sci-Fi &middot; Prime Video / Apple TV</p></div></article>');
+}
 if (carousel && !carousel.querySelector('[href="./spider-man-brand-new-day/index.html"]')) {
   carousel.insertAdjacentHTML("beforeend", '<article class="movie-tile" data-level="elementary" data-genre="action" data-platform="prime-video"><a href="./spider-man-brand-new-day/index.html" class="movie-poster-link"><img src="assets/spider-man-brand-new-day-poster.webp" alt="Spider-Man: Brand New Day movie poster"><span class="play-overlay">&#9654;</span></a><div class="movie-meta"><h3>Spider-Man: Brand New Day</h3><p><span>Elementary</span> &middot; Action &middot; Prime Video</p></div></article>');
 }
@@ -100,6 +103,7 @@ const landingPosterPool = [
   { title: "Talk to Me", image: "assets/talk-to-me-poster.png", href: "./talk-to-me/index.html" },
     { title: "Obsession", image: "assets/obsession-poster.webp", href: "./obsession/index.html" },
     { title: "About Time", image: "assets/about-time-poster.webp", href: "./about-time/index.html" },
+    { title: "Disclosure Day", image: "assets/disclosure-day-poster.webp", href: "./disclosure-day/index.html" },
     { title: "Spider-Man: Brand New Day", image: "assets/spider-man-brand-new-day-poster.webp", href: "./spider-man-brand-new-day/index.html" },
     { title: "The Hunger Games: The Ballad of Songbirds & Snakes", image: "assets/ballad-of-songbirds-and-snakes-poster.webp", href: "./ballad-of-songbirds-and-snakes/index.html" },
 ];
@@ -339,6 +343,7 @@ if (carousel && !document.querySelector("#curated-movie-rows")) {
       <a href="./harry-potter-philosophers-stone/index.html" class="curated-movie-card"><img src="assets/harry-potter-1-poster.webp" alt="Harry Potter and the Philosopher's Stone movie poster"><span>Harry Potter and the Philosopher's Stone</span></a>
     </div></section>`;
   curatedRows.querySelectorAll('[data-curated-row="debate"], [data-curated-row="family"]').forEach((row) => {
+    if (row.dataset.curatedRow === "debate") row.insertAdjacentHTML("beforeend", '<a href="./disclosure-day/index.html" class="curated-movie-card"><img src="assets/disclosure-day-poster.webp" alt="Disclosure Day movie poster"><span>Disclosure Day</span></a>');
     if (row.dataset.curatedRow === "family") row.insertAdjacentHTML("beforeend", '<a href="./spider-man-brand-new-day/index.html" class="curated-movie-card"><img src="assets/spider-man-brand-new-day-poster.webp" alt="Spider-Man: Brand New Day movie poster"><span>Spider-Man: Brand New Day</span></a>');
     if (row.dataset.curatedRow === "debate") row.insertAdjacentHTML("beforeend", '<a href="./ballad-of-songbirds-and-snakes/index.html" class="curated-movie-card" data-content-warning="ballad-mild"><img src="assets/ballad-of-songbirds-and-snakes-poster.webp" alt="The Hunger Games: The Ballad of Songbirds &amp; Snakes movie poster"><span>The Hunger Games: The Ballad of Songbirds &amp; Snakes</span></a>');
     row.insertAdjacentHTML("beforeend", '<a href="./about-time/index.html" class="curated-movie-card"><img src="assets/about-time-poster.webp" alt="About Time movie poster"><span>About Time</span></a>');
