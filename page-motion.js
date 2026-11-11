@@ -17,7 +17,12 @@ document.querySelectorAll(".lesson-page .watch-provider-grid, .lesson-page .watc
   if (provider.nextElementSibling?.classList.contains("watch-availability-note")) return;
   const note = document.createElement("p");
   note.className = "watch-availability-note";
-  note.textContent = "Availability and platforms vary by country. Check your local listings before watching.";
+  const link = document.createElement("a");
+  link.href = "https://www.justwatch.com/";
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = "Availability and platforms vary by country. Check your local listings before watching.";
+  note.appendChild(link);
   provider.insertAdjacentElement("afterend", note);
 });
 const storyExportScript = document.createElement("script");
@@ -89,6 +94,7 @@ window.myeEnsureShuffledOrder = (answers, savedOrder) => {
 // Each lesson owns its challenge state, but this shared control resets only that
 // state and lets the lesson's existing renderer rebuild the activity on reload.
 const extraActivityState = {
+  "toy-story-5": { matches: [], matchOrder: [], selectedMatch: null },
   "disclosure-day": { wordSearchFound: [] },
   "spider-man-brand-new-day": { gridSelected: [], gridOrder: [], gridChecked: false, gridSolved: false },
   "ballad-of-songbirds-and-snakes": { preferences: {} },
@@ -284,6 +290,7 @@ const addCarouselInstructions = () => {
   });
 };
 const beforeWatchHeadings = {
+  "toy-story-5": "Toys meet technology",
   "alien-romulus": "Survive the station",
   "captain-america-brave-new-world": "Meet the new Captain America",
   "conclave": "Behind closed doors",

@@ -105,6 +105,11 @@
       input.removeAttribute("checked");
       input.removeAttribute("value");
     });
+    root.querySelectorAll(".spot-difference-answer select").forEach((select) => {
+      const blank = document.createElement("p");
+      blank.textContent = "_____ / 7 differences";
+      select.replaceWith(blank);
+    });
     root.querySelectorAll("textarea").forEach((textarea) => {
       const lines = document.createElement("div");
       lines.className = "lesson-print-writing-lines";

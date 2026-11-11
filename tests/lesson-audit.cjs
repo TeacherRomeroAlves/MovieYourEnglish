@@ -54,6 +54,30 @@ const root = path.resolve(__dirname, '..');
       await page.evaluate(() => { window.print = () => {}; document.querySelector('[data-print-lesson]').click(); });
       assert.equal(await page.locator('.lesson-print-section').count(), 3, `${slug}: three printable stages`);
       assert.equal(await page.locator('.lesson-print-export .speaking-card').count(), 0, `${slug}: no printable recording controls`);
+      if (slug === 'toy-story-5') {
+        await page.evaluate(() => {
+          document.body.classList.remove('lesson-printing');
+          document.querySelector('.lesson-print-export').replaceChildren();
+          document.querySelectorAll('details.lesson-section').forEach(section => { section.open = true; });
+          for (let i = 0; i < 7; i++) {
+            document.querySelector('#character-matching [data-term="' + i + '"]').click();
+            document.querySelector('#character-matching [data-definition="' + i + '"]').click();
+          }
+        });
+        assert.equal(await page.locator('#character-matching .matched').count(), 14);
+        assert.equal(await page.locator('#differences-found').count(), 0);
+        assert.equal(await page.locator('.progress-panel strong').innerText(), '8 / 30 complete');
+        await page.reload();
+        await page.waitForFunction(() => !!document.querySelector('[data-print-lesson]'));
+        assert.equal(await page.locator('#character-matching .matched').count(), 14);
+        await page.evaluate(() => {
+          for (const [group, questions] of [['before', window.TOY_LESSON.before], ['after', window.TOY_LESSON.after]]) {
+            for (const question of questions) document.querySelector('[data-group="' + group + '"][data-id="' + question[0] + '"][data-answer="' + question[3] + '"]').click();
+          }
+          window.TOY_LESSON.during.forEach((_, i) => document.querySelector('[data-during="' + i + '"]').click());
+        });
+        assert.equal(await page.locator('.progress-panel strong').innerText(), '30 / 30 complete');
+      }
       if (slug === 'about-time') {
         await page.evaluate(() => {
           document.body.classList.remove('lesson-printing');
@@ -212,7 +236,7 @@ const root = path.resolve(__dirname, '..');
     console.log('Passed report prompt check.');
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('http://mye.test/movies.html');
-    await page.waitForFunction(() => document.querySelectorAll('.featured-slide').length === 3);
+    await page.waitForFunction(() => document.querySelectorAll('.featured-slide').length === 4);
     assert.equal(await page.locator('.featured-slide[aria-hidden="false"]').count(), 1);
     await page.mouse.move(0, 0);
     await page.waitForTimeout(3300);
@@ -221,11 +245,15 @@ const root = path.resolve(__dirname, '..');
     assert.equal(await page.locator('.featured-slide.is-active .activity-link').getAttribute('href'), './project-hail-mary/index.html');
     await page.locator('[data-featured-slide="2"]').click();
     assert.equal(await page.locator('.featured-slide.is-active .activity-link').getAttribute('href'), './spider-man-brand-new-day/index.html');
-    assert.equal(await page.locator('.featured-slide[inert]').count(), 2);
-    await page.locator('.featured-pause').click();
-    assert.equal(await page.locator('.featured-pause').innerText(), 'Play');
+    assert.equal(await page.locator('.featured-slide[inert]').count(), 3);
+    await page.locator('.featured-pause:not(.featured-next)').click();
+    assert.equal(await page.locator('.featured-pause:not(.featured-next)').innerText(), 'Play');
+    await page.locator('[data-featured-slide="3"]').click();
+    assert.equal(await page.locator('.featured-slide.is-active .activity-link').getAttribute('href'), './toy-story-5/index.html');
+    await page.locator('.featured-next').click();
+    assert.equal(await page.locator('.featured-slide.is-active .activity-link').getAttribute('href'), './odyssey/index.html');
     await page.locator('[data-featured-slide="0"]').click();
-    for (let index = 0; index < 3; index++) {
+    for (let index = 0; index < 4; index++) {
       await page.locator(`[data-featured-slide="${index}"]`).click();
       const fits = await page.locator('.featured-slide.is-active').evaluate((slide) => {
         const actions = slide.querySelector('.hero-actions').getBoundingClientRect();
@@ -235,7 +263,7 @@ const root = path.resolve(__dirname, '..');
       assert(fits, 'Mobile featured content fits above its controls');
     }
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    assert.equal(await page.locator('.featured-pause').innerText(), 'Play');
+    assert.equal(await page.locator('.featured-pause:not(.featured-next)').innerText(), 'Play');
     console.log('Passed featured movie links, slide selection, and pause checks.');
     assert.equal(await page.locator('#poster-carousel .movie-tile[data-year=""]').count(), 0, 'Every movie has a release year');
     await page.locator('.movie-filter-panel').evaluate((panel) => { panel.open = true; });
@@ -244,7 +272,7 @@ const root = path.resolve(__dirname, '..');
     const originalShuffle = await page.locator('#poster-carousel .movie-poster-link').evaluateAll((links) => links.map((link) => link.getAttribute('href')));
     await page.locator('#movie-filter-order').selectOption('recent');
     const newest = await page.locator('#poster-carousel .movie-poster-link').evaluateAll((links) => links.slice(0, 4).map((link) => link.getAttribute('href')));
-    assert.deepEqual(newest, ['./disclosure-day/index.html', './spider-man-brand-new-day/index.html', './ballad-of-songbirds-and-snakes/index.html', './about-time/index.html']);
+    assert.deepEqual(newest, ['./toy-story-5/index.html', './disclosure-day/index.html', './spider-man-brand-new-day/index.html', './ballad-of-songbirds-and-snakes/index.html']);
     for (const mode of ['newest', 'oldest']) {
       await page.locator('#movie-filter-order').selectOption(mode);
       const years = await page.locator('#poster-carousel .movie-tile').evaluateAll((tiles) => tiles.map((tile) => Number(tile.dataset.year)));
