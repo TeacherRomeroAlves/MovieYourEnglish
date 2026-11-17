@@ -23,7 +23,7 @@
     ".completion-message", ".form-feedback", ".score", ".reset-activity-button", ".dictionary-card",
     ".cambridge-card", ".report-card", ".report-actions", ".lesson-divider", ".watch-provider",
     ".watch-availability-note", ".body-part-result", ".body-part-actions", ".lesson-section-share", ".lesson-section-share-status", "[data-reset-activity]",
-    ".speaking-card", ".response-mode-tabs", "audio", "video", "iframe"
+    ".speaking-card", ".response-mode-tabs", ".song-connection-card", "audio", "video", "iframe"
   ].join(",");
 
   function textOf(node) {
